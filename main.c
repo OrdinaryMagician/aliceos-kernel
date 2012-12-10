@@ -9,6 +9,7 @@
 #include "aos/string.h"
 #include "aos/timer.h"
 #include "aos/panic.h"
+#include "aos/paging.h"
 
 #define KNAME "AliceOS"
 #define KVER "0.0.1a"
@@ -38,9 +39,21 @@ int kmain( struct multiboot *mboot_ptr )
 	drawheader();
 	cur_set(0,2);
 	puts("AliceOS kernel loaded. Hello world!\n");
+	Uint32 test1 = kmalloc(8);
 	init_paging();
-	puts("Paging test!\n");
-	Uint32 *ptr = (Uint32*)0xA0000000;
-	Uint32 do_page_fault = *ptr;
+	Uint32 test2 = kmalloc(8);
+	Uint32 test3 = kmalloc(8);
+	puts("\ntest1: ");
+	puth(test1);
+	puts("\ntest2: ");
+	puth(test2);
+	puts("\ntest3: ");
+	puth(test3);
+	kfree(test3);
+	kfree(test2);
+	Uint32 test4 = kmalloc(12);
+	puts("\ntest4: ");
+	puth(test4);
+	
 	return 0xADEADBED;
 }

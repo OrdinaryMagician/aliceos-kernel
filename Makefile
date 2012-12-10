@@ -1,7 +1,7 @@
 CFLAGS := -m32 -std=c99 -O2 -pipe -Wall -Wextra -pedantic -nostdlib -nostdinc -fno-builtin -fno-stack-protector
 ASFLAGS := -felf32
 LDFLAGS := -melf_i386 -belf32-i386 -Tlink.ld
-SOURCES := boot.o main.o aos/port.o aos/string.o aos/screen.o aos/desc.o aos/isr.o aos/interrupt.o aos/gdt.o aos/timer.o aos/kheap.o aos/paging.o aos/panic.o
+SOURCES := boot.o main.o aos/port.o aos/string.o aos/screen.o aos/desc.o aos/isr.o aos/interrupt.o aos/gdt.o aos/timer.o aos/kheap.o aos/paging.o aos/panic.o aos/ordered_array.o
 .PHONY: clean
 aliceos-kernel: $(SOURCES) link
 qemu-run:

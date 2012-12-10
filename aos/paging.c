@@ -10,6 +10,7 @@
 #include "screen.h"
 #include "panic.h"
 
+
 page_directory_t *kernel_directory = 0;
 page_directory_t *current_directory = 0;
 
@@ -17,6 +18,7 @@ Uint32 *frames;
 Uint32 nframes;
 
 extern Uint32 placement_address;
+extern heap_t *kheap;
 
 #define INDEX_FROM_BIT(a) (a/(8*4))
 #define OFFSET_FROM_BIT(a) (a%(8*4))
@@ -55,7 +57,7 @@ static Uint32 first_frame( void )
 		for ( j=0; j<32; j++ )
 		{
 			Uint32 toTest = 0x01 << j;
-			if ( !frames[i]&toTest )
+			if ( !(frames[i]&toTest) )
 				return i*4*8+j;
 		}
 	}
@@ -94,23 +96,29 @@ void init_paging( void )
 	memset(kernel_directory,0,sizeof(page_directory_t));
 	current_directory = kernel_directory;
 	int i = 0;
-	while ( i < placement_address )
+	for ( i = KHEAP_START; i < KHEAP_START+KHEAP_INITIAL_SIZE; i += 0x1000 )
+		get_page(i,1,kernel_directory);
+	i = 0;
+	while ( i < placement_address+0x1000 )
 	{
 		alloc_frame(get_page(i,1,kernel_directory),0,0);
 		i += 0x1000;
 	}
+	for ( i = KHEAP_START; i < KHEAP_START+KHEAP_INITIAL_SIZE; i += 0x1000 )
+		alloc_frame(get_page(i,1,kernel_directory),0,0);
 	register_interrupt_handler(14,page_fault);
 	switch_page_directory(kernel_directory);
+	kheap = create_heap(KHEAP_START,KHEAP_START+KHEAP_INITIAL_SIZE,0xCFFFF000,0,0);
 }
 
 void switch_page_directory( page_directory_t *dir )
 {
 	current_directory = dir;
-	__asm__ __volatile__ ("mov %0, %%cr3"::"r"(&dir->tablesPhysical));
+	__asm__ __volatile__ ("mov %0, %%cr3":: "r"(&dir->tablesPhysical));
 	Uint32 cr0;
-	__asm__ __volatile__ ("mov %%cr0, %0":"=r"(cr0));
+	__asm__ __volatile__ ("mov %%cr0, %0": "=r"(cr0));
 	cr0 |= 0x80000000;
-	__asm__ __volatile__ ("mov %0, %%cr0"::"r"(cr0));
+	__asm__ __volatile__ ("mov %0, %%cr0":: "r"(cr0));
 }
 
 page_t *get_page( Uint32 address, Uint8 make, page_directory_t *dir )

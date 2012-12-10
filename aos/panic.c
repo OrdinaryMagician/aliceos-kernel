@@ -3,7 +3,6 @@
 
 extern void panic( const char *message, const char *file, Uint32 line )
 {
-	__asm__ __volatile__ ("cli");
 	puts("PANIC(");
 	puts(message);
 	puts(") at ");
@@ -11,12 +10,12 @@ extern void panic( const char *message, const char *file, Uint32 line )
 	puts(":");
 	putu(line);
 	putc('\n');
-	for(;;);
+	__asm__ __volatile__ ("cli");
+	__asm__ __volatile__ ("hlt");
 }
 
 extern void panic_assert( const char *file, Uint32 line, const char *desc )
 {
-	__asm__ __volatile__ ("cli");
 	puts("ASSERTION-FAILED(");
 	puts(desc);
 	puts(") at ");
@@ -24,5 +23,6 @@ extern void panic_assert( const char *file, Uint32 line, const char *desc )
 	puts(":");
 	putu(line);
 	putc('\n');
-	for(;;);
+	__asm__ __volatile__ ("cli");
+	__asm__ __volatile__ ("hlt");
 }
