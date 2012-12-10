@@ -19,9 +19,9 @@ mboot:
 	dd end
 	dd start
 [GLOBAL start]
-[EXTERN main]
+[EXTERN kmain]
 start:
 	push ebx
 	cli
-	call main
+	call kmain
 	jmp $

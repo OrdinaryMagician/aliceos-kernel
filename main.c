@@ -6,7 +6,7 @@
 */
 #include "aos/screen.h"
 
-int main( struct multiboot *mboot_ptr )
+int kmain( struct multiboot *mboot_ptr )
 {
 	init_video();
 	text_setcolor(LCYAN,BLACK);

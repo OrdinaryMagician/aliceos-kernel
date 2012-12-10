@@ -6,9 +6,9 @@ Yes, I want to write a kernel. Any problem with that?
 
 ## How?
 
-I don't even know.
+At the moment I'm reading some tutorials on the subject, mainly JamesM's kernel development tutorials (http://www.jamesmolloy.co.uk/tutorial_html/).
 
-I'm currently trying to find decent tutorials that are not 32-bit exclusive and require a 32-bit host system to develop properly.
+Lowest level parts of the kernel are done in x86 assembly (nasm), everything else is pure C.
 
 ## Why?
 
@@ -18,7 +18,7 @@ I like to learn new things. I like to study all kinds of things about software d
 
 After being introduced to the whole OSDev scene this caught my curiosity. So I wanted to try it too.
 
-This project called ToAruOS ( https://github.com/klange/osdev ) inspired me. It looks nice and I want to try making something similar.
+This project called ToAruOS (https://github.com/klange/osdev) inspired me. It looks nice and I want to try making something similar.
 
 ## When?
 

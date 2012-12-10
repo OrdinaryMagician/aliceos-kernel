@@ -8,18 +8,19 @@
 
 void outb( unsigned short port, unsigned char val )
 {
-	asm volatile("outb %1, %0" : : "dN" (port), "a" (val));
+	__asm__ __volatile__ ("outb %1, %0" : : "dN" (port), "a" (val));
 }
 
 unsigned char inb( unsigned short port )
 {
 	unsigned char ret;
-	asm volatile("inb %1, %0" : "=a" (ret) : "dN" (port));
+	__asm__ __volatile__ ("inb %1, %0" : "=a" (ret) : "dN" (port));
+	return ret;
 }
 
 unsigned short inw( unsigned short port )
 {
 	unsigned short ret;
-	asm volatile("inw %1, %0" : "=a" (ret) : "dN" (port));
+	__asm__ __volatile__ ("inw %1, %0" : "=a" (ret) : "dN" (port));
 	return ret;
 }

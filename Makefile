@@ -1,4 +1,4 @@
-CFLAGS := -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector
+CFLAGS := -m32 -std=c99 -Wall -Wextra -pedantic -nostdlib -nostdinc -fno-builtin -fno-stack-protector
 ASFLAGS := -felf32
 LDFLAGS := -melf_i386 -belf32-i386
 SOURCES := boot.o main.o aos/port.o aos/string.o aos/screen.o
