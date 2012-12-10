@@ -6,7 +6,7 @@
 */
 #include "string.h"
 
-extern Uint8 *memcpy( Uint8 *dest, const Uint8 *src, int count )
+Uint8 *memcpy( Uint8 *dest, const Uint8 *src, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )
@@ -14,7 +14,7 @@ extern Uint8 *memcpy( Uint8 *dest, const Uint8 *src, int count )
 	return dest;
 }
 
-extern Uint16 *memcpyw( Uint16 *dest, const Uint16 *src, int count )
+Uint16 *memcpyw( Uint16 *dest, const Uint16 *src, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )
@@ -22,7 +22,7 @@ extern Uint16 *memcpyw( Uint16 *dest, const Uint16 *src, int count )
 	return dest;
 }
 
-extern Uint8 *memset( Uint8 *dest, Uint8 val, int count )
+Uint8 *memset( Uint8 *dest, Uint8 val, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )
@@ -30,7 +30,7 @@ extern Uint8 *memset( Uint8 *dest, Uint8 val, int count )
 	return dest;
 }
 
-extern Uint16 *memsetw( Uint16 *dest, Uint16 val, int count )
+Uint16 *memsetw( Uint16 *dest, Uint16 val, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )
@@ -38,7 +38,7 @@ extern Uint16 *memsetw( Uint16 *dest, Uint16 val, int count )
 	return dest;
 }
 
-extern int strlen( const char *str )
+int strlen( const char *str )
 {
 	int i = 0;
 	while ( str[i] != 0 )

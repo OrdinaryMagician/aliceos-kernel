@@ -35,35 +35,35 @@ void move_csr( void )
 	outb(0x3D5,temp);
 }
 
-extern void clear_screen( void )
+void clear_screen( void )
 {
 	Uint16 blank;
 	blank = 0x20 | (attrib << 8);
 	memsetw(textmemptr,blank,80*25);
 }
 
-extern void clear_line( void )
+void clear_line( void )
 {
 	Uint16 blank;
 	blank = 0x20 | (attrib << 8);
 	memsetw(textmemptr+csr_y*80,blank,80);
 }
 
-extern void clear_line_r( void )
+void clear_line_r( void )
 {
 	Uint16 blank;
 	blank = 0x20 | (attrib << 8);
 	memsetw(textmemptr+csr_x+csr_y*80,blank,80-csr_x);
 }
 
-extern void clear_line_l( void )
+void clear_line_l( void )
 {
 	Uint16 blank;
 	blank = 0x20 | (attrib << 8);
 	memsetw(textmemptr+csr_y*80,blank,csr_x);
 }
 
-extern void clear_screen_r( void )
+void clear_screen_r( void )
 {
 	Uint16 blank;
 	int i;
@@ -71,7 +71,7 @@ extern void clear_screen_r( void )
 	memsetw(textmemptr+csr_x+csr_y*80,blank,80*25-(csr_x+csr_y*80));
 }
 
-extern void clear_screen_l( void )
+void clear_screen_l( void )
 {
 	Uint16 blank;
 	int i;
@@ -79,7 +79,7 @@ extern void clear_screen_l( void )
 	memsetw(textmemptr,blank,csr_x+csr_y*80);
 }
 
-extern void putc( char c)
+void putc( char c)
 {
 	Uint16 *where;
 	Uint16 attr = attrib << 8;
@@ -109,14 +109,14 @@ extern void putc( char c)
 	move_csr();
 }
 
-extern void puts( char *text )
+void puts( char *text )
 {
 	int i;
 	for ( i=0; i<strlen(text); i++ )
 		putc(text[i]);
 }
 
-extern void putld( Sint64 d )
+void putld( Sint64 d )
 {
 	if ( d == 0 )
 	{
@@ -143,7 +143,7 @@ extern void putld( Sint64 d )
 	puts(cr);
 }
 
-extern void putd( Sint32 d )
+void putd( Sint32 d )
 {
 	if ( d == 0 )
 	{
@@ -170,7 +170,7 @@ extern void putd( Sint32 d )
 	puts(cr);
 }
 
-extern void putlu( Uint64 u )
+void putlu( Uint64 u )
 {
 	if ( u == 0 )
 	{
@@ -195,7 +195,7 @@ extern void putlu( Uint64 u )
 	puts(cr);
 }
 
-extern void putu( Uint32 u )
+void putu( Uint32 u )
 {
 	if ( u == 0 )
 	{
@@ -220,7 +220,7 @@ extern void putu( Uint32 u )
 	puts(cr);
 }
 
-extern void putlh( Uint64 h )
+void putlh( Uint64 h )
 {
 	Uint64 tmp;
 	puts("0x");
@@ -238,7 +238,7 @@ extern void putlh( Uint64 h )
 	putc((tmp >= 0xA) ? (tmp-(0xA+'a')) : (tmp+'0'));
 }
 
-extern void puth( Uint32 h )
+void puth( Uint32 h )
 {
 	Uint32 tmp;
 	puts("0x");
@@ -256,7 +256,7 @@ extern void puth( Uint32 h )
 	putc((tmp >= 0xA) ? (tmp-(0xA+'a')) : (tmp+'0'));
 }
 
-extern void cur_set( int x, int y )
+void cur_set( int x, int y )
 {
 	while ( x >= 80 )
 		x -= 80;
@@ -271,7 +271,7 @@ extern void cur_set( int x, int y )
 	move_csr();
 }
 
-extern void cur_move( int ox, int oy )
+void cur_move( int ox, int oy )
 {
 	int px, py;
 	px = csr_x+ox;
@@ -289,24 +289,24 @@ extern void cur_move( int ox, int oy )
 	move_csr();
 }
 
-extern void cur_get( int *x, int *y )
+void cur_get( int *x, int *y )
 {
 	*x = csr_x;
 	*y = csr_y;
 }
 
-extern void text_getcolor( Uint8 *fg, Uint8 *bg )
+void text_getcolor( Uint8 *fg, Uint8 *bg )
 {
 	*bg = (attrib>>4)&0x0F;
 	*fg = attrib&0x0F;
 }
 
-extern void text_setcolor( Uint8 fg, Uint8 bg )
+void text_setcolor( Uint8 fg, Uint8 bg )
 {
 	attrib = (bg << 4) | (fg & 0x0F);
 }
 
-extern void init_video( void )
+void init_video( void )
 {
 	textmemptr = (Uint16*)0xB8000;
 	clear_screen();
