@@ -3,6 +3,10 @@
 void cls( void );
 void putc( char c );
 void puts( char *c );
+void cur_set( int x, int y );
+void cur_move( int ox, int oy );
+void cur_get( int *x, int *y );
+void text_getcolor( unsigned char *fg, unsigned char *bg );
 void text_setcolor( unsigned char fg, unsigned char bg );
 void init_video( void );
 /* color table */

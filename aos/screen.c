@@ -83,6 +83,49 @@ extern void puts( char *text )
 		putc(text[i]);
 }
 
+extern void cur_set( int x, int y )
+{
+	while ( x >= 80 )
+		x -= 80;
+	while ( x < 0 )
+		x += 80;
+	while ( y >= 25 )
+		y -= 25;
+	while ( y < 0 )
+		y += 25;
+	csr_x = x;
+	csr_y = y;
+}
+
+extern void cur_move( int ox, int oy )
+{
+	int px, py;
+	px = csr_x+ox;
+	py = csr_y+oy;
+	while ( px >= 80 )
+		px -= 80;
+	while ( px < 0 )
+		px += 80;
+	while ( py >= 25 )
+		py -= 25;
+	while ( py < 0 )
+		py += 25;
+	csr_x = px;
+	csr_y = py;
+}
+
+extern void cur_get( int *x, int *y )
+{
+	*x = csr_x;
+	*y = csr_y;
+}
+
+extern void text_getcolor( unsigned char *fg, unsigned char *bg )
+{
+	*bg = (attrib>>4)&0x0F;
+	*fg = attrib&0x0F;
+}
+
 extern void text_setcolor( unsigned char fg, unsigned char bg )
 {
 	attrib = (bg << 4) | (fg & 0x0F);

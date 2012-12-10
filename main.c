@@ -6,19 +6,33 @@
 */
 #include "aos/screen.h"
 
+#define KNAME "AliceOS"
+#define KVER "0.0.1a"
+
+void drawheader()
+{
+	char ofg, obg;
+	int ox, oy, i;
+	text_getcolor(&ofg,&obg);
+	cur_get(&ox,&oy);
+	text_setcolor(LGRAY,BLUE);
+	for( i=0; i<80; i++ )
+		putc(' ');
+	text_setcolor(LCYAN,BLUE);
+	cur_set(1,0);
+	puts(KNAME);
+	cur_set(-(1+strlen(KVER)),0);
+	puts(KVER);
+	text_setcolor(ofg,obg);
+	cur_set(ox,oy);
+}
+
 int kmain( struct multiboot *mboot_ptr )
 {
 	init_video();
-	text_setcolor(LCYAN,BLACK);
-	puts("AliceOS");
-	putc(' ');
-	text_setcolor(LBLUE,BLACK);
-	puts("v0.0.1");
-	putc('\n');
-	text_setcolor(DGRAY,BLACK);
-	puts("--------------");
-	putc('\n');
-	text_setcolor(LGRAY,BLACK);
+	drawheader();
+	cur_set(1,2);
+	puts("AliceOS kernel loaded. Hello world!");
 	for(;;);
 	return 0xADEADBED;
 }
