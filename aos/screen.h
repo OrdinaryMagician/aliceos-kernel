@@ -4,6 +4,12 @@
 void cls( void );
 void putc( char c );
 void puts( char *c );
+void putld( Sint64 d );
+void putd( Sint32 d );
+void putlu( Uint64 u );
+void putu( Uint32 u );
+void putlh( Uint64 h );
+void puth( Uint32 h );
 void cur_set( int x, int y );
 void cur_move( int ox, int oy );
 void cur_get( int *x, int *y );

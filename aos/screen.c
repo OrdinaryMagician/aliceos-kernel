@@ -83,6 +83,146 @@ extern void puts( char *text )
 		putc(text[i]);
 }
 
+extern void putld( Sint64 d )
+{
+	if ( d == 0 )
+	{
+		putc('0');
+		return;
+	}
+	Sint64 dig = (d<0) ? -d : d;
+	char c[19];
+	int i = 0;
+	while ( dig > 0 )
+	{
+		c[i] = '0'+dig%10;
+		dig /= 10;
+		i++;
+	}
+	c[i] = 0;
+	char cr[19];
+	cr[i--] = 0;
+	int j = 0;
+	while ( i >= 0 )
+		cr[i--] = c[j++];
+	if ( d<0 )
+		putc('-');
+	puts(cr);
+}
+
+extern void putd( Sint32 d )
+{
+	if ( d == 0 )
+	{
+		putc('0');
+		return;
+	}
+	Sint32 dig = (d<0) ? -d : d;
+	char c[10];
+	int i = 0;
+	while ( dig > 0 )
+	{
+		c[i] = '0'+dig%10;
+		dig /= 10;
+		i++;
+	}
+	c[i] = 0;
+	char cr[10];
+	cr[i--] = 0;
+	int j = 0;
+	while ( i >= 0 )
+		cr[i--] = c[j++];
+	if ( d<0 )
+		putc('-');
+	puts(cr);
+}
+
+extern void putlu( Uint64 u )
+{
+	if ( u == 0 )
+	{
+		putc('0');
+		return;
+	}
+	Uint64 dig = u;
+	char c[20];
+	int i = 0;
+	while ( dig > 0 )
+	{
+		c[i] = '0'+dig%10;
+		dig /= 10;
+		i++;
+	}
+	c[i] = 0;
+	char cr[20];
+	cr[i--] = 0;
+	int j = 0;
+	while ( i >= 0 )
+		cr[i--] = c[j++];
+	puts(cr);
+}
+
+extern void putu( Uint32 u )
+{
+	if ( u == 0 )
+	{
+		putc('0');
+		return;
+	}
+	Uint32 dig = u;
+	char c[10];
+	int i = 0;
+	while ( dig > 0 )
+	{
+		c[i] = '0'+dig%10;
+		dig /= 10;
+		i++;
+	}
+	c[i] = 0;
+	char cr[10];
+	cr[i--] = 0;
+	int j = 0;
+	while ( i >= 0 )
+		cr[i--] = c[j++];
+	puts(cr);
+}
+
+extern void putlh( Uint64 h )
+{
+	Uint64 tmp;
+	puts("0x");
+	Uint8 nozero = 1;
+	int i;
+	for ( i=60; i>0; i-=4 )
+	{
+		tmp = (h>>i)&0xF;
+		if ( (tmp == 0) && (nozero != 0) )
+			continue;
+		nozero = 0;
+		putc((tmp >= 0xA) ? (tmp-(0xA+'a')) : (tmp+'0'));
+	}
+	tmp = h&0xF;
+	putc((tmp >= 0xA) ? (tmp-(0xA+'a')) : (tmp+'0'));
+}
+
+extern void puth( Uint32 h )
+{
+	Uint32 tmp;
+	puts("0x");
+	Uint8 nozero = 1;
+	int i;
+	for ( i=28; i>0; i-=4 )
+	{
+		tmp = (h>>i)&0xF;
+		if ( (tmp == 0) && (nozero != 0) )
+			continue;
+		nozero = 0;
+		putc((tmp >= 0xA) ? (tmp-(0xA+'a')) : (tmp+'0'));
+	}
+	tmp = h&0xF;
+	putc((tmp >= 0xA) ? (tmp-(0xA+'a')) : (tmp+'0'));
+}
+
 extern void cur_set( int x, int y )
 {
 	while ( x >= 80 )

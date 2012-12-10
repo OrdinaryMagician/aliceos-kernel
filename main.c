@@ -1,11 +1,12 @@
 /*
-	main.c : C entry point for the AliceOS kernel.
+	kmain.c : C entry point for the AliceOS kernel.
 	(C)2012 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include "aos/desc.h"
 #include "aos/screen.h"
-
+#include "aos/string.h"
 #define KNAME "AliceOS"
 #define KVER "0.0.1a"
 
@@ -29,10 +30,13 @@ void drawheader()
 
 int kmain( struct multiboot *mboot_ptr )
 {
+	init_descriptor_tables();
 	init_video();
 	drawheader();
-	cur_set(1,2);
-	puts("AliceOS kernel loaded. Hello world!");
+	cur_set(0,2);
+	puts("AliceOS kernel loaded. Hello world!\n");
+	__asm__ __volatile__ ("int $0x3");
+	__asm__ __volatile__ ("int $0x4");
 	for(;;);
 	return 0xADEADBED;
 }
