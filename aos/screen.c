@@ -16,9 +16,10 @@ void scroll( void )
 {
 	Uint16 blank;
 	blank = 0x20 | (attrib << 8);
-	if ( csr_y >=25 )
+	if ( csr_y >= 25 )
 	{
-		memcpy(textmemptr,textmemptr+80,24*80);
+		int i;
+		memcpyw(textmemptr,textmemptr+80,24*80);
 		memsetw(textmemptr+24*80,blank,80);
 		csr_y = 24;
 	}
@@ -34,16 +35,48 @@ void move_csr( void )
 	outb(0x3D5,temp);
 }
 
-extern void cls( void )
+extern void clear_screen( void )
+{
+	Uint16 blank;
+	blank = 0x20 | (attrib << 8);
+	memsetw(textmemptr,blank,80*25);
+}
+
+extern void clear_line( void )
+{
+	Uint16 blank;
+	blank = 0x20 | (attrib << 8);
+	memsetw(textmemptr+csr_y*80,blank,80);
+}
+
+extern void clear_line_r( void )
+{
+	Uint16 blank;
+	blank = 0x20 | (attrib << 8);
+	memsetw(textmemptr+csr_x+csr_y*80,blank,80-csr_x);
+}
+
+extern void clear_line_l( void )
+{
+	Uint16 blank;
+	blank = 0x20 | (attrib << 8);
+	memsetw(textmemptr+csr_y*80,blank,csr_x);
+}
+
+extern void clear_screen_r( void )
 {
 	Uint16 blank;
 	int i;
 	blank = 0x20 | (attrib << 8);
-	for ( i=0; i<25; i++ )
-		memsetw(textmemptr+i*80,blank,80);
-	csr_x = 0;
-	csr_y = 0;
-	move_csr();
+	memsetw(textmemptr+csr_x+csr_y*80,blank,80*25-(csr_x+csr_y*80));
+}
+
+extern void clear_screen_l( void )
+{
+	Uint16 blank;
+	int i;
+	blank = 0x20 | (attrib << 8);
+	memsetw(textmemptr,blank,csr_x+csr_y*80);
 }
 
 extern void putc( char c)
@@ -235,6 +268,7 @@ extern void cur_set( int x, int y )
 		y += 25;
 	csr_x = x;
 	csr_y = y;
+	move_csr();
 }
 
 extern void cur_move( int ox, int oy )
@@ -252,6 +286,7 @@ extern void cur_move( int ox, int oy )
 		py += 25;
 	csr_x = px;
 	csr_y = py;
+	move_csr();
 }
 
 extern void cur_get( int *x, int *y )
@@ -274,5 +309,6 @@ extern void text_setcolor( Uint8 fg, Uint8 bg )
 extern void init_video( void )
 {
 	textmemptr = (Uint16*)0xB8000;
-	cls();
+	clear_screen();
+	cur_set(0,0);
 }

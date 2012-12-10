@@ -32,4 +32,11 @@ SECTIONS
 	end = .;
 	_end = .;
 	__end = .;
+
+	/DISCARD/ :
+	{
+		*(.comment)
+		*(.eh_frame)
+		*(.note.gnu.build-id)
+	}
 }

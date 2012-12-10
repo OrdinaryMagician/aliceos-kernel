@@ -6,6 +6,10 @@
 */
 
 #include "desc.h"
+#include "isr.h"
+#include "screen.h"
+#include "string.h"
+#include "port.h"
 
 extern void gdt_flush( Uint32 );
 extern void idt_flush( Uint32 );
@@ -20,10 +24,13 @@ gdt_ptr_t gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t idt_ptr;
 
+extern isr_t interrupt_handlers[];
+
 void init_descriptor_tables( void )
 {
 	init_gdt();
 	init_idt();
+	memset(&interrupt_handlers,0,sizeof(isr_t)*256);
 }
 
 static void init_gdt( void )
@@ -43,6 +50,16 @@ static void init_idt( void )
 	idt_ptr.limit = sizeof(idt_entry_t)*256-1;
 	idt_ptr.base = (Uint32)&idt_entries;
 	memset(&idt_entries,0,sizeof(idt_entry_t)*256);
+	outb(0x20,0x11);
+	outb(0xA0,0x11);
+	outb(0x21,0x20);
+	outb(0xA1,0x28);
+	outb(0x21,0x04);
+	outb(0xA1,0x02);
+	outb(0x21,0x01);
+	outb(0xA1,0x01);
+	outb(0x21,0x00);
+	outb(0xA1,0x00);
 	idt_set_gate(0,(Uint32)isr0,0x08,0x8E);
 	idt_set_gate(1,(Uint32)isr1,0x08,0x8E);
 	idt_set_gate(2,(Uint32)isr2,0x08,0x8E);
@@ -75,6 +92,22 @@ static void init_idt( void )
 	idt_set_gate(29,(Uint32)isr29,0x08,0x8E);
 	idt_set_gate(30,(Uint32)isr30,0x08,0x8E);
 	idt_set_gate(31,(Uint32)isr31,0x08,0x8E);
+	idt_set_gate(32,(Uint32)irq0,0x08,0x8E);
+	idt_set_gate(33,(Uint32)irq1,0x08,0x8E);
+	idt_set_gate(34,(Uint32)irq2,0x08,0x8E);
+	idt_set_gate(35,(Uint32)irq3,0x08,0x8E);
+	idt_set_gate(36,(Uint32)irq4,0x08,0x8E);
+	idt_set_gate(37,(Uint32)irq5,0x08,0x8E);
+	idt_set_gate(38,(Uint32)irq6,0x08,0x8E);
+	idt_set_gate(39,(Uint32)irq7,0x08,0x8E);
+	idt_set_gate(40,(Uint32)irq8,0x08,0x8E);
+	idt_set_gate(41,(Uint32)irq9,0x08,0x8E);
+	idt_set_gate(42,(Uint32)irq10,0x08,0x8E);
+	idt_set_gate(43,(Uint32)irq11,0x08,0x8E);
+	idt_set_gate(44,(Uint32)irq12,0x08,0x8E);
+	idt_set_gate(45,(Uint32)irq13,0x08,0x8E);
+	idt_set_gate(46,(Uint32)irq14,0x08,0x8E);
+	idt_set_gate(47,(Uint32)irq15,0x08,0x8E);
 	idt_flush((Uint32)&idt_ptr);
 }
 

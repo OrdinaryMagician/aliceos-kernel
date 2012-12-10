@@ -7,6 +7,8 @@
 #include "aos/desc.h"
 #include "aos/screen.h"
 #include "aos/string.h"
+#include "aos/timer.h"
+
 #define KNAME "AliceOS"
 #define KVER "0.0.1a"
 
@@ -37,6 +39,7 @@ int kmain( struct multiboot *mboot_ptr )
 	puts("AliceOS kernel loaded. Hello world!\n");
 	__asm__ __volatile__ ("int $0x3");
 	__asm__ __volatile__ ("int $0x4");
-	for(;;);
+	__asm__ __volatile__ ("sti");
+	init_timer(50);
 	return 0xADEADBED;
 }

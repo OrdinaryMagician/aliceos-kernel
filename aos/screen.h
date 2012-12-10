@@ -1,7 +1,12 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 #include "types.h"
-void cls( void );
+void clear_screen( void );
+void clear_screen_l( void );
+void clear_screen_r( void );
+void clear_line( void );
+void clear_line_l( void );
+void clear_line_r( void );
 void putc( char c );
 void puts( char *c );
 void putld( Sint64 d );
