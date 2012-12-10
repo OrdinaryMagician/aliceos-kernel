@@ -11,7 +11,7 @@
 
 void drawheader()
 {
-	char ofg, obg;
+	Uint8 ofg, obg;
 	int ox, oy, i;
 	text_getcolor(&ofg,&obg);
 	cur_get(&ox,&oy);

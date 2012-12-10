@@ -1,5 +1,5 @@
 /*
-	screen.c : Simple VGA text drawing funtions.
+	screen.c : Simple VGA text drawing functions.
 	(C)2012 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
@@ -8,13 +8,13 @@
 #include "string.h"
 #include "screen.h"
 
-unsigned short *textmemptr;
+Uint16 *textmemptr;
 int attrib = 0x0F;
 int csr_x = 0, csr_y = 0;
 
 void scroll( void )
 {
-	unsigned blank;
+	Uint16 blank;
 	blank = 0x20 | (attrib << 8);
 	if ( csr_y >=25 )
 	{
@@ -26,7 +26,7 @@ void scroll( void )
 
 void move_csr( void )
 {
-	unsigned temp;
+	Uint16 temp;
 	temp = csr_y*80+csr_x;
 	outb(0x3D4,14);
 	outb(0x3D5,temp>>8);
@@ -36,7 +36,7 @@ void move_csr( void )
 
 extern void cls( void )
 {
-	unsigned blank;
+	Uint16 blank;
 	int i;
 	blank = 0x20 | (attrib << 8);
 	for ( i=0; i<25; i++ )
@@ -48,8 +48,8 @@ extern void cls( void )
 
 extern void putc( char c)
 {
-	unsigned short *where;
-	unsigned attr = attrib << 8;
+	Uint16 *where;
+	Uint16 attr = attrib << 8;
 	if ( c == '\b' )
 		csr_x -= (csr_x != 0) ? 1 : 0;
 	else if ( c == '\t' )
@@ -120,19 +120,19 @@ extern void cur_get( int *x, int *y )
 	*y = csr_y;
 }
 
-extern void text_getcolor( unsigned char *fg, unsigned char *bg )
+extern void text_getcolor( Uint8 *fg, Uint8 *bg )
 {
 	*bg = (attrib>>4)&0x0F;
 	*fg = attrib&0x0F;
 }
 
-extern void text_setcolor( unsigned char fg, unsigned char bg )
+extern void text_setcolor( Uint8 fg, Uint8 bg )
 {
 	attrib = (bg << 4) | (fg & 0x0F);
 }
 
 extern void init_video( void )
 {
-	textmemptr = (unsigned short *)0xB8000;
+	textmemptr = (Uint16*)0xB8000;
 	cls();
 }

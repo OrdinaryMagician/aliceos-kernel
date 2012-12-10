@@ -1,7 +1,8 @@
 #ifndef STRING_H
 #define STRING_H
-unsigned char *memcpy( unsigned char *dest, const unsigned char *src, int count );
-unsigned char *memset( unsigned char *dest, unsigned char val, int count );
-unsigned short *memsetw( unsigned short *dest, unsigned short val, int count );
+#include "types.h"
+Uint8 *memcpy( Uint8 *dest, const Uint8 *src, int count );
+Uint8 *memset( Uint8 *dest, Uint8 val, int count );
+Uint16 *memsetw( Uint16 *dest, Uint16 val, int count );
 int strlen( const char *str );
 #endif

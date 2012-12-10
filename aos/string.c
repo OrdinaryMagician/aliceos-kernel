@@ -6,7 +6,7 @@
 */
 #include "string.h"
 
-extern unsigned char *memcpy( unsigned char *dest, const unsigned char *src, int count )
+extern Uint8 *memcpy( Uint8 *dest, const Uint8 *src, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )
@@ -14,7 +14,7 @@ extern unsigned char *memcpy( unsigned char *dest, const unsigned char *src, int
 	return dest;
 }
 
-extern unsigned char *memset( unsigned char *dest, unsigned char val, int count )
+extern Uint8 *memset( Uint8 *dest, Uint8 val, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )
@@ -22,7 +22,7 @@ extern unsigned char *memset( unsigned char *dest, unsigned char val, int count 
 	return dest;
 }
 
-extern unsigned short *memsetw( unsigned short *dest, unsigned short val, int count )
+extern Uint16 *memsetw( Uint16 *dest, Uint16 val, int count )
 {
 	int i;
 	for ( i=0; i<count; i++ )

@@ -6,21 +6,21 @@
 */
 #include "port.h"
 
-void outb( unsigned short port, unsigned char val )
+void outb( Uint16 port, Uint8 val )
 {
 	__asm__ __volatile__ ("outb %1, %0" : : "dN" (port), "a" (val));
 }
 
-unsigned char inb( unsigned short port )
+Uint8 inb( Uint16 port )
 {
-	unsigned char ret;
+	Uint8 ret;
 	__asm__ __volatile__ ("inb %1, %0" : "=a" (ret) : "dN" (port));
 	return ret;
 }
 
-unsigned short inw( unsigned short port )
+Uint16 inw( Uint16 port )
 {
-	unsigned short ret;
+	Uint16 ret;
 	__asm__ __volatile__ ("inw %1, %0" : "=a" (ret) : "dN" (port));
 	return ret;
 }
