@@ -60,13 +60,13 @@ void vga_clr_ll( void );
 void vga_clr_lr( void );
 
 /* set cursor position directly */
-void vga_curset( int x, int y );
+void vga_curset( Sint32 x, Sint32 y );
 
 /* move cursor by offset */
-void vga_curmv( int ox, int oy );
+void vga_curmv( Sint32 ox, Sint32 oy );
 
 /* get current cursor position */
-void vga_curget( int *x, int *y );
+void vga_curget( Sint32 *x, Sint32 *y );
 
 /* get text attributes */
 void vga_getattr( Uint8 *fg, Uint8 *bg );
@@ -80,10 +80,22 @@ void vga_setc( Uint16 pos, char c, Uint8 attr );
 /* put a single character on screen */
 void vga_putc( char c );
 
+/* put an entire string on screen */
+void vga_puts( char *s );
+
+/* put a character many times on screen */
+void vga_putmc( char c, Sint32 i );
+
 /* put a base 10 unsigned integer on screen */
 void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad );
 
 /* put a base 10 signed integer on screen */
 void vga_putd( Sint64 val, Uint16 width, Uint8 zeropad );
+
+/* put a base 16 unsigned integer on screen */
+void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad );
+
+/* put a base 8 unsigned integer on screen */
+void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad );	/* no jokes about the function name, please */
 
 #endif

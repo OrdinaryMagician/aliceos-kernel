@@ -10,6 +10,7 @@
 #include <vgatext.h>
 #include <multiboot.h>
 #include <krand.h>
+#include <printk.h>
 
 Uint32 *initial_esp;
 
@@ -21,11 +22,20 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	/* pretty screen fill */
 	vga_clr_s();
 	vga_curset(0,0);
-	int i = 0;
-	for ( i=0; i<(80*25); i++ )
-	{
-		vga_setc(i,(i%2)?'/':'\\',0x07);
-	}
+	/* rev up those variables! */
+	char chr = 'A';
+	Uint64 hex = 0xABADCAFE;
+	char *str = "hello world";
+	Uint64 oct = 0755;
+	Sint64 dec = -2857265;
+	vga_setattr(CYAN,BLUE);
+	vga_putmc(' ',80);
+	printk("%{1,0%s %s.%s.%s-%s (%s)\n",_kname,_kver_maj,_kver_min,_kver_low,_kver_suf,_kver_code);
+	vga_setattr(LIGHTGRAY,BLACK);
+	printk("%[Fprinting a char at -1,0 (top right corner)%{-1,0%c\n",chr);
+	printk("%[7wah, numbers incoming!\n%{4%[A%#3o %d %#8x\n",oct,dec,hex);
+	printk("%[3now there will be a string at 0,-1 (bottom left corner)\n%{0,-1%[20%s",str);
+	vga_setattr(LIGHTGRAY,BLACK);
 	/* THE END */
 	return 0xADEADBED;
 }

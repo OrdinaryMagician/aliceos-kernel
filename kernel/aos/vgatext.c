@@ -8,7 +8,7 @@
 
 Uint16 *vgamem = (Uint16*)0xB8000;	/* pointer to video memory */
 Uint8 attrib = 0x07;	/* current text attributes */
-Uint16 csr_x = 0, csr_y = 0; /* cursor position */
+Sint16 csr_x = 0, csr_y = 0; /* cursor position */
 
 /*
    scrolling: when the cursor is beyond 24 lines...
@@ -75,7 +75,7 @@ void vga_clr_lr( void )
 }
 
 /* set cursor position directly */
-void vga_curset( int x, int y )
+void vga_curset( Sint32 x, Sint32 y )
 {
 	while ( x >= 80 )
 		x -= 80;
@@ -91,7 +91,7 @@ void vga_curset( int x, int y )
 }
 
 /* move cursor by offset */
-void vga_curmv( int ox, int oy )
+void vga_curmv( Sint32 ox, Sint32 oy )
 {
 	int px, py;
 	px = csr_x+ox;
@@ -110,7 +110,7 @@ void vga_curmv( int ox, int oy )
 }
 
 /* get current cursor position */
-void vga_curget( int *x, int *y )
+void vga_curget( Sint32 *x, Sint32 *y )
 {
 	*x = csr_x;
 	*y = csr_y;
@@ -163,35 +163,52 @@ void vga_putc( char c )
 	vga_updatecsr();
 }
 
+/* put an entire string on screen */
+void vga_puts( char *s )
+{
+	while ( *s )
+		vga_putc(*(s++));
+}
+
+/* put a character many times on screen */
+void vga_putmc( char c, Sint32 i )
+{
+	while ( i > 0 )
+	{
+		vga_putc(c);
+		i--;
+	}
+}
+
 /* put a base 10 unsigned integer on screen */
 void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
 		char c[20];
-		Uint32 i = 0;
+		Sint32 i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
 			val /= 10;
 		}
-		while ( val > 0 );
-		while ( i > 0 )
+		while ( val != 0 );
+		while ( i >= 0 )
 			vga_putc(c[i--]);
 	}
 	else
 	{
 		char c[width];
-		Uint32 i = 0;
+		Sint32 i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
 			val /= 10;
 		}
-		while ( (val > 0) && (i < width) );
-		while ( (i < width) )
+		while ( (val != 0) && (i < width) );
+		while ( i < width )
 			c[i++] = (zeropad)?'0':' ';
-		while ( i > 0 )
+		while ( i >= 0 )
 			vga_putc(c[i--]);
 	}
 }
@@ -204,31 +221,99 @@ void vga_putd( Sint64 val, Uint16 width, Uint8 zeropad )
 	if ( !width )
 	{
 		char c[19];
-		Uint32 i = 0;
+		Sint32 i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
 			val /= 10;
 		}
-		while ( val > 0 );
-		vga_putc((isneg)?'-':'\0');
+		while ( val != 0 );
+		if ( isneg )
+			vga_putc('-');
 		while ( i > 0 )
-			vga_putc(c[i--]);
+			vga_putc(c[--i]);
 	}
 	else
 	{
 		char c[width];
-		Uint32 i = 0;
+		Sint32 i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
 			val /= 10;
 		}
-		while ( (val > 0) && (i < width) );
-		while ( (i < width) )
+		while ( (val != 0) && (i < width) );
+		while ( i < width )
 			c[i++] = (zeropad)?'0':' ';
-		vga_putc((isneg)?'-':' ');
+		if ( isneg )
+			vga_putc('-');
 		while ( i > 0 )
-			vga_putc(c[i--]);
+			vga_putc(c[--i]);
+	}
+}
+
+/* put a base 16 unsigned integer on screen */
+void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad )
+{
+	if ( !width )
+	{
+		char c[8];
+		Sint32 i = 0;
+		do
+		{
+			c[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A):('0'+(val&0x0F));
+			val >>= 4;
+		}
+		while ( val != 0 );
+		while ( i > 0 )
+			vga_putc(c[--i]);
+	}
+	else
+	{
+		char c[width];
+		Sint32 i = 0;
+		do
+		{
+			c[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A):('0'+(val&0x0F));
+			val >>= 4;
+		}
+		while ( (val != 0) && (i < width) );
+		while ( i < width )
+			c[i++] = (zeropad)?'0':' ';
+		while ( i > 0 )
+			vga_putc(c[--i]);
+	}
+}
+
+/* put a base 8 unsigned integer on screen */
+void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad )	/* no jokes about the function name, please */
+{
+	if ( !width )
+	{
+		char c[8];
+		Sint32 i = 0;
+		do
+		{
+			c[i++] ='0'+(val&0x07);
+			val >>= 3;
+		}
+		while ( val != 0 );
+		while ( i > 0 )
+			vga_putc(c[--i]);
+	}
+	else
+	{
+		char c[width];
+		Sint32 i = 0;
+		do
+		{
+			c[i++] ='0'+(val&0x07);
+			val >>= 3;
+		}
+		while ( (val != 0) && (i < width) );
+		while ( i < width )
+			c[i++] = (zeropad)?'0':' ';
+		while ( i > 0 )
+			vga_putc(c[--i]);
 	}
 }
