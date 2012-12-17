@@ -9,7 +9,7 @@ SOURCES := $(KMAIN_S) $(KMAIN_C) $(AOS_S) $(AOS_C)
 .PHONY: clean
 aliceos-kernel: $(SOURCES) link
 qemu-run:
-	qemu-system-i386 -kernel vmaliceos
+	qemu-system-i386 -kernel vmaliceos -serial stdio
 clean:
 	rm -f $(SOURCES) vmaliceos
 link:

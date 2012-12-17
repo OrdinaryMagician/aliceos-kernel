@@ -12,7 +12,7 @@ MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
 ; Ketchu- checksum, I mean
 MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
-[BITS 32] ; we're going to target i686, anyway
+[BITS 32] ; we're going to target i386, anyway
 
 ; putting all them datas in the kernel img
 [GLOBAL mboot]

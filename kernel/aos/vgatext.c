@@ -173,11 +173,8 @@ void vga_puts( char *s )
 /* put a character many times on screen */
 void vga_putmc( char c, Sint32 i )
 {
-	while ( i > 0 )
-	{
+	while ( i-- > 0 )
 		vga_putc(c);
-		i--;
-	}
 }
 
 /* put a base 10 unsigned integer on screen */
