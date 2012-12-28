@@ -12,7 +12,7 @@
 #include <krand.h>
 #include <printk.h>
 #include <serial.h>
-#include <stropt.h>
+#include <strops.h>
 
 Uint32 *initial_esp;
 
@@ -36,7 +36,7 @@ void printk_demo( void )
 	printk_s(SERIAL_A, "Finished printk demo.\n");
 }
 
-void stropt_demo( void )
+void strops_demo( void )
 {
 	/* TODO */
 }
@@ -54,7 +54,7 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	vga_curset(0,0);
 	/* run demos */
 	printk_demo();
-	stropt_demo();
+	strops_demo();
 	/* THE END */
 	printk_s(SERIAL_A, "All done!\n");
 	return 0xADEADBED;

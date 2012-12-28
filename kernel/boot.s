@@ -23,11 +23,6 @@ mboot:
 	dd MULTIBOOT_HEADER_MAGIC
 	dd MULTIBOOT_HEADER_FLAGS
 	dd MULTIBOOT_CHECKSUM
-	dd mboot
-	dd code
-	dd bss
-	dd end
-	dd start
 
 ; getting started~
 [GLOBAL start]
