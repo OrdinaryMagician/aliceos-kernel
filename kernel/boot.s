@@ -28,14 +28,14 @@ mboot:
 [GLOBAL start]
 [EXTERN kmain]
 start:
+	; no interrupts pls
+	cli
 	; muh stack pointer
 	mov esp, 0x7FFFF
 	push esp
 	; dem headers
 	push eax
 	push ebx
-	; no interrupts pls
-	cli
 	; ... and we're done with asm for now
 	call kmain
 	hlt
