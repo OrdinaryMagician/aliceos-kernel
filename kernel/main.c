@@ -38,7 +38,40 @@ void printk_demo( void )
 
 void strops_demo( void )
 {
-	/* TODO */
+	/* some vars for testing */
+	printk_s(SERIAL_A, "Initiating strops demo...\n");
+	char lowc = 'e';
+	char capsc = 'G';
+	char *convme = "Convert Me to CAPS or lowercase.";
+	char cata[256] = "place another string here -> ";
+	char *catb = "append me";
+	char tofind = 'x';
+	char *findtest = "The Quick Brown Fox Jumps Over The Lazy Dog";
+	char *compa = "Compare me (A)";
+	char *compb = "Compare me (B)";
+	char *dst = "overwrite me";
+	char *src = "huehuehuehue";
+	char empty[256] = "";
+	/* the tests */
+	printk_s(SERIAL_A, "\033[1;36mchrlcaps() and chrcaps() test\033[0m\n");
+	printk_s(SERIAL_A, "\'%c\' -> \'%c\'\n",capsc,chrlcaps(capsc));
+	printk_s(SERIAL_A, "\'%c\' -> \'%c\'\n",lowc,chrcaps(lowc));
+	printk_s(SERIAL_A, "\033[1;36mstrlcaps() and strcaps() test\033[0m\n");
+	printk_s(SERIAL_A, "original:  \"%s\"\n",convme);
+	strlcaps(convme);
+	printk_s(SERIAL_A, "lowercase: \"%s\"\n",convme);
+	strcaps(convme);
+	printk_s(SERIAL_A, "uppercase: \"%s\"\n",convme);
+	printk_s(SERIAL_A, "\033[1;36mstrcat() test\033[0m\n");
+	printk_s(SERIAL_A, "string a: \"%s\"\n",cata);
+	printk_s(SERIAL_A, "string b: \"%s\"\n",catb);
+	strcat(cata,catb);
+	printk_s(SERIAL_A, "result:   \"%s\"\n",cata);
+	printk_s(SERIAL_A, "\033[1;36mstrchr() test\033[0m\n");
+	printk_s(SERIAL_A, "will look for the character \'%c\'\n",tofind);
+	printk_s(SERIAL_A, "inside of \"%s\"\n",findtest);
+	
+	printk_s(SERIAL_A, "Finished strops demo...\n");
 }
 
 /* C entry point for the kernel starts here. */

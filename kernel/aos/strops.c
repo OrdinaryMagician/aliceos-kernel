@@ -48,6 +48,7 @@ char *strcat( char *dest, char *src )
 {
 	char *ret = dest;
 	while ( *(dest++) );
+	dest--;
 	while ( *src )
 		*(dest++) = *(src++);
 	return ret;
@@ -246,6 +247,7 @@ char *strncat( char *dest, char *src, Uint32 count )
 {
 	char *ret = dest;
 	while ( *(dest++) );
+	dest--;
 	while ( *src && count-- )
 		*(dest++) = *(src++);
 	return ret;
@@ -383,12 +385,27 @@ char *strrncasestr( char *in, char *s, Uint32 count )
 	return ret;
 }
 
-/* append a number of characters from one string to the end of another while
-   keeping the length of the resulting string under a specific limit */
-char *strnncat( char *dest, char *src, Uint32 count, Uint32 dmax )
+/* append one string to the end of another while keeping the length of the
+   resulting string under a specific limit */
+char *strlcat( char *dest, char *src, Uint32 dmax )
 {
 	char *ret = dest;
 	while ( *(dest++) && dmax-- );
+	dest--;
+	dmax--;
+	while ( *src && dmax-- )
+		*(dest++) = *(src++);
+	return ret;
+}
+
+/* append a number of characters from one string to the end of another while
+   keeping the length of the resulting string under a specific limit */
+char *strnlcat( char *dest, char *src, Uint32 count, Uint32 dmax )
+{
+	char *ret = dest;
+	while ( *(dest++) && dmax-- );
+	dest--;
+	dmax--;
 	while ( *src && count-- && dmax-- )
 		*(dest++) = *(src++);
 	return ret;
