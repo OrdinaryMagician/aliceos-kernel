@@ -153,13 +153,13 @@ Uint8 strcont( char *in, char *set )
 		char *el = set;
 		while ( *el )
 		{
-			if ( *in != *el )
-				return 1;
+			if ( *in == *el )
+				return 0;
 			el++;
 		}
 		in++;
 	}
-	return 0;
+	return 1;
 }
 
 /* case insensitive version of strcont */
@@ -170,13 +170,13 @@ Uint8 strcasecont( char *in, char *set )
 		char *el = set;
 		while ( *el )
 		{
-			if ( chrlcaps(*in) != chrlcaps(*el) )
-				return 1;
+			if ( chrlcaps(*in) == chrlcaps(*el) )
+				return 0;
 			el++;
 		}
 		in++;
 	}
-	return 0;
+	return 1;
 }
 
 /* returns the length of a null-terminated string */

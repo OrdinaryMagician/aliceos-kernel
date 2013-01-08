@@ -100,7 +100,7 @@ char *strrncasestr( char *in, char *s, Uint32 count );
 
 /* append one string to the end of another while keeping the length of the
    resulting string under a specific limit */
-char *strlcat( char *dest, char *src, Uint32 count, Uint32 dmax );
+char *strlcat( char *dest, char *src, Uint32 dmax );
 
 /* append a number of characters from one string to the end of another while
    keeping the length of the resulting string under a specific limit */
