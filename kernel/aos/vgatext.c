@@ -9,22 +9,36 @@
 Uint16 *vgamem = (Uint16*)0xB8000;	/* pointer to video memory */
 Uint8 attrib = 0x07;	/* current text attributes */
 Sint16 csr_x = 0, csr_y = 0; /* cursor position */
+Uint8 doscroll = 1;	/* should perform scrolling? */
+Uint8 cropbeg = 0, cropend = 25;
 
-/*
-   scrolling: when the cursor is beyond 24 lines...
-    1. move the last 24 lines one position back
-    2. clear new line
-    3. push cursor back to line 24
-    4. ????
-    5. profit!
-*/
+/* toggle automatic scrolling */
+void vga_tscroll( Uint8 on )
+{
+	doscroll = on;
+}
+
+/* change the area where scrolling can take effect */
+void vga_setcroparea( Uint8 start, Uint8 end )
+{
+	if ( start > 24 )
+		start = 24;
+	if ( end <= start )
+		end = start+1;
+	cropbeg = start;
+	cropend = end;
+}
+
+/* scroll if needed */
 void vga_scroll( void )
 {
-	if ( csr_y >= 25 )
+	if ( csr_y >= cropend )
 	{
-		memcpyw(vgamem,vgamem+80,24*80);
-		memsetw(vgamem+24*80,0x0720,80);
-		csr_y = 24;
+		csr_y = cropend-1;
+		if ( !doscroll )
+			return;
+		memcpyw(vgamem+cropbeg*80,vgamem+(cropbeg+1)*80,((cropend-1)-cropbeg)*80);
+		memsetw(vgamem+(cropend-1)*80,0x0720,80);
 	}
 }
 

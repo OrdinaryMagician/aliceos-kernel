@@ -81,7 +81,7 @@ char *strcasechr( char *in, char c )
 /* find last occurence of a character in a string */
 char *strrchr( char *in, char c )
 {
-	char *last = in;
+	char *last = in+strlen(in);
 	while ( *in )
 	{
 		if ( *in == c )
@@ -94,7 +94,7 @@ char *strrchr( char *in, char c )
 /* case insensitive version of strrchr */
 char *strrcasechr( char *in, char c )
 {
-	char *last = in;
+	char *last = in+strlen(in);
 	while ( *in )
 	{
 		if ( chrlcaps(*in) == chrlcaps(c) )
@@ -198,7 +198,7 @@ char *strstr( char *in, char *s )
 			return in;
 		in++;
 	}
-	return NULL;
+	return in;
 }
 
 /* case insensitive version of strstr */
@@ -211,14 +211,14 @@ char *strcasestr( char *in, char *s )
 			return in;
 		in++;
 	}
-	return NULL;
+	return in;
 }
 
 /* find the last occurence of a string inside another */
 char *strrstr( char *in, char *s )
 {
 	Uint32 slen = strlen(s);
-	char *ret = NULL;
+	char *ret = in+strlen(in);
 	while ( *in )
 	{
 		if ( !strncmp(in,s,slen) )
@@ -232,7 +232,7 @@ char *strrstr( char *in, char *s )
 char *strrcasestr( char *in, char *s )
 {
 	Uint32 slen = strlen(s);
-	char *ret = NULL;
+	char *ret = in+strlen(in);
 	while ( *in )
 	{
 		if ( !strncasecmp(in,s,slen) )
@@ -250,6 +250,7 @@ char *strncat( char *dest, char *src, Uint32 count )
 	dest--;
 	while ( *src && count-- )
 		*(dest++) = *(src++);
+	*dest = 0;	/* obligatory null termination */
 	return ret;
 }
 
@@ -291,6 +292,7 @@ char *strncpy( char *dest, char *src, Uint32 count )
 	char *ret = dest;
 	while ( *src && count-- )
 		*(dest++) = *(src++);
+	*dest = 0;	/* obligatory null termination */
 	return ret;
 }
 
@@ -340,7 +342,7 @@ char *strnstr( char *in, char *s, Uint32 count )
 			return in;
 		in++;
 	}
-	return NULL;
+	return in+strlen(in);
 }
 
 /* case insensitive version of strncasestr */
@@ -353,7 +355,7 @@ char *strncasestr( char *in, char *s, Uint32 count )
 			return in;
 		in++;
 	}
-	return NULL;
+	return in+strlen(in);
 }
 
 /* find the last occurence of a string inside a number of characters at the
@@ -361,7 +363,7 @@ char *strncasestr( char *in, char *s, Uint32 count )
 char *strrnstr( char *in, char *s, Uint32 count )
 {
 	Uint32 slen = strlen(s);
-	char *ret = NULL;
+	char *ret = in+strlen(in);
 	while ( *in && count-- )
 	{
 		if ( !strncmp(in,s,slen) )
@@ -375,7 +377,7 @@ char *strrnstr( char *in, char *s, Uint32 count )
 char *strrncasestr( char *in, char *s, Uint32 count )
 {
 	Uint32 slen = strlen(s);
-	char *ret = NULL;
+	char *ret = in+strlen(in);
 	while ( *in && count-- )
 	{
 		if ( !strncasecmp(in,s,slen) )
@@ -395,6 +397,7 @@ char *strlcat( char *dest, char *src, Uint32 dmax )
 	dmax--;
 	while ( *src && dmax-- )
 		*(dest++) = *(src++);
+	*dest = 0;	/* obligatory null termination */
 	return ret;
 }
 
@@ -408,6 +411,7 @@ char *strnlcat( char *dest, char *src, Uint32 count, Uint32 dmax )
 	dmax--;
 	while ( *src && count-- && dmax-- )
 		*(dest++) = *(src++);
+	*dest = 0;	/* obligatory null termination */
 	return ret;
 }
 
@@ -418,9 +422,8 @@ char *strtok(char *str, char *delim)
 {
 	Uint32 len = strlen(delim);
 	char *found = strstr(str,delim);
-	if ( found == NULL )
-		return NULL;
-	while ( len-- )
-		*(found++) = 0;
+	if ( *found )
+		while ( len-- )
+			*(found++) = 0;
 	return found;
 }

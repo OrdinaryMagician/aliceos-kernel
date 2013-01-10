@@ -11,7 +11,7 @@ static Uint64 krand_seed = 1;
 /* get next random number */
 Uint64 krand()
 {
-	return (krand_seed = krand_seed*195728565+123456789);
+	return (krand_seed = (krand_seed<<1)*35447+(krand_seed/83));
 }
 
 /* set a specific seed */

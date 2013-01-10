@@ -28,14 +28,13 @@
 #define YELLOW     14
 #define WHITE      15
 
-/*
-   scrolling: when the cursor is beyond 24 lines...
-    1. move the last 24 lines one position back
-    2. clear new line
-    3. push cursor back to line 24
-    4. ????
-    5. profit!
-*/
+/* toggle automatic scrolling */
+void vga_tscroll( Uint8 on );
+
+/*  change the area where scrolling can take effect */
+void vga_setcroparea( Uint8 start, Uint8 end );
+
+/* scroll if needed */
 void vga_scroll( void );
 
 /* update cursor position */
