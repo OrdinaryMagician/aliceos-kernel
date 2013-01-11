@@ -1,0 +1,17 @@
+/*
+	cmos.c : basic handling of the system CMOS.
+	(C)2012 Marisa Kirisame, UnSX Team.
+	Part of AliceOS, the Alice Operating System.
+	Released under the MIT License.
+*/
+#include <cmos.h>
+
+void cmos_dump( Uint8 *here )
+{
+	Uint8 i;
+	for ( i=0; i<128; i++ )
+	{
+		outport_b(0x70,i);
+		here[i] = inport_b(0x71);
+	}
+}
