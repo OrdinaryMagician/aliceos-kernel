@@ -6,6 +6,9 @@
 */
 #ifndef KDEFS_H
 #define KDEFS_H
+#include <types.h>
+
+/* kernel stuff */
 const char *_kname;
 const char *_kver_fmt;
 const char *_kver_maj;
@@ -16,4 +19,5 @@ const char *_kver_code;
 const char *_karch;
 const char *_kbuild_date;
 const char *_kbuild_time;
+
 #endif

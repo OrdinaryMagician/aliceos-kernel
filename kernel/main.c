@@ -13,6 +13,8 @@
 #include <printk.h>
 #include <serial.h>
 #include <cmos.h>
+#include <berp.h>
+#include <palettes.h>
 
 Uint32 *initial_esp;
 
@@ -24,6 +26,12 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	/* serial output */
 	serial_ins();
 	printk_s(SERIAL_A,"\033[1;36m%s %s - %s.%s.%s-%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	/* initialize some vga settings */
+	Uint8 newpal[48];
+	memcpy(&newpal[0],&alicepal[0],48);
+	vga_setpal(&newpal[0],&newpal[0]);
+	//vga_set8dot();
+	//vga_setfont(&alicefont[0]);
 	/* pretty screen fill */
 	vga_clr_s();
 	vga_curset(0,0);
@@ -43,6 +51,19 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	printk("%{-26,0%s %02x/%02x/20%02x | %02x:%02x:%02x",weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],cmosval[8],cmosval[9],cmosval[4],cmosval[2],cmosval[0]);
 	vga_curset(0,2);
 	vga_setattr(WHITE,BLACK);
+	/* show palette */
+	int i = 0;
+	for ( i=0; i<16; i++ )
+	{
+		vga_setattr(i,BLACK);
+		vga_putc('x');
+	}
+	vga_putc('\n');
+	for ( i=0; i<16; i++ )
+	{
+		vga_setattr(BLACK,i);
+		vga_putc(' ');
+	}
 	/* THE END */
 	printk_s(SERIAL_A,"All done!\n");
 	return 0xADEADBED;

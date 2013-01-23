@@ -163,7 +163,7 @@ void vga_putc( char c )
 		csr_x = 0;
 		csr_y++;
 	}
-	else if ( c >= ' ' )
+	else
 	{
 		vga_setc(csr_x+csr_y*80,c,attrib);
 		csr_x++;
@@ -204,8 +204,8 @@ void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad )
 			val /= 10;
 		}
 		while ( val != 0 );
-		while ( i >= 0 )
-			vga_putc(c[i--]);
+		while ( i > 0 )
+			vga_putc(c[--i]);
 	}
 	else
 	{
@@ -219,8 +219,8 @@ void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad )
 		while ( (val != 0) && (i < width) );
 		while ( i < width )
 			c[i++] = (zeropad)?'0':' ';
-		while ( i >= 0 )
-			vga_putc(c[i--]);
+		while ( i > 0 )
+			vga_putc(c[--i]);
 	}
 }
 
@@ -326,5 +326,49 @@ void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad )	/* no jokes about the f
 			c[i++] = (zeropad)?'0':' ';
 		while ( i > 0 )
 			vga_putc(c[--i]);
+	}
+}
+
+/* set the 16-color 6-bit palettes */
+void vga_setpal( Uint8 *palbg, Uint8 *palfg )
+{
+	int i;
+	/* background */
+	for ( i=0; i<16; i++ )
+	{
+		outport_b(0x3C8,i);
+		outport_b(0x3C9,palbg[i*3]);
+		outport_b(0x3C9,palbg[i*3+1]);
+		outport_b(0x3C9,palbg[i*3+2]);
+	}
+	/* foreground */
+	for ( i=0; i<16; i++ )
+	{
+		outport_b(0x3C8,i);
+		outport_b(0x3C9,palfg[i*3]);
+		outport_b(0x3C9,palfg[i*3+1]);
+		outport_b(0x3C9,palfg[i*3+2]);
+	}
+}
+
+/* get the 16-color 6-bit palettes */
+void vga_getpal( Uint8 *palbg, Uint8 *palfg )
+{
+	int i;
+	/* background */
+	for ( i=0; i<16; i++ )
+	{
+		outport_b(0x3C8,i);
+		palbg[i*3] = inport_b(0x3C9);
+		palbg[i*3+1] = inport_b(0x3C9);
+		palbg[i*3+2] = inport_b(0x3C9);
+	}
+	/* foreground */
+	for ( i=0; i<16; i++ )
+	{
+		outport_b(0x3C8,i+32);
+		palfg[i*3] = inport_b(0x3C9);
+		palfg[i*3+1] = inport_b(0x3C9);
+		palfg[i*3+2] = inport_b(0x3C9);
 	}
 }

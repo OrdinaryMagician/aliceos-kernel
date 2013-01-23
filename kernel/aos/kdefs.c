@@ -6,6 +6,7 @@
 */
 #include <kdefs.h>
 
+/* kernel stuff */
 const char *_kname = "AliceOS kernel";
 const char *_kver_fmt = "%d.%d.%d-%s";
 const char *_kver_maj = "0";

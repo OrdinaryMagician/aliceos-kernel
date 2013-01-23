@@ -11,6 +11,7 @@
 #include <port.h>
 #include <memops.h>
 
+/* colors valid on default palette */
 #define BLACK       0
 #define BLUE        1
 #define GREEN       2
@@ -97,4 +98,9 @@ void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad );
 /* put a base 8 unsigned integer on screen */
 void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad );	/* no jokes about the function name, please */
 
+/* set the 16-color 6-bit palettes */
+void vga_setpal( Uint8 *palbg, Uint8 *palfg );
+
+/* get the 16-color 6-bit palettes */
+void vga_getpal( Uint8 *palbg, Uint8 *palfg );
 #endif
