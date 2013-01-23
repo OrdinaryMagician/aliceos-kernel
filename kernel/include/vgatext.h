@@ -10,6 +10,7 @@
 #include <helpers.h>
 #include <port.h>
 #include <memops.h>
+#include <vgareg.h>
 
 /* colors valid on default palette */
 #define BLACK       0
@@ -99,8 +100,14 @@ void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad );
 void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad );	/* no jokes about the function name, please */
 
 /* set the 16-color 6-bit palettes */
-void vga_setpal( Uint8 *palbg, Uint8 *palfg );
+void vga_setpal( const Uint8 *pal );
 
 /* get the 16-color 6-bit palettes */
-void vga_getpal( Uint8 *palbg, Uint8 *palfg );
+void vga_getpal( Uint8 *pal );
+
+/* switch to 8px wide characters */
+void vga_set8dot();
+
+/* switch to 8px wide characters */
+void vga_set9dot();
 #endif

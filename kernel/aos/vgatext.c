@@ -46,10 +46,8 @@ void vga_scroll( void )
 void vga_updatecsr( void )
 {
 	Uint16 tmp = csr_y*80+csr_x;
-	outport_b(0x3D4,14);
-	outport_b(0x3D5,tmp>>8);
-	outport_b(0x3D4,15);
-	outport_b(0x3D5,tmp);
+	vga_setreg(VGA_CRTC,VGA_CRTC_CSRLCH,tmp>>8);
+	vga_setreg(VGA_CRTC,VGA_CRTC_CSRLCL,tmp);
 }
 
 /* clear entire screen */
@@ -330,45 +328,47 @@ void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad )	/* no jokes about the f
 }
 
 /* set the 16-color 6-bit palettes */
-void vga_setpal( Uint8 *palbg, Uint8 *palfg )
+void vga_setpal( const Uint8 *pal )
 {
 	int i;
-	/* background */
+	/* CGA->EGA mapping */
+	int map[16] = {0,1,2,3,4,5,20,7,56,57,58,59,60,61,62,63};
 	for ( i=0; i<16; i++ )
 	{
-		outport_b(0x3C8,i);
-		outport_b(0x3C9,palbg[i*3]);
-		outport_b(0x3C9,palbg[i*3+1]);
-		outport_b(0x3C9,palbg[i*3+2]);
-	}
-	/* foreground */
-	for ( i=0; i<16; i++ )
-	{
-		outport_b(0x3C8,i);
-		outport_b(0x3C9,palfg[i*3]);
-		outport_b(0x3C9,palfg[i*3+1]);
-		outport_b(0x3C9,palfg[i*3+2]);
+		outport_b(0x3C8,map[i]);
+		outport_b(0x3C9,pal[i*3]);
+		outport_b(0x3C9,pal[i*3+1]);
+		outport_b(0x3C9,pal[i*3+2]);
 	}
 }
 
 /* get the 16-color 6-bit palettes */
-void vga_getpal( Uint8 *palbg, Uint8 *palfg )
+void vga_getpal( Uint8 *pal )
 {
 	int i;
-	/* background */
+	/* CGA->EGA mapping */
+	int map[16] = {0,1,2,3,4,5,20,7,56,57,58,59,60,61,62,63};
 	for ( i=0; i<16; i++ )
 	{
-		outport_b(0x3C8,i);
-		palbg[i*3] = inport_b(0x3C9);
-		palbg[i*3+1] = inport_b(0x3C9);
-		palbg[i*3+2] = inport_b(0x3C9);
+		outport_b(0x3C8,map[i]);
+		pal[i*3] = inport_b(0x3C9);
+		pal[i*3+1] = inport_b(0x3C9);
+		pal[i*3+2] = inport_b(0x3C9);
 	}
-	/* foreground */
-	for ( i=0; i<16; i++ )
-	{
-		outport_b(0x3C8,i+32);
-		palfg[i*3] = inport_b(0x3C9);
-		palfg[i*3+1] = inport_b(0x3C9);
-		palfg[i*3+2] = inport_b(0x3C9);
-	}
+}
+
+/* switch to 8px wide characters */
+void vga_set8dot()
+{
+	Uint8 reg = vga_getreg(VGA_SEQ,VGA_SEQ_CMODE);
+	reg |= 0x01;
+	vga_setreg(VGA_SEQ,VGA_SEQ_CMODE,reg);
+}
+
+/* switch to 9px wide characters */
+void vga_set9dot()
+{
+	Uint8 reg = vga_getreg(VGA_SEQ,VGA_SEQ_CMODE);
+	reg &= 0xFE;
+	vga_setreg(VGA_SEQ,VGA_SEQ_CMODE,reg);
 }
