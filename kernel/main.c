@@ -21,6 +21,7 @@ Uint32 *initial_esp;
 /* C entry point for the kernel starts here. */
 int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 {
+	int i = 0;
 	/* set the initial stack pointer */
 	initial_esp = esp;
 	/* serial output */
@@ -29,7 +30,6 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	/* initialize some vga settings */
 	vga_setpal(&alicepal[0]);
 	vga_set8dot();
-	//vga_setfont(&alicefont[0]);
 	/* pretty screen fill */
 	vga_clr_s();
 	vga_curset(0,0);
@@ -50,12 +50,31 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	vga_curset(0,2);
 	vga_setattr(APAL_WHITE,APAL_BLACK);
 	/* show palette */
-	int i = 0;
 	printk("0123456789ABCDEF\n");
 	for ( i=0; i<16; i++ )
 	{
 		vga_setattr(i,i);
 		vga_putc(' ');
+	}
+	vga_setattr(APAL_WHITE,APAL_BLACK);
+	vga_putc('\n');
+	int pos = 80*8;
+	/* standard characters */
+	for ( i=0; i<128; i++ )
+	{
+		vga_setc(pos,i,0x0F);
+		pos++;
+		if ( (pos%80)%16 == 0 )
+			pos += 64;
+	}
+	/* extended characters */
+	pos = 80*8 + 20;
+	for ( i=128; i<256; i++ )
+	{
+		vga_setc(pos,i,0x0F);
+		pos++;
+		if ( (pos%80)%36 == 0 )
+			pos += 64;
 	}
 	/* THE END */
 	printk_s(SERIAL_A,"All done!\n");

@@ -142,7 +142,7 @@ void vga_setattr( Uint8 fg, Uint8 bg )
 }
 
 /* set character at position, no scrolling or cursor movement */
-void vga_setc( Uint16 pos, char c, Uint8 attr )
+void vga_setc( Uint16 pos, Uint8 c, Uint8 attr )
 {
 	*(vgamem+pos) = c|(attr<<8);
 }
@@ -328,7 +328,7 @@ void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad )	/* no jokes about the f
 }
 
 /* set the 16-color 6-bit palettes */
-void vga_setpal( const Uint8 *pal )
+void vga_setpal( Uint8 *pal )
 {
 	int i;
 	/* CGA->EGA mapping */
@@ -371,4 +371,58 @@ void vga_set9dot()
 	Uint8 reg = vga_getreg(VGA_SEQ,VGA_SEQ_CMODE);
 	reg &= 0xFE;
 	vga_setreg(VGA_SEQ,VGA_SEQ_CMODE,reg);
+}
+
+/* change the font */
+void vga_setfont( Uint8 *font )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	vga_setreg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	Uint8 old_smmod = vga_getreg(VGA_SEQ,VGA_SEQ_SMMOD);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	Uint8 old_gfxmod = vga_getreg(VGA_GC,VGA_GC_GFXMOD);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i, j;
+	/* copy character map, skip 16 bytes of padding for each glyph */
+	Uint8 *fntmem = (Uint8*)0xB8000;
+	for ( i=0; i<256; i++ )
+	{
+		for ( j=0; j<16; j++ )
+			*(fntmem++) = *(font++);
+		fntmem += 16;
+	}
+	/* restore to defaults */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
+}
+
+/* get the current font */
+void vga_getfont( Uint8 *font )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	vga_setreg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	Uint8 old_smmod = vga_getreg(VGA_SEQ,VGA_SEQ_SMMOD);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	Uint8 old_gfxmod = vga_getreg(VGA_GC,VGA_GC_GFXMOD);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i, j;
+	/* copy character map, skip 16 bytes of padding for each glyph */
+	Uint8 *fntmem = (Uint8*)0xB8000;
+	for ( i=0; i<256; i++ )
+	{
+		for ( j=0; j<16; j++ )
+			*(font++) = *(fntmem++);
+		fntmem += 16;
+	}
+	/* restore to defaults */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }

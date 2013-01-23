@@ -1,4 +1,4 @@
-CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions -ffreestanding -Wno-unused-function -Wno-unused-parameter -Ikernel/include
+CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions -ffreestanding -funsigned-char -Wno-unused-function -Wno-unused-parameter -Ikernel/include
 ASFLAGS := -felf32
 LDFLAGS := -melf_i386 -Tkernel/link.ld
 KMAIN_C := $(patsubst %.c,%.o,$(wildcard kernel/*.c))

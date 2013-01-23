@@ -76,7 +76,7 @@ void vga_getattr( Uint8 *fg, Uint8 *bg );
 void vga_setattr( Uint8 fg, Uint8 bg );
 
 /* set character at position, no scrolling or cursor movement */
-void vga_setc( Uint16 pos, char c, Uint8 attr );
+void vga_setc( Uint16 pos, Uint8 c, Uint8 attr );
 
 /* put a single character on screen */
 void vga_putc( char c );
@@ -100,7 +100,7 @@ void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad );
 void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad );	/* no jokes about the function name, please */
 
 /* set the 16-color 6-bit palettes */
-void vga_setpal( const Uint8 *pal );
+void vga_setpal( Uint8 *pal );
 
 /* get the 16-color 6-bit palettes */
 void vga_getpal( Uint8 *pal );
@@ -110,4 +110,10 @@ void vga_set8dot();
 
 /* switch to 8px wide characters */
 void vga_set9dot();
+
+/* change the font */
+void vga_setfont( Uint8 *font );
+
+/* get the current font */
+void vga_getfont( Uint8 *font );
 #endif
