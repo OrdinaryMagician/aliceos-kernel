@@ -335,10 +335,10 @@ void vga_setpal( Uint8 *pal )
 	int map[16] = {0,1,2,3,4,5,20,7,56,57,58,59,60,61,62,63};
 	for ( i=0; i<16; i++ )
 	{
-		outport_b(0x3C8,map[i]);
-		outport_b(0x3C9,pal[i*3]);
-		outport_b(0x3C9,pal[i*3+1]);
-		outport_b(0x3C9,pal[i*3+2]);
+		outport_b(VGA_DAC_ADWM,map[i]);
+		outport_b(VGA_DAC_DATA,pal[i*3]);
+		outport_b(VGA_DAC_DATA,pal[i*3+1]);
+		outport_b(VGA_DAC_DATA,pal[i*3+2]);
 	}
 }
 
@@ -350,10 +350,10 @@ void vga_getpal( Uint8 *pal )
 	int map[16] = {0,1,2,3,4,5,20,7,56,57,58,59,60,61,62,63};
 	for ( i=0; i<16; i++ )
 	{
-		outport_b(0x3C8,map[i]);
-		pal[i*3] = inport_b(0x3C9);
-		pal[i*3+1] = inport_b(0x3C9);
-		pal[i*3+2] = inport_b(0x3C9);
+		outport_b(VGA_DAC_ADWM,map[i]);
+		pal[i*3] = inport_b(VGA_DAC_DATA);
+		pal[i*3+1] = inport_b(VGA_DAC_DATA);
+		pal[i*3+2] = inport_b(VGA_DAC_DATA);
 	}
 }
 
