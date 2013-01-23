@@ -350,7 +350,7 @@ void vga_getpal( Uint8 *pal )
 	int map[16] = {0,1,2,3,4,5,20,7,56,57,58,59,60,61,62,63};
 	for ( i=0; i<16; i++ )
 	{
-		outport_b(VGA_DAC_ADWM,map[i]);
+		outport_b(VGA_DAC_ADRM,map[i]);
 		pal[i*3] = inport_b(VGA_DAC_DATA);
 		pal[i*3+1] = inport_b(VGA_DAC_DATA);
 		pal[i*3+2] = inport_b(VGA_DAC_DATA);
