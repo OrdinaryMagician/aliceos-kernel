@@ -17,6 +17,7 @@
 #include <palettes.h>
 #include <vgaimgtxt.h>
 #include <vgafont.h>
+#include <aliceimg.h>
 
 Uint32 *initial_esp;
 
@@ -24,14 +25,9 @@ Uint32 *initial_esp;
 void demo_blockgfx( void )
 {
 	vga_initimgtxt();
-	int i, line;
-	i = 0;
-	line = 0;
-	while ( i < 4000 )
-	{
-		vga_putbloxel(i%80,line,krand()%16);
-		line = !(++i%80)?(line+1):line;
-	}
+	vga_fullblit(&aliceimg[0]);
+	vga_drawrect(50,21,75,29,4);
+	printk("%[4E%{51,11%s %s%{53,13%s.%s.%s-%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
 
 /* serial output */
