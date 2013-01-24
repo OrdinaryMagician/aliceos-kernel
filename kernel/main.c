@@ -49,33 +49,7 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	printk("%{-26,0%s %02x/%02x/20%02x | %02x:%02x:%02x",weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],cmosval[8],cmosval[9],cmosval[4],cmosval[2],cmosval[0]);
 	vga_curset(0,2);
 	vga_setattr(APAL_WHITE,APAL_BLACK);
-	/* show palette */
-	printk("0123456789ABCDEF\n");
-	for ( i=0; i<16; i++ )
-	{
-		vga_setattr(i,i);
-		vga_putc(' ');
-	}
-	vga_setattr(APAL_WHITE,APAL_BLACK);
-	vga_putc('\n');
-	int pos = 80*8;
-	/* standard characters */
-	for ( i=0; i<128; i++ )
-	{
-		vga_setc(pos,i,0x0F);
-		pos++;
-		if ( (pos%80)%16 == 0 )
-			pos += 64;
-	}
-	/* extended characters */
-	pos = 80*8 + 20;
-	for ( i=128; i<256; i++ )
-	{
-		vga_setc(pos,i,0x0F);
-		pos++;
-		if ( (pos%80)%36 == 0 )
-			pos += 64;
-	}
+	
 	/* THE END */
 	printk_s(SERIAL_A,"All done!\n");
 	return 0xADEADBED;
