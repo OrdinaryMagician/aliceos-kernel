@@ -426,3 +426,69 @@ void vga_getfont( Uint8 *font )
 	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x00);
 	vga_setreg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
+
+/* change a specific glyph in the character map */
+void vga_setglyph( Uint8 val, Uint8 *data )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	vga_setreg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	Uint8 old_smmod = vga_getreg(VGA_SEQ,VGA_SEQ_SMMOD);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	Uint8 old_gfxmod = vga_getreg(VGA_GC,VGA_GC_GFXMOD);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i;
+	Uint8 *fntmem = (Uint8*)0xB8000;
+	/* skip characters */
+	for ( i=0; i<val; i++ )
+		fntmem += 32;
+	for ( i=0; i<16; i++ )
+		*(fntmem++) = *(data++);
+	/* restore to defaults */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
+}
+
+/* retrieve a specific glyph in the character map */
+void vga_getglyph( Uint8 val, Uint8 *data )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	vga_setreg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	Uint8 old_smmod = vga_getreg(VGA_SEQ,VGA_SEQ_SMMOD);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	Uint8 old_gfxmod = vga_getreg(VGA_GC,VGA_GC_GFXMOD);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i;
+	Uint8 *fntmem = (Uint8*)0xB8000;
+	/* skip characters */
+	for ( i=0; i<val; i++ )
+		fntmem += 32;
+	for ( i=0; i<16; i++ )
+		*(data++) = *(fntmem++);
+	/* restore to defaults */
+	vga_setreg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	vga_setreg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	vga_setreg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	vga_setreg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
+}
+
+/* hide cursor */
+void vga_hidecursor( void )
+{
+	Uint8 reg = vga_getreg(VGA_CRTC,VGA_CRTC_CSRSTR);
+	reg |= (1<<5);
+	vga_setreg(VGA_CRTC,VGA_CRTC_CSRSTR,reg);
+}
+
+/* show cursor */
+void vga_showcursor( void )
+{
+	Uint8 reg = vga_getreg(VGA_CRTC,VGA_CRTC_CSRSTR);
+	reg &= ~(1<<5);
+	vga_setreg(VGA_CRTC,VGA_CRTC_CSRSTR,reg);
+}

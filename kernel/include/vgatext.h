@@ -116,4 +116,16 @@ void vga_setfont( Uint8 *font );
 
 /* get the current font */
 void vga_getfont( Uint8 *font );
+
+/* change a specific glyph in the character map */
+void vga_setglyph( Uint8 val, Uint8 *data );
+
+/* retrieve a specific glyph in the character map */
+void vga_getglyph( Uint8 val, Uint8 *data );
+
+/* hide cursor */
+void vga_hidecursor( void );
+
+/* show cursor */
+void vga_showcursor( void );
 #endif
