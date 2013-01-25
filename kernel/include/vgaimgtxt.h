@@ -19,7 +19,7 @@ void vga_drawimg( bitmap_t *img, Uint16 posx, Uint16 posy );
 /* fill screen with a 80x50 bitmap */
 void vga_fullblit( Uint8 *img );
 /* draw a solid rectangle */
-void vga_drawrect( Uint16 x1, Uint16 y1, Uint16 x2, Uint16 y2, Uint8 c );
+void vga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
 /* get the color of a specific bloxel */
 Uint8 vga_getbloxel( Uint16 posx, Uint16 posy );
 /* set the color of a specific bloxel */

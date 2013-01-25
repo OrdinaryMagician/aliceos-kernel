@@ -363,14 +363,21 @@ void vga_set8dot()
 	Uint8 reg = vga_getreg(VGA_SEQ,VGA_SEQ_CMODE);
 	reg |= 0x01;
 	vga_setreg(VGA_SEQ,VGA_SEQ_CMODE,reg);
+	reg = inport_b(VGA_MSCOUTR);
+	reg &= ~(0x03<<2);
+	outport_b(VGA_MSCOUTW,reg);
 }
 
 /* switch to 9px wide characters */
 void vga_set9dot()
 {
 	Uint8 reg = vga_getreg(VGA_SEQ,VGA_SEQ_CMODE);
-	reg &= 0xFE;
+	reg &= ~(0x01);
 	vga_setreg(VGA_SEQ,VGA_SEQ_CMODE,reg);
+	reg = inport_b(VGA_MSCOUTR);
+	reg &= ~(0x03<<2);
+	reg |= 0x01<<2;
+	outport_b(VGA_MSCOUTW,reg);
 }
 
 /* change the font */

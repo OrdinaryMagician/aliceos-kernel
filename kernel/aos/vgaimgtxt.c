@@ -46,22 +46,25 @@ void vga_fullblit( Uint8 *img )
 }
 
 /* draw a solid rectangle */
-void vga_drawrect( Uint16 x1, Uint16 y1, Uint16 x2, Uint16 y2, Uint8 c )
+void vga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 {
 	Uint16 px, py;
-	px = x1;
-	py = y1;
+	Uint16 lx, ly;
+	px = x;
+	py = y;
+	lx = x+w;
+	ly = y+h;
 	do
 	{
 		vga_putbloxel(px,py,c);
 		px++;
-		if ( px >= x2 )
+		if ( px >= lx )
 		{
-			px = x1;
+			px = x;
 			py++;
 		}
 	}
-	while ( (px < x2) && (py < y2) );
+	while ( (px < lx) && (py < ly) );
 }
 
 /* get the color of a specific bloxel */

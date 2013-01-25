@@ -7,6 +7,32 @@
 #include <types.h>
 #include <port.h>
 
+#define VGA_AC_I 0x3C0 /* Attribute Controller Address */
+#define VGA_AC_W 0x3C0 /* Attribute Controller Write */
+#define VGA_AC_R 0x3C1 /* Attribute Controller Read */
+
+#define VGA_AC_PAL0 0x00 /* AC Palette Index 0 */
+#define VGA_AC_PAL1 0x01 /* AC Palette Index 1 */
+#define VGA_AC_PAL2 0x02 /* AC Palette Index 2 */
+#define VGA_AC_PAL3 0x03 /* AC Palette Index 3 */
+#define VGA_AC_PAL4 0x04 /* AC Palette Index 4 */
+#define VGA_AC_PAL5 0x05 /* AC Palette Index 5 */
+#define VGA_AC_PAL6 0x06 /* AC Palette Index 6 */
+#define VGA_AC_PAL7 0x07 /* AC Palette Index 7 */
+#define VGA_AC_PAL8 0x08 /* AC Palette Index 8 */
+#define VGA_AC_PAL9 0x09 /* AC Palette Index 9 */
+#define VGA_AC_PALA 0x0A /* AC Palette Index A */
+#define VGA_AC_PALB 0x0B /* AC Palette Index B */
+#define VGA_AC_PALC 0x0C /* AC Palette Index C */
+#define VGA_AC_PALD 0x0D /* AC Palette Index D */
+#define VGA_AC_PALE 0x0E /* AC Palette Index E */
+#define VGA_AC_PALF 0x0F /* AC Palette Index F */
+#define VGA_AC_ATRM 0x10 /* AC Attribute Mode Control */
+#define VGA_AC_OVSC 0x11 /* AC Overscan Color */
+#define VGA_AC_CPLE 0x12 /* AC Color Plane Enable */
+#define VGA_AC_HPXP 0x13 /* AC Horizontal Pixel Panning */
+#define VGA_AC_PXSC 0x14 /* AC Color Select */
+
 #define VGA_DAC_ADWM 0x3C8 /* DAC Address Write Mode */
 #define VGA_DAC_ADRM 0x3C7 /* DAC Address Read Mode */
 #define VGA_DAC_DATA 0x3C9 /* DAC Data */
@@ -59,6 +85,14 @@
 #define VGA_CRTC_EVBLNK 0x16 /* End Vertical Blanking */
 #define VGA_CRTC_CRTCMC 0x17 /* CRTC Mode Control */
 #define VGA_CRTC_LNCOMP 0x18 /* Line Compare */
+
+#define VGA_MSCOUTR 0x3CC /* Miscellaneous Output Read */
+#define VGA_MSCOUTW 0x3C2 /* Miscellaneous Output Write */
+#define VGA_FTCNTLR 0x3CA /* Feature Control Read */
+#define VGA_FTCNTLW 0x3DA /* Feature Control Write */
+
+#define VGA_INSTAT0 0x3C2 /* Input Status 0 */
+#define VGA_INSTAT1 0x3DA /* Input Status 1 */
 
 /* set the value of a VGA register, return previous value */
 Uint8 vga_setreg( Uint16 port, Uint8 index, Uint8 value );

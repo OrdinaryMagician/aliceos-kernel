@@ -8,6 +8,8 @@
 #define VGAFONT_H
 #include <types.h>
 #include <vgatext.h>
-/* apply patches to the current font (which is expected to be the BIOS one) */
-void vga_patchfont( void );
+/* local copy of bios font */
+Uint8 biosfnt[4096];
+/* apply patches to the BIOS font, save a local copy */
+void vga_initfont( void );
 #endif

@@ -6,8 +6,8 @@
 */
 #include <vgafont.h>
 
-/* apply patches to the current font (which is expected to be the BIOS one) */
-void vga_patchfont( void )
+/* apply patches to the BIOS font, save a local copy */
+void vga_initfont( void )
 {
 	Uint8 chr[16];
 
@@ -19,4 +19,7 @@ void vga_patchfont( void )
 	vga_getglyph(0xDC,&chr[0]);
 	chr[7] = 0x00;
 	vga_setglyph(0xDC,&chr[0]);
+	
+	/* save font */
+	vga_getfont(&biosfnt[0]);
 }
