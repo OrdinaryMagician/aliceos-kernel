@@ -1,0 +1,6 @@
+#!/bin/bash
+if [[ ! -n $* ]]; then
+  qemu-system-i386 -kernel vmaliceos -serial stdio
+else
+  qemu-system-i386 -kernel vmaliceos -serial stdio -append "$@"
+fi

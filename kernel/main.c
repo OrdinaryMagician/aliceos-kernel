@@ -9,92 +9,17 @@
 #include <kdefs.h>
 #include <vgatext.h>
 #include <multiboot.h>
-#include <krand.h>
 #include <printk.h>
 #include <serial.h>
 #include <cmos.h>
 #include <berp.h>
 #include <palettes.h>
-#include <vgaimgtxt.h>
 #include <vgafont.h>
 #include <vgamodeset.h>
-#include <aliceimg.h>
-#include <vga13hgfx.h>
+#include <strops.h>
+#include <demos.h>
 
 Uint32 *initial_esp;
-
-/* 80x50 graphics demo */
-void demo_blockgfx( void )
-{
-	vga_initimgtxt();
-	vga_fullblit(&aliceimg[0]);
-	vga_drawrect(50,21,25,8,4);
-	/* splash screen */
-	printk("%[4E%{51,11%s %s%{53,13%s.%s.%s-%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
-}
-
-/* mode 13h graphics demo */
-void demo_realgfx( void )
-{
-	vga_modeset(MODE_13H);
-	vga_13hsetpal(&alicepal256[0]);
-	Uint16 x,y;
-	int i = 0;
-	/* 16 color set */
-	x = 8;
-	y = 8;
-	while ( i < 16 )
-	{
-		vga_13hdrawrect(x,y,8,8,i);
-		x+=8;
-		if ( !((++i)%8) )
-		{
-			x=8;
-			y+=8;
-		}
-	}
-	/* 64 color set */
-	y += 8;
-	while ( i < 80 )
-	{
-		vga_13hdrawrect(x,y,8,8,i);
-		x+=8;
-		if ( !((++i)%8) )
-		{
-			x=8;
-			y+=8;
-		}
-	}
-	/* 64 gray set */
-	y += 8;
-	while ( i < 144 )
-	{
-		vga_13hdrawrect(x,y,8,8,i);
-		x+=8;
-		if ( !((++i)%8) )
-		{
-			x=8;
-			y+=8;
-		}
-	}
-	/* user palettes left out */
-	
-	/* draw some colorful noise (using the 64 color palette) */
-	x = 160;
-	y = 8;
-	do
-	{
-		vga_13hputpixel(x,y,16+krand()%64);
-		x++;
-		if ( x >= 288 )
-		{
-			x = 160;
-			y++;
-		}
-	}
-	while ( (x < 288) && (y < 136) );
-}
-
 /* serial output */
 void init_serial( void )
 {
@@ -135,6 +60,7 @@ void print_header( void )
 	vga_setattr(APAL_WHITE,APAL_BLACK);
 }
 
+
 /* C entry point for the kernel starts here. */
 int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 {
@@ -145,11 +71,27 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	init_serial();
 	init_console();
 	print_header();
-	
-	/* insert demo code or whatever here */
-	demo_realgfx();
 
-	/* THE END */
-	printk_s(SERIAL_A,"All done!\n");
+	/* insert demo code or whatever here */
+	char *kargs = strchr((char*)mboot->cmdline,' ');
+	kargs++;
+	if ( !(*kargs) )
+	{
+		printk("No argument specified\n\n");
+		listdemos();
+		return 0xADEADBED;
+	}
+	unsigned int i = 0;
+	for ( i=0; i<DEMO_COUNT; i++ )
+	{
+		if ( !strcmp(kargs,demos[i].name) )
+		{
+			demos[i].func();
+			return 0xADEADBED;
+		}
+	}
+	printk("Unrecognized argument \"%s\"\n\n",kargs);
+	listdemos();
+
 	return 0xADEADBED;
 }
