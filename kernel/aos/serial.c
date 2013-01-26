@@ -74,8 +74,8 @@ void serial_uns( Uint16 dev, Uint64 val, Uint16 width, Uint8 zeropad )
 			val /= 10;
 		}
 		while ( val != 0 );
-		while ( i >= 0 )
-			serial_chr(dev,c[i--]);
+		while ( i > 0 )
+			serial_chr(dev,c[--i]);
 	}
 	else
 	{
@@ -89,8 +89,8 @@ void serial_uns( Uint16 dev, Uint64 val, Uint16 width, Uint8 zeropad )
 		while ( (val != 0) && (i < width) );
 		while ( i < width )
 			c[i++] = (zeropad)?'0':' ';
-		while ( i >= 0 )
-			serial_chr(dev,c[i--]);
+		while ( i > 0 )
+			serial_chr(dev,c[--i]);
 	}
 }
 

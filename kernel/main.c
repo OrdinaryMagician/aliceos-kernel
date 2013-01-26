@@ -18,6 +18,7 @@
 #include <vgamodeset.h>
 #include <strops.h>
 #include <demos.h>
+#include <ramdisk.h>
 
 Uint32 *initial_esp;
 /* serial output */
@@ -71,6 +72,8 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	init_serial();
 	init_console();
 	print_header();
+	if ( mboot->mods_count )
+		init_ramdisk(*((Uint32*)mboot->mods_addr),*(Uint32*)(mboot->mods_addr+4));
 
 	/* insert demo code or whatever here */
 	char *kargs = strchr((char*)mboot->cmdline,' ');

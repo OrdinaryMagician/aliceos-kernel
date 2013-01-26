@@ -71,3 +71,21 @@ void vga_13hdrawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 	}
 	while ( (px < lx) && (py < ly) );
 }
+
+/* draw an image on the entire screen */
+void vga_13hfullblit( Uint8 *img, Uint16 palshift )
+{
+	Uint16 rows = 0, lines = 0;
+	Uint32 i = 0;
+	while ( i < 64000 )
+	{
+		vga_13hputpixel(rows,lines,(img[i]+palshift)%256);
+		rows++;
+		if ( rows >= 320 )
+		{
+			rows = 0;
+			lines++;
+		}
+		i++;
+	}
+}

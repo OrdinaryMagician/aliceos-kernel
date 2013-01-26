@@ -111,10 +111,10 @@ Uint8 strcmp( char *a, char *b )
 	{
 		if ( *a != *b )
 			return 1;
-		if ( (!(*a) && *b) || (*a && !(*b)) )
-			return 1;
 		a++;
 		b++;
+		if ( (!(*a) && *b) || (*a && !(*b)) )
+			return 1;
 	}
 	while ( *a && *b );
 	return 0;
@@ -127,10 +127,10 @@ Uint8 strcasecmp( char *a, char *b )
 	{
 		if ( chrlcaps(*a) != chrlcaps(*b) )
 			return 1;
-		if ( (!(*a) && *b) || (*a && !(*b)) )
-			return 1;
 		a++;
 		b++;
+		if ( (!(*a) && *b) || (*a && !(*b)) )
+			return 1;
 	}
 	while ( *a && *b );
 	return 0;
@@ -261,10 +261,10 @@ Uint8 strncmp( char *a, char *b, Uint32 count )
 	{
 		if ( *a != *b )
 			return 1;
-		if ( (!(*a) && *b) || (*a && !(*b)) )
-			return 1;
 		a++;
 		b++;
+		if ( (!(*a) && *b) || (*a && !(*b)) )
+			return 1;
 	}
 	while ( *a && *b && count-- );
 	return 0;
@@ -277,10 +277,10 @@ Uint8 strncasecmp( char *a, char *b, Uint32 count )
 	{
 		if ( chrlcaps(*a) != chrlcaps(*b) )
 			return 1;
-		if ( (!(*a) && *b) || (*a && !(*b)) )
-			return 1;
 		a++;
 		b++;
+		if ( (!(*a) && *b) || (*a && !(*b)) )
+			return 1;
 	}
 	while ( *a && *b && count-- );
 	return 0;

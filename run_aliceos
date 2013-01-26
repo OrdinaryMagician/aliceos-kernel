@@ -1,6 +1,10 @@
 #!/bin/bash
-if [[ ! -n $* ]]; then
-  qemu-system-i386 -kernel vmaliceos -serial stdio
+if [[ ! -e initramfs-aliceos.img ]]; then
+  echo "you haven't created an initial ramdisk"
 else
-  qemu-system-i386 -kernel vmaliceos -serial stdio -append "$@"
+  if [[ ! -n $* ]]; then
+    qemu-system-i386 -kernel vmaliceos -serial stdio -initrd initramfs-aliceos.img
+  else
+    qemu-system-i386 -kernel vmaliceos -serial stdio -initrd initramfs-aliceos.img -append "$@"
+  fi
 fi

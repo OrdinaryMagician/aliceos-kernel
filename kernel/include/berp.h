@@ -9,6 +9,10 @@
 #include <types.h>
 #include <helpers.h>
 #include <printk.h>
+#include <vgatext.h>
+#include <vgamodeset.h>
+#include <vgafont.h>
+#include <palettes.h>
 #define BERP(msg) berp(msg,__FILE__,__LINE__);
 extern void berp( const char *message, const char *file, Uint32 line );
 #endif

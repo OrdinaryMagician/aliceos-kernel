@@ -16,10 +16,11 @@
 #include <vgafont.h>
 #include <vgamodeset.h>
 #include <vgaimgtxt.h>
-#include <aliceimg.h>
 #include <vga13hgfx.h>
+#include <ramdisk.h>
+#include <berp.h>
 
-#define DEMO_COUNT 2
+#define DEMO_COUNT 9
 
 typedef void (*demo_func_t)( void );
 typedef struct
@@ -37,6 +38,27 @@ void demo_blockgfx( void );
 
 /* mode 13h graphics demo */
 void demo_realgfx( void );
+
+/* mode 13h graphics demo (full image alice16) */
+void demo_a16gfx( void );
+
+/* mode 13h graphics demo (full image alice64) */
+void demo_a64gfx( void );
+
+/* mode 13h graphics demo (full image alice64g) */
+void demo_a64ggfx( void );
+
+/* mode 13h graphics demo (full image custom16) */
+void demo_c16gfx( void );
+
+/* mode 13h graphics demo (full image custom32) */
+void demo_c32gfx( void );
+
+/* mode 13h graphics demo (full image custom64) */
+void demo_c64gfx( void );
+
+/* mode 13h graphics demo (full image customfull) */
+void demo_cfullgfx( void );
 
 demo_t demos[DEMO_COUNT];
 #endif

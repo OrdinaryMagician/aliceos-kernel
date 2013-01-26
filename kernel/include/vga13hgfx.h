@@ -24,4 +24,7 @@ void vga_13hgetpal( Uint8 *pal );
 
 /* draw a rectangle filled with one color */
 void vga_13hdrawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
+
+/* draw an image on the entire screen */
+void vga_13hfullblit( Uint8 *img, Uint16 palshift );
 #endif
