@@ -101,6 +101,9 @@ void vga_initimgtxt( void )
 	/* reposition and hide cursor */
 	vga_curset(0,0);
 	vga_hidecursor();
+	/* some necessary attribute changes */
+	vga_set8dot();
+	vga_disableblink();
 	/* fill screen with upper halfblocks and set all colors to black */
 	memsetw(vmem,0x00DF,80*25);
 }
@@ -112,4 +115,7 @@ void vga_exitimgtxt( void )
 	vga_showcursor();
 	/* blank screen */
 	vga_clr_s();
+	/* reset attributes */
+	vga_set9dot();
+	vga_enableblink();
 }

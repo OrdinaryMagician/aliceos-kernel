@@ -92,6 +92,9 @@ Uint8 vga_modeset( Uint8 mode )
 		return 1;
 	}
 
+	/* blank display */
+	vga_blank();
+
 	/* MISC */
 	outport_b(VGA_MSCOUTW,*regs);
 	regs++;
@@ -121,7 +124,8 @@ Uint8 vga_modeset( Uint8 mode )
 		outport_b(VGA_AC_I,i);
 		outport_b(VGA_AC_W,*(regs++));
 	}
-	/* lock palette and unblank display */
+	/* unblank display and lock palette */
+	vga_unblank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,0x20);
 

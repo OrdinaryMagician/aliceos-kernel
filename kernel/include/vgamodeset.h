@@ -11,6 +11,7 @@
 #include <vgareg.h>
 #include <vgafont.h>
 #include <memops.h>
+#include <vgamisc.h>
 
 #define MODE_UNKN 0
 #define MODE_3H   1

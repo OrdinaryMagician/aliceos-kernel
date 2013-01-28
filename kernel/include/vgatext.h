@@ -11,6 +11,7 @@
 #include <port.h>
 #include <memops.h>
 #include <vgareg.h>
+#include <vgamisc.h>
 
 /* colors valid on default palette */
 #define BLACK       0
@@ -104,12 +105,6 @@ void vga_setpal( Uint8 *pal );
 
 /* get the 16-color 6-bit palettes */
 void vga_getpal( Uint8 *pal );
-
-/* switch to 8px wide characters */
-void vga_set8dot();
-
-/* switch to 8px wide characters */
-void vga_set9dot();
 
 /* change the font */
 void vga_setfont( Uint8 *font );
