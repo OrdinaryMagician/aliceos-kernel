@@ -29,7 +29,7 @@ Uint8 mode3h[] =
 	0x0C, 0x00, 0x0F, 0x08, 0x00
 };
 
-/* mode 12h (640x480 planar 16-bit) */
+/* mode 12h (640x480 planar 16 colors) */
 Uint8 mode12h[] =
 {
 	/* MISC */

@@ -17,6 +17,8 @@ demo_t demos[DEMO_COUNT] =
 	{"img32c", "mode 13h custom 32 color set image", demo_c32gfx},
 	{"img64c", "mode 13h custom 64 color set image", demo_c64gfx},
 	{"imgfc", "mode 13h custom full (256) color set image", demo_cfullgfx},
+	{"mode12", "mode 12h test (640x480 16 color)", demo_mode12},
+	{"cmap", "text mode character map", demo_cmap},
 };
 
 /* list available demos */
@@ -26,6 +28,50 @@ void listdemos( void )
 	printk("Available demos:\n");
 	for ( i=0; i<DEMO_COUNT; i++ )
 		printk(" - %s : %s\n",demos[i].name,demos[i].desc);
+}
+
+/* Character map */
+void demo_cmap( void )
+{
+	Uint16 i;
+	Uint16 x,y;
+	x = 4;
+	y = 4;
+	for ( i=0; i<128; i++ )
+	{
+		vga_setc(x+y*80,i,0x0F);
+		x++;
+		if ( x >= 20 )
+		{
+			x = 4;
+			y++;
+		}
+	}
+	x = 24;
+	y = 4;
+	for ( i=128; i<256; i++ )
+	{
+		vga_setc(x+y*80,i,0x0F);
+		x++;
+		if ( x >= 40 )
+		{
+			x = 24;
+			y++;
+		}
+	}
+}
+
+/* Mode 12h (640x480 planar 16-color) */
+void demo_mode12( void )
+{
+	printk_s(SERIAL_A,"Running Mode 12h demo\n");
+	vga_modeset(MODE_12H);
+	vga_p16init();
+	Uint32 i = 0, j = 0;
+	for ( i=0; i<480; i++ )
+		for ( j=0; j<640; j++ )
+			vga_p16putpixel(j,i,krand());
+	printk_s(SERIAL_A,"Yup, it's THAT slow\n");
 }
 
 /* 80x50 graphics demo */
@@ -41,7 +87,6 @@ void demo_blockgfx( void )
 	/* splash screen */
 	printk("%[4E%{51,11%s %s%{53,13%s.%s.%s-%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
-
 
 /* mode 13h graphics demo (full image alice16) */
 void demo_a16gfx( void )

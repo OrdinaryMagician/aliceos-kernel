@@ -19,8 +19,9 @@
 #include <vga13hgfx.h>
 #include <ramdisk.h>
 #include <berp.h>
+#include <vgaplanar16.h>
 
-#define DEMO_COUNT 9
+#define DEMO_COUNT 11
 
 typedef void (*demo_func_t)( void );
 typedef struct
@@ -30,8 +31,14 @@ typedef struct
 	demo_func_t func;
 } demo_t;
 
+/* Character map */
+void demo_cmap( void );
+
 /* list available demos */
 void listdemos( void );
+
+/* Mode 12h (SLOW 640x480 planar 16-color) */
+void demo_mode12( void );
 
 /* 80x50 graphics demo */
 void demo_blockgfx( void );

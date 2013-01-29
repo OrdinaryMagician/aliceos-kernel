@@ -9,6 +9,9 @@
 #include <types.h>
 #include <vgareg.h>
 
+/* plane switch */
+void vga_planeswitch( Uint8 p );
+
 /* blank screen */
 void vga_blank( void );
 

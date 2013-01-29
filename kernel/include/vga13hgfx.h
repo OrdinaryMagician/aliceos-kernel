@@ -9,6 +9,7 @@
 #include <types.h>
 #include <vgareg.h>
 #include <vgafont.h>
+#include <vgamisc.h>
 
 /* draw a pixel on screen */
 void vga_13hputpixel( Uint16 x, Uint16 y, Uint8 c );

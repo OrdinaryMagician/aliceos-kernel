@@ -6,6 +6,16 @@
 */
 #include <vgamisc.h>
 
+/* plane switch */
+void vga_planeswitch( Uint8 p )
+{
+	Uint8 pmask;
+	p &= 3;
+	pmask = 1 << p;
+	vga_setreg(VGA_GC, VGA_GC_RDMSEL,p);
+	vga_setreg(VGA_SEQ, VGA_SEQ_MMASK,pmask);
+}
+
 /* blank screen */
 void vga_blank( void )
 {
