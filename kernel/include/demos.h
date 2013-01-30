@@ -21,7 +21,7 @@
 #include <berp.h>
 #include <vgaplanar16.h>
 
-#define DEMO_COUNT 11
+#define DEMO_COUNT 15
 
 typedef void (*demo_func_t)( void );
 typedef struct
@@ -36,6 +36,18 @@ void demo_cmap( void );
 
 /* list available demos */
 void listdemos( void );
+
+/* mode 12h image blit (per-pixel) */
+void demo_mode12imgpx( void );
+
+/* mode 12h image blit (per-channel) */
+void demo_mode12imgch( void );
+
+/* mode 12h image blit with custom palette  (per-pixel) */
+void demo_mode12imgpx_c( void );
+
+/* mode 12h image blit with custom palette  (per-channel) */
+void demo_mode12imgch_c( void );
 
 /* Mode 12h (SLOW 640x480 planar 16-color) */
 void demo_mode12( void );

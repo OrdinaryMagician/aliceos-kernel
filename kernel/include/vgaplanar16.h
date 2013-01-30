@@ -17,6 +17,9 @@
 /* Initialize 640x480 planar 16 color mode */
 void vga_p16init( void );
 
+/* draw an image on the whole screen */
+void vga_p16fullblit( Uint8 *img, Uint8 bmode );
+
 /* Draw a filled rectangle */
 void vga_p16drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c, Uint8 bmode );
 

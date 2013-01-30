@@ -19,6 +19,75 @@ void vga_p16init( void )
 	}
 }
 
+/* draw an image on the whole screen using the per-channel blit method */
+void vga_p16fullblit_channel( Uint8 *img )
+{
+	Uint8 p;
+	Uint8 c;
+	Uint16 px, py;
+	Uint16 lx, ly;
+	for ( p=0; p<4; p++ )
+	{
+		vga_planeswitch(p);
+		px = 0;
+		py = 0;
+		lx = 640;
+		ly = 480;
+		do
+		{
+			c = img[px+py*640];
+			vga_p16putpixelsp(px,py,(c>>p)&1);
+			px++;
+			py = (px>=lx)?(py+1):py;
+			px = (px>=lx)?0:px;
+		}
+		while ( (px < lx) && (py < ly) );
+	}
+}
+
+/* draw an image on the whole screen using the per-pixel blit method */
+void vga_p16fullblit_pixel( Uint8 *img )
+{
+	Uint8 c;
+	Uint16 px, py;
+	Uint16 lx, ly;
+	px = 0;
+	py = 0;
+	lx = 640;
+	ly = 480;
+	do
+	{
+		c = img[px+py*640];
+		vga_planeswitch(0);
+		vga_p16putpixelsp(px,py,(c)&1);
+		vga_planeswitch(1);
+		vga_p16putpixelsp(px,py,(c>>1)&1);
+		vga_planeswitch(2);
+		vga_p16putpixelsp(px,py,(c>>2)&1);
+		vga_planeswitch(3);
+		vga_p16putpixelsp(px,py,(c>>3)&1);
+		px++;
+		py = (px>=lx)?(py+1):py;
+		px = (px>=lx)?0:px;
+	}
+	while ( (px < lx) && (py < ly) );
+}
+
+/* draw an image on the whole screen */
+void vga_p16fullblit( Uint8 *img, Uint8 bmode )
+{
+	switch ( bmode )
+	{
+	case BLIT_CHANNEL:
+		vga_p16fullblit_channel(img);
+		break;
+	case BLIT_PIXEL:
+	default:
+		vga_p16fullblit_pixel(img);
+		break;
+	}
+}
+
 /* Writes pixels one by one, iterating between planes for each channel filled */
 void vga_p16drawrect_channel( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 {

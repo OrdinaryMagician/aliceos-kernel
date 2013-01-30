@@ -18,6 +18,10 @@ demo_t demos[DEMO_COUNT] =
 	{"img64c", "mode 13h custom 64 color set image", demo_c64gfx},
 	{"imgfc", "mode 13h custom full (256) color set image", demo_cfullgfx},
 	{"mode12", "mode 12h test (640x480 16 color)", demo_mode12},
+	{"mode12imgpx", "mode 12h image blit (per-pixel)", demo_mode12imgpx},
+	{"mode12imgch", "mode 12h image blit (per-channel)", demo_mode12imgch},
+	{"mode12imgpx_c", "mode 12h image blit with custom palette (per-pixel)", demo_mode12imgpx_c},
+	{"mode12imgch_c", "mode 12h image blit with custom palette (per-channel)", demo_mode12imgch_c},
 	{"cmap", "text mode character map", demo_cmap},
 };
 
@@ -59,6 +63,70 @@ void demo_cmap( void )
 			y++;
 		}
 	}
+}
+
+/* mode 12h image blit (per-pixel) */
+void demo_mode12imgpx( void )
+{
+	printk_s(SERIAL_A,"Running Mode 12h image blit demo (per-pixel)\n");
+	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_p16.img");
+	if ( aliceimg == NULL )
+		BERP("alice_p16.img not found in ramdisk");
+	vga_modeset(MODE_12H);
+	vga_p16init();
+	vga_p16fullblit(aliceimg,BLIT_PIXEL);
+}
+
+/* mode 12h image blit (per-channel) */
+void demo_mode12imgch( void )
+{
+	printk_s(SERIAL_A,"Running Mode 12h image blit demo (per-channel)\n");
+	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_p16.img");
+	if ( aliceimg == NULL )
+		BERP("alice_p16.img not found in ramdisk");
+	vga_modeset(MODE_12H);
+	vga_p16init();
+	vga_p16fullblit(aliceimg,BLIT_CHANNEL);
+}
+
+/* mode 12h image blit with custom palette  (per-pixel) */
+void demo_mode12imgpx_c( void )
+{
+	printk_s(SERIAL_A,"Running Mode 12h image blit with custom palette demo (per-pixel)\n");
+	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_p16c.img");
+	if ( aliceimg == NULL )
+		BERP("alice_p16.img not found in ramdisk");
+	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_p16c.pal");
+	if ( aliceimgpal == NULL )
+		BERP("alice_p16c.pal not found in ramdisk");
+	vga_modeset(MODE_12H);
+	vga_p16init();
+	/* custom palette needs a bit of tweaking to adapt to 6-bit */
+	int i;
+	for ( i=0; i<48; i++ )
+		alicepal256[i+APAL256_16USR_POS] = aliceimgpal[i]/4;
+	vga_setpal(&alicepal256[APAL256_16USR_POS]);
+	vga_p16fullblit(aliceimg,BLIT_PIXEL);
+}
+
+/* mode 12h image blit with custom palette  (per-channel) */
+void demo_mode12imgch_c( void )
+{
+	printk_s(SERIAL_A,"Running Mode 12h image blit with custom palette demo (per-channel)\n");
+	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_p16c.img");
+	if ( aliceimg == NULL )
+		BERP("alice_p16.img not found in ramdisk");
+	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_p16c.pal");
+	if ( aliceimgpal == NULL )
+		BERP("alice_p16c.pal not found in ramdisk");
+	vga_modeset(MODE_12H);
+	vga_p16init();
+	/* custom palette needs a bit of tweaking to adapt to 6-bit */
+	int i;
+	for ( i=0; i<48; i++ )
+		alicepal256[i+APAL256_16USR_POS] = aliceimgpal[i]/4;
+	vga_setpal(&alicepal256[APAL256_16USR_POS]);
+	vga_p16fullblit(aliceimg,BLIT_CHANNEL);
 }
 
 /* Mode 12h (640x480 planar 16-color) */
@@ -132,7 +200,7 @@ void demo_c16gfx( void )
 	if ( aliceimg == NULL )
 		BERP("alice_13h_16c.img not found in ramdisk");
 	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_16c.pal");
-	if ( aliceimg == NULL )
+	if ( aliceimgpal == NULL )
 		BERP("alice_13h_16c.pal not found in ramdisk");
 	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
@@ -151,7 +219,7 @@ void demo_c32gfx( void )
 	if ( aliceimg == NULL )
 		BERP("alice_13h_32c.img not found in ramdisk");
 	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_32c.pal");
-	if ( aliceimg == NULL )
+	if ( aliceimgpal == NULL )
 		BERP("alice_13h_32c.pal not found in ramdisk");
 	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
@@ -170,7 +238,7 @@ void demo_c64gfx( void )
 	if ( aliceimg == NULL )
 		BERP("alice_13h_64c.img not found in ramdisk");
 	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_64c.pal");
-	if ( aliceimg == NULL )
+	if ( aliceimgpal == NULL )
 		BERP("alice_13h_64c.pal not found in ramdisk");
 	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
@@ -189,7 +257,7 @@ void demo_cfullgfx( void )
 	if ( aliceimg == NULL )
 		BERP("alice_13h_fc.img not found in ramdisk");
 	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_fc.pal");
-	if ( aliceimg == NULL )
+	if ( aliceimgpal == NULL )
 		BERP("alice_13h_fc.pal not found in ramdisk");
 	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
