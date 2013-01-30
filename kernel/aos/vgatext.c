@@ -38,7 +38,7 @@ void vga_scroll( void )
 		if ( !doscroll )
 			return;
 		memcpyw(vgamem+cropbeg*80,vgamem+(cropbeg+1)*80,((cropend-1)-cropbeg)*80);
-		memsetw(vgamem+(cropend-1)*80,0x0720,80);
+		memsetw(vgamem+(cropend-1)*80,0x0000,80);
 	}
 }
 
@@ -53,37 +53,37 @@ void vga_updatecsr( void )
 /* clear entire screen */
 void vga_clr_s( void )
 {
-	memsetw(vgamem,0x0720,80*25);
+	memsetw(vgamem,0x0000,80*25);
 }
 
 /* clear screen to the left of the cursor */
 void vga_clr_sl( void )
 {
-	memsetw(vgamem,0x0720,csr_x+csr_y*80);
+	memsetw(vgamem,0x0000,csr_x+csr_y*80);
 }
 
 /* clear screen to the right of the cursor */
 void vga_clr_sr( void )
 {
-	memsetw(vgamem+csr_x+csr_y*80,0x0720,80*25-(csr_x+csr_y*80));
+	memsetw(vgamem+csr_x+csr_y*80,0x0000,80*25-(csr_x+csr_y*80));
 }
 
 /* clear current line */
 void vga_clr_l( void )
 {
-	memsetw(vgamem+csr_y*80,0x0720,80);
+	memsetw(vgamem+csr_y*80,0x0000,80);
 }
 
 /* clear everything inside the current line to the left of the cursor */
 void vga_clr_ll( void )
 {
-	memsetw(vgamem+csr_y*80,0x0720,csr_x);
+	memsetw(vgamem+csr_y*80,0x0000,csr_x);
 }
 
 /* clear everything inside the current line to the right of the cursor */
 void vga_clr_lr( void )
 {
-	memsetw(vgamem+csr_x+csr_y*80,0x0720,80-csr_x);
+	memsetw(vgamem+csr_x+csr_y*80,0x0000,80-csr_x);
 }
 
 /* set cursor position directly */

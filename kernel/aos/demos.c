@@ -67,11 +67,11 @@ void demo_mode12( void )
 	printk_s(SERIAL_A,"Running Mode 12h demo\n");
 	vga_modeset(MODE_12H);
 	vga_p16init();
-	Uint32 i = 0, j = 0;
-	for ( i=0; i<480; i++ )
-		for ( j=0; j<640; j++ )
-			vga_p16putpixel(j,i,krand());
-	printk_s(SERIAL_A,"Yup, it's THAT slow\n");
+	printk_s(SERIAL_A,"Per-pixel blit (slow but steady)\n");
+	vga_p16drawrect(4,4,312,472,APAL_WHITE,BLIT_PIXEL);
+	printk_s(SERIAL_A,"Per-channel blit (faster but flashier)\n");
+	vga_p16drawrect(324,4,312,472,APAL_WHITE,BLIT_CHANNEL);
+	printk_s(SERIAL_A,"Yes, it's slow\n");
 }
 
 /* 80x50 graphics demo */
