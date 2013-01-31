@@ -190,11 +190,11 @@ void vga_putmc( char c, Sint32 i )
 }
 
 /* put a base 10 unsigned integer on screen */
-void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad )
+void vga_putu( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
-		char c[20];
+		char c[10];
 		Sint32 i = 0;
 		do
 		{
@@ -223,13 +223,13 @@ void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad )
 }
 
 /* put a base 10 signed integer on screen */
-void vga_putd( Sint64 val, Uint16 width, Uint8 zeropad )
+void vga_putd( Sint32 val, Uint16 width, Uint8 zeropad )
 {
 	Uint8 isneg = (val<0);
 	val = abs(val);
 	if ( !width )
 	{
-		char c[19];
+		char c[10];
 		Sint32 i = 0;
 		do
 		{
@@ -262,7 +262,7 @@ void vga_putd( Sint64 val, Uint16 width, Uint8 zeropad )
 }
 
 /* put a base 16 unsigned integer on screen */
-void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad )
+void vga_puth( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -295,11 +295,11 @@ void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad )
 }
 
 /* put a base 8 unsigned integer on screen */
-void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad )	/* no jokes about the function name, please */
+void vga_puto( Uint32 val, Uint16 width, Uint8 zeropad )	/* no jokes about the function name, please */
 {
 	if ( !width )
 	{
-		char c[8];
+		char c[11];
 		Sint32 i = 0;
 		do
 		{

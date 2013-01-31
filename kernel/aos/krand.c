@@ -6,16 +6,16 @@
 */
 #include <krand.h>
 
-static Uint64 krand_seed = 1;
+static Uint32 krand_seed = 1;
 
 /* get next random number */
-Uint64 krand()
+Uint32 krand()
 {
-	return (krand_seed = (krand_seed<<1)*35447+(krand_seed/83));
+	return (krand_seed = (krand_seed<<1)*35447+(krand_seed/87));
 }
 
 /* set a specific seed */
-void ksrand( Uint64 nseed )
+void ksrand( Uint32 nseed )
 {
 	krand_seed = nseed;
 }

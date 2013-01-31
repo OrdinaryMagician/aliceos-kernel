@@ -9,9 +9,9 @@
 #include <types.h>
 
 /* get next random number */
-Uint64 krand();
+Uint32 krand();
 
 /* set a specific seed */
-void ksrand( Uint64 nseed );
+void ksrand( Uint32 nseed );
 
 #endif

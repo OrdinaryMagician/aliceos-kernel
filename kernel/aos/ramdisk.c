@@ -22,7 +22,7 @@ rd_entry_t *rd_find( char *fname )
 		return NULL;
 	}
 	Uint32 ents = rd_numents();
-	Uint64 i;
+	Uint32 i;
 	rd_entry_t *ent;
 	for ( i=0; i<ents; i++ )
 	{

@@ -24,9 +24,9 @@ char serial_recv_async( Uint16 dev );
 Uint8 serial_transmit_empty( Uint16 dev );
 void serial_chr( Uint16 dev, char c );
 void serial_str( Uint16 dev, char *s );
-void serial_uns( Uint16 dev, Uint64 val, Uint16 width, Uint8 zeropad );
-void serial_dec( Uint16 dev, Sint64 val, Uint16 width, Uint8 zeropad );
-void serial_hex( Uint16 dev, Uint64 val, Uint16 width, Uint8 zeropad );
-void serial_oct( Uint16 dev, Uint64 val, Uint16 width, Uint8 zeropad );
+void serial_uns( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad );
+void serial_dec( Uint16 dev, Sint32 val, Uint16 width, Uint8 zeropad );
+void serial_hex( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad );
+void serial_oct( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad );
 
 #endif

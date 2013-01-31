@@ -89,16 +89,16 @@ void vga_puts( char *s );
 void vga_putmc( char c, Sint32 i );
 
 /* put a base 10 unsigned integer on screen */
-void vga_putu( Uint64 val, Uint16 width, Uint8 zeropad );
+void vga_putu( Uint32 val, Uint16 width, Uint8 zeropad );
 
 /* put a base 10 signed integer on screen */
-void vga_putd( Sint64 val, Uint16 width, Uint8 zeropad );
+void vga_putd( Sint32 val, Uint16 width, Uint8 zeropad );
 
 /* put a base 16 unsigned integer on screen */
-void vga_puth( Uint64 val, Uint16 width, Uint8 zeropad );
+void vga_puth( Uint32 val, Uint16 width, Uint8 zeropad );
 
 /* put a base 8 unsigned integer on screen */
-void vga_puto( Uint64 val, Uint16 width, Uint8 zeropad );	/* no jokes about the function name, please */
+void vga_puto( Uint32 val, Uint16 width, Uint8 zeropad );	/* no jokes about the function name, please */
 
 /* set the 16-color 6-bit palettes */
 void vga_setpal( Uint8 *pal );
