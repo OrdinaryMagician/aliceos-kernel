@@ -41,8 +41,9 @@ typedef struct
 	void (*drawvline)( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
 	void (*drawimg)( Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h );
 	void (*drawchar)( Uint16 x, Uint16 y, char c );
-	void (*drawuchar)( Uint16 x, Uint16 y, uchar c );
+	void (*drawwchar)( Uint16 x, Uint16 y, wchar c );
 	void (*drawstring)( Uint16 x, Uint16 y, char *s );
+	void (*drawwstring)( Uint16 x, Uint16 y, wchar *s );
 	/* framebuffer console management */
 	void (*fbscroll)( void );
 	void (*fbgetres)( Uint16 *cols, Uint16 *rows );
@@ -53,8 +54,10 @@ typedef struct
 	void (*fbsetcursor)( Uint16 col, Uint16 row );
 	void (*fbcursorvis)( Uint8 on );
 	void (*fbputc)( char c );
-	void (*fbputuc)( uchar c );
+	void (*fbwputc)( wchar c );
 	void (*fbputs)( char *s );
+	void (*fbwputs)( wchar *s );
 	void (*fbprintf)( char *s, ... );
+	void (*fbwprintf)( wchar *s, ... );
 
 } vga_mode_t;

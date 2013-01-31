@@ -18,8 +18,8 @@ typedef signed short int Sint16;
 typedef unsigned int Uint32;
 typedef signed int Sint32;
 
-/* unicode char */
-typedef unsigned int uchar;
+/* unicode (wide) char */
+typedef unsigned int wchar;
 
 /* limits */
 #define SINT8_MAX 127
