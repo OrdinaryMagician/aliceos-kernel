@@ -46,8 +46,8 @@ void print_header( void )
 {
 	vga_setattr(APAL_CYAN,APAL_BLUE);
 	vga_putmc(' ',80);
-	printk("%{1,0%s %s - %s.%s.%s-%s (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
-	printk_s(SERIAL_A,"\033[1;36m%s %s - %s.%s.%s-%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	printk("%{1,0%s %s - %s.%s.%s%s (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	printk_s(SERIAL_A,"\033[1;36m%s %s - %s.%s.%s%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 	vga_curset(0,2);
 	vga_setattr(APAL_WHITE,APAL_BLACK);
 

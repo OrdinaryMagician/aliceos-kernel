@@ -153,7 +153,7 @@ void demo_blockgfx( void )
 	vga_fullblit(aliceimg);
 	vga_drawrect(50,21,25,8,4);
 	/* splash screen */
-	printk("%[4E%{51,11%s %s%{53,13%s.%s.%s-%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	printk("%[4E%{51,11%s %s%{53,13%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
 
 /* mode 13h graphics demo (full image alice16) */

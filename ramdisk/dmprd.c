@@ -27,9 +27,12 @@ int main( int argc, char **argv )
 {
 	if ( argc <= 1 )
 	{
-		fprintf(stderr,"usage: %s DISK_NAME\n",argv[0]);
+		fprintf(stderr,"usage: %s DISK_NAME [ls]\n",argv[0]);
 		return 1;
 	}
+	int dodump = 1;
+	if ( argc > 2 )
+		dodump = (strcmp(argv[2],"ls") != 0);
 	int fdes = open(argv[1],O_RDONLY);
 	if ( fdes == -1 )
 	{
@@ -53,7 +56,7 @@ int main( int argc, char **argv )
 	{
 		pos += read(fdes,&ent,sizeof(rd_entry_t));
 		printf("\"%s\" (%u bytes)\n",ent.name,ent.size);
-		if ( dump(fdes,ent.name,ent.start,ent.size) )
+		if ( dodump && dump(fdes,ent.name,ent.start,ent.size) )
 		{
 			fprintf(stderr,"an error ocurred while dumping \"%s\"\n",ent.name);
 			close(fdes);

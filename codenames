@@ -1,0 +1,14 @@
+Reference of possible codenames for releases (and some kind of short roadmap).
+This list is subject to change, lots of change.
+
+ - Shanghai: Early development stages.
+ - Hourai: Base kernel finished, modular development stages.
+ - France: Fundamental hardware modules (disk, video, input, filesystems...).
+ - Holland: Support for modern GPUs, sound support.
+ - Tibet: Au integration, C library.
+ - Kyoto: Networking.
+ - London: Some other hardware support stuff.
+ - Russia: Attempt to port to x86_64.
+ - Orleans: Feature freeze, bugfixing.
+ - Bucuresti: Release candidates.
+ - Dollmaker: Finished product, no more codenames afterwards.
