@@ -15,10 +15,58 @@ Uint8 *memcpy( Uint8 *dest, const Uint8 *src, Uint32 count )
 	return dest;
 }
 
+/* copy byte blocks checking for possible overlap */
+Uint8 *memmove( Uint8 *dest, const Uint8 *src, Uint32 count )
+{
+	Uint32 i;
+	if ( dest == src )
+		return dest;
+	if ( (src+count <= dest) || (dest+count <= src) )
+	{
+		for ( i=0; i<count; i++ )
+			dest[i] = src[i];
+		return dest;
+	}
+	if ( dest > src )
+	{
+		i = count;
+		while ( i-- )
+			dest[i] = src[i];
+		return dest;
+	}
+	for ( i=0; i<count; i++ )
+		dest[i] = src[i];
+	return dest;
+}
+
 /* copy word blocks */
 Uint16 *memcpyw( Uint16 *dest, const Uint16 *src, Uint32 count )
 {
 	Uint32 i;
+	for ( i=0; i<count; i++ )
+		dest[i] = src[i];
+	return dest;
+}
+
+/* copy word blocks checking for possible overlap */
+Uint8 *memmovew( Uint16 *dest, const Uint16 *src, Uint32 count )
+{
+	Uint32 i;
+	if ( dest == src )
+		return dest;
+	if ( (src+count <= dest) || (dest+count <= src) )
+	{
+		for ( i=0; i<count; i++ )
+			dest[i] = src[i];
+		return dest;
+	}
+	if ( dest > src )
+	{
+		i = count;
+		while ( i-- )
+			dest[i] = src[i];
+		return dest;
+	}
 	for ( i=0; i<count; i++ )
 		dest[i] = src[i];
 	return dest;
