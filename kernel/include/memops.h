@@ -18,7 +18,7 @@ Uint8 *memmove( Uint8 *dest, const Uint8 *src, Uint32 count );
 Uint16 *memcpyw( Uint16 *dest, const Uint16 *src, Uint32 count );
 
 /* copy word blocks checking for possible overlap */
-Uint8 *memmovew( Uint16 *dest, const Uint16 *src, Uint32 count );
+Uint16 *memmovew( Uint16 *dest, const Uint16 *src, Uint32 count );
 
 /* fill an entire memory block with a repeating byte */
 Uint8 *memset( Uint8 *dest, Uint8 val, Uint32 count );

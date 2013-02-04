@@ -7,6 +7,7 @@
 #ifndef VGASTRUCT_H
 #define VGASTRUCT_H
 #include <types.h>
+#include <vgaloadimg.h>
 
 #define LAYOUT_LINEAR  0
 #define LAYOUT_PLANAR  1
@@ -52,7 +53,7 @@ typedef struct
 	void (*drawrect)( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
 	void (*drawhline)( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
 	void (*drawvline)( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-	void (*drawimg)( Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h );
+	void (*drawimg)( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift );
 	void (*drawchar)( Uint16 x, Uint16 y, char c );
 	void (*drawwchar)( Uint16 x, Uint16 y, wchar c );
 	void (*drawstring)( Uint16 x, Uint16 y, char *s );

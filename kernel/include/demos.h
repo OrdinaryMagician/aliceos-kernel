@@ -6,20 +6,6 @@
 */
 #ifndef DEMOS_H
 #define DEMOS_H
-#include <types.h>
-#include <helpers.h>
-#include <kdefs.h>
-#include <krand.h>
-#include <vgatext.h>
-#include <printk.h>
-#include <palettes.h>
-#include <vgafont.h>
-#include <vgamodeset.h>
-#include <vgaimgtxt.h>
-#include <vga13hgfx.h>
-#include <ramdisk.h>
-#include <berp.h>
-#include <vgaplanar16.h>
 
 #define DEMO_COUNT 15
 

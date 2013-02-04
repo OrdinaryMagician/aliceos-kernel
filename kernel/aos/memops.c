@@ -49,7 +49,7 @@ Uint16 *memcpyw( Uint16 *dest, const Uint16 *src, Uint32 count )
 }
 
 /* copy word blocks checking for possible overlap */
-Uint8 *memmovew( Uint16 *dest, const Uint16 *src, Uint32 count )
+Uint16 *memmovew( Uint16 *dest, const Uint16 *src, Uint32 count )
 {
 	Uint32 i;
 	if ( dest == src )

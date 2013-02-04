@@ -5,6 +5,20 @@
 	Released under the MIT License.
 */
 #include <demos.h>
+#include <types.h>
+#include <helpers.h>
+#include <kdefs.h>
+#include <krand.h>
+#include <vgatext.h>
+#include <printk.h>
+#include <palettes.h>
+#include <vgafont.h>
+#include <vgamodeset.h>
+#include <vgaimgtxt.h>
+#include <ramdisk.h>
+#include <berp.h>
+#include <vgaplanar16.h>
+#include <vgamode13h.h>
 
 demo_t demos[DEMO_COUNT] =
 {
@@ -160,120 +174,108 @@ void demo_blockgfx( void )
 void demo_a16gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on alice16 color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_16.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_16.img") )
 		BERP("alice_13h_16.img not found in ramdisk");
-	vga_modeset(MODE_13H);
-	vga_13hsetpal(&alicepal256[0]);
-	vga_13hfullblit(aliceimg,APAL256_16PAL_OFF);
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_16PAL_OFF);
 }
 
 /* mode 13h graphics demo (full image alice64) */
 void demo_a64gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on alice64 color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_64.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_64.img") )
 		BERP("alice_13h_64.img not found in ramdisk");
-	vga_modeset(MODE_13H);
-	vga_13hsetpal(&alicepal256[0]);
-	vga_13hfullblit(aliceimg,APAL256_64PAL_OFF);
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_64PAL_OFF);
 }
 
 /* mode 13h graphics demo (full image alice64g) */
 void demo_a64ggfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on alice64g color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_64g.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_64g.img") )
 		BERP("alice_13h_64g.img not found in ramdisk");
-	vga_modeset(MODE_13H);
-	vga_13hsetpal(&alicepal256[0]);
-	vga_13hfullblit(aliceimg,APAL256_64GRY_OFF);
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_64GRY_OFF);
 }
 
 /* mode 13h graphics demo (full image custom16) */
 void demo_c16gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 16 color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_16c.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_16c.img") )
 		BERP("alice_13h_16c.img not found in ramdisk");
-	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_16c.pal");
-	if ( aliceimgpal == NULL )
-		BERP("alice_13h_16c.pal not found in ramdisk");
-	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<48; i++ )
-		alicepal256[i+APAL256_16USR_POS] = aliceimgpal[i]/4;
-	vga_13hsetpal(&alicepal256[0]);
-	vga_13hfullblit(aliceimg,APAL256_16USR_OFF);
+		alicepal256[i+APAL256_16USR_POS] = aliceimg->pal[i]/4;
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_16USR_OFF);
 }
 
 /* mode 13h graphics demo (full image custom32) */
 void demo_c32gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 32 color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_32c.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_32c.img") )
 		BERP("alice_13h_32c.img not found in ramdisk");
-	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_32c.pal");
-	if ( aliceimgpal == NULL )
-		BERP("alice_13h_32c.pal not found in ramdisk");
-	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<96; i++ )
-		alicepal256[i+APAL256_32USR_POS] = aliceimgpal[i]/4;
-	vga_13hsetpal(&alicepal256[0]);
-	vga_13hfullblit(aliceimg,APAL256_32USR_OFF);
+		alicepal256[i+APAL256_32USR_POS] = aliceimg->pal[i]/4;
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_32USR_OFF);
 }
 
 /* mode 13h graphics demo (full image custom64) */
 void demo_c64gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 64 color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_64c.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_64c.img") )
 		BERP("alice_13h_64c.img not found in ramdisk");
-	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_64c.pal");
-	if ( aliceimgpal == NULL )
-		BERP("alice_13h_64c.pal not found in ramdisk");
-	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<192; i++ )
-		alicepal256[i+APAL256_64USR_POS] = aliceimgpal[i]/4;
-	vga_13hsetpal(&alicepal256[0]);
-	vga_13hfullblit(aliceimg,APAL256_64USR_OFF);
+		alicepal256[i+APAL256_64USR_POS] = aliceimg->pal[i]/4;
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_64USR_OFF);
 }
 
 /* mode 13h graphics demo (full image customfull) */
 void demo_cfullgfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 256 color set)\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_13h_fc.img");
-	if ( aliceimg == NULL )
+	img_t *aliceimg = NULL;
+	if ( vga_loadimg(aliceimg,"alice_13h_fc.img") )
 		BERP("alice_13h_fc.img not found in ramdisk");
-	Uint8 *aliceimgpal = (Uint8*)rd_find_data("alice_13h_fc.pal");
-	if ( aliceimgpal == NULL )
-		BERP("alice_13h_fc.pal not found in ramdisk");
-	vga_modeset(MODE_13H);
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<768; i++ )
-		aliceimgpal[i] /= 4;
-	vga_13hsetpal(aliceimgpal);
-	vga_13hfullblit(aliceimg,0);
+		aliceimg->pal[i] /= 4;
+	mode_13h.setmode();
+	mode_13h.setpal(&(aliceimg->pal[0]));
+	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,0);
 }
 
 /* mode 13h graphics demo */
 void demo_realgfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo\n");
-	vga_modeset(MODE_13H);
-	vga_13hsetpal(&alicepal256[0]);
+	mode_13h.setmode();
+	mode_13h.setpal(&alicepal256[0]);
 	Uint16 x,y;
 	int i = 0;
 	/* 16 color set */
@@ -281,7 +283,7 @@ void demo_realgfx( void )
 	y = 8;
 	while ( i < 16 )
 	{
-		vga_13hdrawrect(x,y,8,8,i);
+		mode_13h.drawrect(x,y,8,8,i);
 		x+=8;
 		if ( !((++i)%8) )
 		{
@@ -293,7 +295,7 @@ void demo_realgfx( void )
 	y += 8;
 	while ( i < 80 )
 	{
-		vga_13hdrawrect(x,y,8,8,i);
+		mode_13h.drawrect(x,y,8,8,i);
 		x+=8;
 		if ( !((++i)%8) )
 		{
@@ -305,7 +307,7 @@ void demo_realgfx( void )
 	y += 8;
 	while ( i < 144 )
 	{
-		vga_13hdrawrect(x,y,8,8,i);
+		mode_13h.drawrect(x,y,8,8,i);
 		x+=8;
 		if ( !((++i)%8) )
 		{
@@ -320,7 +322,7 @@ void demo_realgfx( void )
 	y = 8;
 	do
 	{
-		vga_13hputpixel(x,y,16+krand()%64);
+		mode_13h.putpixel(x,y,16+krand()%64);
 		x++;
 		if ( x >= 288 )
 		{

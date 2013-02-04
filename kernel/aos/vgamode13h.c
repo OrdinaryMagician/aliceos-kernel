@@ -7,6 +7,8 @@
 #include <vgamode13h.h>
 #include <vgareg.h>
 #include <vgamisc.h>
+#include <memops.h>
+#include <vgaloadimg.h>
 
 /* mode 13h variables */
 Uint8 *m13h_mem = (Uint8*)0xA0000; /* memory area */
@@ -30,7 +32,7 @@ Uint8 m13h_getpixel( Uint16 x, Uint16 y );
 void m13h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
 void m13h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
 void m13h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-void m13h_drawimg( Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h );
+void m13h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift );
 void m13h_drawchar( Uint16 x, Uint16 y, char c );
 void m13h_drawwchar( Uint16 x, Uint16 y, wchar c );
 void m13h_drawstring( Uint16 x, Uint16 y, char *s );
@@ -96,7 +98,7 @@ vga_mode_t mode_13h =
 void m13h_setmode( void )
 {
 	int i;
-	Uint8 *regs =
+	Uint8 regs[] =
 	{
 		/* MISC */
 		0x63,
@@ -115,15 +117,16 @@ void m13h_setmode( void )
 		0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
 		0x41, 0x00, 0x0F, 0x00, 0x00,
 	};
+	int rg = 0;
 	Uint8 reg;
 	/* blank display */
 	vga_blank();
 	/* MISC */
-	outport_b(VGA_MSCOUTW,*regs);
-	regs++;
+	outport_b(VGA_MSCOUTW,regs[rg]);
+	rg++;
 	/* SEQ */
 	for ( i=0; i<5; i++ )
-		vga_setreg(VGA_SEQ,i,*(regs++));
+		vga_setreg(VGA_SEQ,i,regs[rg++]);
 	/* need to unlock CRTC here */
 	reg = vga_getreg(VGA_CRTC,VGA_CRTC_EHBLNK);
 	reg |= 0x80;
@@ -132,20 +135,20 @@ void m13h_setmode( void )
 	reg &= ~0x80;
 	vga_setreg(VGA_CRTC,VGA_CRTC_VTRTEN,reg);
 	/* keep 'em unlocked */
-	regs[VGA_CRTC_EHBLNK] |= 0x80;
-	regs[VGA_CRTC_VTRTEN] &= ~0x80;
+	regs[rg+VGA_CRTC_EHBLNK] |= 0x80;
+	regs[rg+VGA_CRTC_VTRTEN] &= ~0x80;
 	/* CRTC */
 	for ( i=0; i<25; i++ )
-		vga_setreg(VGA_CRTC,i,*(regs++));
+		vga_setreg(VGA_CRTC,i,regs[rg++]);
 	/* GC */
 	for ( i=0; i<9; i++ )
-		vga_setreg(VGA_GC,i,*(regs++));
+		vga_setreg(VGA_GC,i,regs[rg++]);
 	/* AC */
 	for ( i=0; i<9; i++ )
 	{
 		inport_b(VGA_INSTAT1);
 		outport_b(VGA_AC_I,i);
-		outport_b(VGA_AC_W,*(regs++));
+		outport_b(VGA_AC_W,regs[rg++]);
 	}
 	/* unblank display and lock palette */
 	vga_unblank();
@@ -211,13 +214,222 @@ void m13h_hscroll( Sint32 offset )
 	{
 		for ( ln=0; ln<200; ln++ )
 		{
-			
+			memmove(m13h_mem+(ln*320),m13h_mem+(ln*320)+offset,320-offset);
+			memset(m13h_mem+(ln*320),0x00,offset);
 		}
 	}
 	else
 	{
 		for ( ln=0; ln<200; ln++ )
 		{
+			memmove(m13h_mem+(ln*320)+offset,m13h_mem+(ln*320),320-offset);
+			memset(m13h_mem+(ln*320)+(320-offset),0x00,offset);
 		}
 	}
 }
+
+void m13h_vscroll( Sint32 offset )
+{
+	/* noscroll */
+	if ( !offset )
+		return;
+	/* scrolling 200 pixels? that's just like clearing the screen */
+	if ( abs(offset) >= 200 )
+	{
+		memset(m13h_mem,0x00,64000);
+		return;
+	}
+	/* vertical scrolling seems faster in theory */
+	if ( offset > 0 )
+	{
+		memmove(m13h_mem,m13h_mem+(offset*320),320*(200-offset));
+		memset(m13h_mem,0x00,offset*320);
+	}
+	else
+	{
+		memmove(m13h_mem+(offset*320),m13h_mem,320*(200-offset));
+		memset(m13h_mem+(offset*320),0x00,offset*320);
+	}
+}
+
+void m13h_putpixel( Uint16 x, Uint16 y, Uint8 c )
+{
+	x %= 320;
+	y %= 200;
+	m13h_mem[x+y*320] = c;
+}
+
+Uint8 m13h_getpixel( Uint16 x, Uint16 y )
+{
+	x %= 320;
+	y %= 200;
+	return m13h_mem[x+y*320];
+}
+
+void m13h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
+{
+	Uint16 px, py;
+	Uint16 lx, ly;
+	px = x;
+	py = y;
+	lx = x+w;
+	ly = y+h;
+	while ( (px < lx) && (py < ly) )
+	{
+		m13h_mem[px+py*320] = c;
+		px++;
+		if ( px >= lx )
+		{
+			px = x;
+			py++;
+		}
+	}
+}
+
+void m13h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
+{
+	Uint16 px;
+	Uint16 lx;
+	px = x;
+	lx = x+l;
+	while ( px < lx )
+		m13h_mem[(px++)+y*320] = c;
+}
+
+void m13h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
+{
+	Uint16 py;
+	Uint16 ly;
+	py = y;
+	ly = y+l;
+	while ( py < ly )
+		m13h_mem[x+(py++)*320] = c;
+}
+
+void m13h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_drawchar( Uint16 x, Uint16 y, char c )
+{
+	Uint16 px, py;
+	Uint16 lx, ly;
+	px = x;
+	py = y;
+	lx = x+8;
+	ly = y+8;
+	Uint16 off = c*64;
+	Uint16 cx, cy;
+	cx = 0;
+	cy = 0;
+	while ( (px < lx) && (py < ly) )
+	{
+		m13h_mem[px+py*320] = m13h_fnt[off+cx+cy*8];
+		cx++;
+		if ( cx >= 8 )
+		{
+			cx = 0;
+			cy++;
+		}
+		px++;
+		if ( px >= lx )
+		{
+			px = x;
+			py++;
+		}
+	}
+}
+
+void m13h_drawwchar( Uint16 x, Uint16 y, wchar c )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_drawstring( Uint16 x, Uint16 y, char *s )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_drawwstring( Uint16 x, Uint16 y, wchar *s )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbgetres( Uint16 *cols, Uint16 *rows )
+{
+	*cols = m13h_fbw;
+	*rows = m13h_fbh;
+}
+
+void m13h_fbgetcursor( Uint16 *col, Uint16 *row )
+{
+	*col = m13h_cx;
+	*row = m13h_cy;
+}
+
+void m13h_fbsetcursor( Uint16 col, Uint16 row )
+{
+	col %= m13h_fbw;
+	row %= m13h_fbh;
+	m13h_cx = col;
+	m13h_cy = row;
+}
+
+void m13h_fbmovecursor( Uint16 cols, Uint16 rows )
+{
+	m13h_cx += cols;
+	m13h_cy += rows;
+	m13h_cx %= m13h_fbw;
+	m13h_cy %= m13h_fbh;
+}
+
+void m13h_fbcursorvis( Uint8 on )
+{
+	m13h_cv = on&1;
+}
+
+void m13h_fbputc( char c )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbwputc( wchar c )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbputs( char *s )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbwputs( wchar *s )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbprintf( char *s, ... )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbwprintf( wchar *s, ... )
+{
+	return;	/* not yet implemented */
+}
+
+void m13h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex )
+{
+	m13h_attrs[0] = fg;
+	m13h_attrs[1] = bg;
+	m13h_attrs[2] = ex;
+}
+
+void m13h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex )
+{
+	*fg = m13h_attrs[0];
+	*bg = m13h_attrs[1];
+	*ex = m13h_attrs[2];
+}
+
