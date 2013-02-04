@@ -10,12 +10,15 @@
 #include <vgaloadimg.h>
 #include <vgaloadfnt.h>
 
+/* memory access layout for modes */
 #define LAYOUT_LINEAR  0
 #define LAYOUT_PLANAR  1
+/* color depths for modes */
 #define DEPTH_2COLOR   0
 #define DEPTH_4COLOR   1
 #define DEPTH_16COLOR  2
 #define DEPTH_256COLOR 3
+/* extended attributes for text drawing */
 #define EXATTR_MASKED  1 /* Zero brightness pixels of font (and background) are transparent when drawing (NOTE: Will break cursor drawing) */
 #define EXATTR_HFLIP   2 /* Mirror characters horizontally */
 #define EXATTR_VFLIP   4 /* Mirror characters vertically */
@@ -75,18 +78,5 @@ typedef struct
 	void (*fbgetattr)( Uint8 *fg, Uint8 *bg, Uint8 *ex );
 
 } vga_mode_t;
-
-/* install a new video mode, return 0 on success, 1 on failure */
-Uint8 vga_installmode( vga_mode_t *mode );
-/* uninstall a video mode, return 0 on success (or if it isn't installed), 1 on failure */
-Uint8 vga_uninstallmode( vga_mode_t *mode );
-/* retrieve the list of currently installed video modes */
-vga_mode_t *vga_listmodes( void );
-/* find a video mode by its id */
-vga_mode_t *vga_findmode( Uint16 id );
-/* find a video mode by its name */
-vga_mode_t *vga_findmoden( char *name );
-/* find the installed mode that is closest to the specified properties */
-vga_mode_t *vga_findclosestmode( Uint16 w, Uint16 h, Uint8 layout, Uint8 depth );
 
 #endif
