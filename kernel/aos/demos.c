@@ -160,13 +160,12 @@ void demo_mode12( void )
 void demo_blockgfx( void )
 {
 	printk_s(SERIAL_A,"Running Block GFX demo\n");
-	Uint8 *aliceimg = (Uint8*)rd_find_data("alice_txt.img");
-	if ( aliceimg == NULL )
-		BERP("alice_txt.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice3h.img") )
+		BERP("error loading alice3h.img");
 	vga_initimgtxt();
-	vga_fullblit(aliceimg);
+	vga_fullblit(aliceimg.data);
 	vga_drawrect(50,21,25,8,4);
-	/* splash screen */
 	printk("%[4E%{51,11%s %s%{53,13%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
 
@@ -174,100 +173,100 @@ void demo_blockgfx( void )
 void demo_a16gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on alice16 color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_16.img") )
-		BERP("alice_13h_16.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_16.img") )
+		BERP("error loading alice13h_16.img");
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_16PAL_OFF);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,APAL256_16PAL_OFF);
 }
 
 /* mode 13h graphics demo (full image alice64) */
 void demo_a64gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on alice64 color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_64.img") )
-		BERP("alice_13h_64.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_64.img") )
+		BERP("error loading alice13h_64.img");
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_64PAL_OFF);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,APAL256_64PAL_OFF);
 }
 
 /* mode 13h graphics demo (full image alice64g) */
 void demo_a64ggfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on alice64g color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_64g.img") )
-		BERP("alice_13h_64g.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_64g.img") )
+		BERP("error loading alice13h_64g.img");
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_64GRY_OFF);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,APAL256_64GRY_OFF);
 }
 
 /* mode 13h graphics demo (full image custom16) */
 void demo_c16gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 16 color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_16c.img") )
-		BERP("alice_13h_16c.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_16c.img") )
+		BERP("error loading alice13h_16c.img");
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<48; i++ )
-		alicepal256[i+APAL256_16USR_POS] = aliceimg->pal[i]/4;
+		alicepal256[i+APAL256_16USR_POS] = aliceimg.pal[i]/4;
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_16USR_OFF);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,APAL256_16USR_OFF);
 }
 
 /* mode 13h graphics demo (full image custom32) */
 void demo_c32gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 32 color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_32c.img") )
-		BERP("alice_13h_32c.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_32c.img") )
+		BERP("error loading alice13h_32c.img");
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<96; i++ )
-		alicepal256[i+APAL256_32USR_POS] = aliceimg->pal[i]/4;
+		alicepal256[i+APAL256_32USR_POS] = aliceimg.pal[i]/4;
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_32USR_OFF);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,APAL256_32USR_OFF);
 }
 
 /* mode 13h graphics demo (full image custom64) */
 void demo_c64gfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 64 color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_64c.img") )
-		BERP("alice_13h_64c.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_64c.img") )
+		BERP("error loading alice13h_64c.img");
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<192; i++ )
-		alicepal256[i+APAL256_64USR_POS] = aliceimg->pal[i]/4;
+		alicepal256[i+APAL256_64USR_POS] = aliceimg.pal[i]/4;
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,APAL256_64USR_OFF);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,APAL256_64USR_OFF);
 }
 
 /* mode 13h graphics demo (full image customfull) */
 void demo_cfullgfx( void )
 {
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo (full image draw on custom 256 color set)\n");
-	img_t *aliceimg = NULL;
-	if ( vga_loadimg(aliceimg,"alice_13h_fc.img") )
-		BERP("alice_13h_fc.img not found in ramdisk");
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_fc.img") )
+		BERP("error loading alice13h_fc.img");
 	/* custom palette needs a bit of tweaking to adapt to 6-bit */
 	int i;
 	for ( i=0; i<768; i++ )
-		aliceimg->pal[i] /= 4;
+		aliceimg.pal[i] /= 4;
 	mode_13h.setmode();
-	mode_13h.setpal(&(aliceimg->pal[0]));
-	mode_13h.drawimg(aliceimg,0,0,0,0,320,200,0);
+	mode_13h.setpal(&aliceimg.pal[0]);
+	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,0);
 }
 
 /* mode 13h graphics demo */

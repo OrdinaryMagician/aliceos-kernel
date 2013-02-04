@@ -14,6 +14,7 @@ typedef struct
 	Uint8 *pal;
 	Uint16 w;
 	Uint16 h;
+	Uint8 flags;
 	Uint8 depth;
 } img_t;
 

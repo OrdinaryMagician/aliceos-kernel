@@ -9,12 +9,18 @@
 #include <memops.h>
 #include <printk.h>
 
-/* img file magic: UTF-8 "IMGでれ\0" */
-Uint8 img_magic[10] = {'I', 'M', 'G', 0xE3, 0x81, 0xA7, 0xE3, 0x82, 0x8C, '\0'};
+/* img file magic (OS magic + file format magic) */
+Uint8 img_magic[24] = 
+{
+	'A', 'L', 'I', 'C', 'E', 'O', 'S',
+	0xE3, 0x81, 0xA7, 0xE3, 0x82, 0x8C, /* Hiragana "dere", UTF-8 */
+	'R', 'A', 'W', 'I', 'M', 'G', 'F', 'I', 'L', 'E',
+	'\0',
+};
 /* img file header structure */
 typedef struct
 {
-	Uint8 magic[10];
+	Uint8 magic[24];
 	Uint8 flags;
 	Uint8 depth;
 	Uint16 width;
@@ -47,7 +53,7 @@ Uint8 vga_loadimg( img_t *dest, char *fname )
 	Uint8 *imgdata = (Uint8*)rd_find_data(fname);
 	/* verify header magic */
 	img_header_t *hd = (img_header_t*)imgdata;
-	if ( memcmp(&(hd->magic[0]),&img_magic[0],10) )
+	if ( memcmp(&(hd->magic[0]),&img_magic[0],24) )
 		return 1;
 	/* data retrieval */
 	imgdata += sizeof(img_header_t);
@@ -59,6 +65,7 @@ Uint8 vga_loadimg( img_t *dest, char *fname )
 	dest->data = imgdata;
 	dest->w = hd->width;
 	dest->h = hd->height;
+	dest->flags = hd->flags;
 	dest->depth = hd->depth;
 	return 0;
 }

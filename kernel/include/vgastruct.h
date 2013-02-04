@@ -8,6 +8,7 @@
 #define VGASTRUCT_H
 #include <types.h>
 #include <vgaloadimg.h>
+#include <vgaloadfnt.h>
 
 #define LAYOUT_LINEAR  0
 #define LAYOUT_PLANAR  1
@@ -39,8 +40,8 @@ typedef struct
 	void (*setpal)( Uint8* pal );
 	void (*getpal)( Uint8* pal );
 	/* font setting */
-	void (*setfont)( Uint8* fnt );
-	Uint8* (*getfont)( void );
+	void (*setfont)( fnt_t* fnt );
+	fnt_t* (*getfont)( void );
 	/* clear screen */
 	void (*clear)( void );
 	/* scrolling */

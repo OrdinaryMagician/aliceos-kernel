@@ -12,7 +12,7 @@
 
 /* mode 13h variables */
 Uint8 *m13h_mem = (Uint8*)0xA0000; /* memory area */
-Uint8 *m13h_fnt = NULL; /* font (currently empty) */
+fnt_t m13h_fnt; /* font (currently empty) */
 Uint16 m13h_cx = 0, m13h_cy = 0; /* cursor position for text */
 Uint8 m13h_cv = 1; /* cursor visibility for text */
 Uint16 m13h_fbw = 40, m13h_fbh = 25; /* framebuffer console columns and rows */
@@ -22,8 +22,8 @@ Uint8 m13h_attrs[3] = {7,0,0}; /* current text attributes */
 void m13h_setmode( void );
 void m13h_setpal( Uint8* pal );
 void m13h_getpal( Uint8* pal );
-void m13h_setfont( Uint8* fnt );
-Uint8* m13h_getfont( void );
+void m13h_setfont( fnt_t* fnt );
+fnt_t* m13h_getfont( void );
 void m13h_clear( void );
 void m13h_hscroll( Sint32 offset );
 void m13h_vscroll( Sint32 offset );
@@ -183,14 +183,14 @@ void m13h_getpal( Uint8* pal )
 	}
 }
 
-void m13h_setfont( Uint8* fnt )
+void m13h_setfont( fnt_t* fnt )
 {
-	m13h_fnt = fnt;
+	m13h_fnt = *fnt;
 }
 
-Uint8* m13h_getfont( void )
+fnt_t* m13h_getfont( void )
 {
-	return m13h_fnt;
+	return &m13h_fnt;
 }
 
 void m13h_clear( void )
@@ -308,26 +308,57 @@ void m13h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 
 void m13h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
 {
-	return;	/* not yet implemented */
+	Uint16 px, py;
+	Uint16 lx, ly;
+	Uint16 iw, ih;
+	iw = img->w;
+	ih = img->h;
+	px = x;
+	py = y;
+	lx = x+w;
+	ly = y+h;
+	Uint16 ix, iy;
+	ix = ox;
+	iy = oy;
+	while ( (px < lx) && (py < ly) )
+	{
+		m13h_mem[px+py*320] = img->data[ix+iy*iw]+palshift;
+		ix++;
+		if ( ix >= iw )
+			ix = ox;
+		px++;
+		if ( px >= lx )
+		{
+			ix = ox;
+			px = x;
+			py++;
+			iy++;
+		}
+		if ( iy >= ih )
+			iy = oy;
+	}
 }
 
 void m13h_drawchar( Uint16 x, Uint16 y, char c )
 {
 	Uint16 px, py;
 	Uint16 lx, ly;
+	Uint8 cw, ch;
+	cw = m13h_fnt.w;
+	ch = m13h_fnt.h;
 	px = x;
 	py = y;
-	lx = x+8;
-	ly = y+8;
+	lx = x+cw;
+	ly = y+ch;
 	Uint16 off = c*64;
 	Uint16 cx, cy;
 	cx = 0;
 	cy = 0;
 	while ( (px < lx) && (py < ly) )
 	{
-		m13h_mem[px+py*320] = m13h_fnt[off+cx+cy*8];
+		m13h_mem[px+py*320] = m13h_fnt.data[off+cx+cy*cw];
 		cx++;
-		if ( cx >= 8 )
+		if ( cx >= cw )
 		{
 			cx = 0;
 			cy++;
