@@ -9,6 +9,8 @@
 #include <vgamisc.h>
 #include <memops.h>
 #include <vgaloadimg.h>
+#include <port.h>
+#include <helpers.h>
 
 /* mode 13h variables */
 Uint8 *m13h_mem = (Uint8*)0xA0000; /* memory area */
@@ -350,7 +352,7 @@ void m13h_drawchar( Uint16 x, Uint16 y, char c )
 	py = y;
 	lx = x+cw;
 	ly = y+ch;
-	Uint16 off = c*64;
+	Uint16 off = c*cw*ch;
 	Uint16 cx, cy;
 	cx = 0;
 	cy = 0;
@@ -374,17 +376,53 @@ void m13h_drawchar( Uint16 x, Uint16 y, char c )
 
 void m13h_drawwchar( Uint16 x, Uint16 y, wchar c )
 {
-	return;	/* not yet implemented */
+	Uint16 px, py;
+	Uint16 lx, ly;
+	Uint8 cw, ch;
+	cw = m13h_fnt.w;
+	ch = m13h_fnt.h;
+	px = x;
+	py = y;
+	lx = x+cw;
+	ly = y+ch;
+	Uint32 off = c*cw*ch;
+	Uint16 cx, cy;
+	cx = 0;
+	cy = 0;
+	while ( (px < lx) && (py < ly) )
+	{
+		m13h_mem[px+py*320] = m13h_fnt.data[off+cx+cy*cw];
+		cx++;
+		if ( cx >= cw )
+		{
+			cx = 0;
+			cy++;
+		}
+		px++;
+		if ( px >= lx )
+		{
+			px = x;
+			py++;
+		}
+	}
 }
 
 void m13h_drawstring( Uint16 x, Uint16 y, char *s )
 {
-	return;	/* not yet implemented */
+	while ( *s )
+	{
+		m13h_drawchar(x,y,*(s++));
+		x += m13h_fnt.w;
+	}
 }
 
 void m13h_drawwstring( Uint16 x, Uint16 y, wchar *s )
 {
-	return;	/* not yet implemented */
+	while ( *s )
+	{
+		m13h_drawwchar(x,y,*(s++));
+		x += m13h_fnt.w;
+	}
 }
 
 void m13h_fbgetres( Uint16 *cols, Uint16 *rows )

@@ -43,8 +43,8 @@ typedef unsigned int wchar;
 
 /* booleans, don't really use it but just in case */
 
-#define _Bool bool;
-#define true 1;
-#define false 0;
+#define _Bool bool
+#define true 1
+#define false 0
 
 #endif

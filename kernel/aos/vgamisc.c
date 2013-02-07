@@ -5,6 +5,7 @@
 	Released under the MIT License.
 */
 #include <vgamisc.h>
+#include <port.h>
 
 /* plane switch */
 void vga_planeswitch( Uint8 p )

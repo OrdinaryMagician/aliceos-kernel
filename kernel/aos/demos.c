@@ -275,6 +275,10 @@ void demo_realgfx( void )
 	printk_s(SERIAL_A,"Running Mode 13h GFX demo\n");
 	mode_13h.setmode();
 	mode_13h.setpal(&alicepal256[0]);
+	fnt_t font8;
+	if ( vga_loadfnt(&font8,"fbfont8.fnt") )
+		BERP("error loading fbfont8.fnt");
+	mode_13h.setfont(&font8);
 	Uint16 x,y;
 	int i = 0;
 	/* 16 color set */
@@ -330,4 +334,7 @@ void demo_realgfx( void )
 		}
 	}
 	while ( (x < 288) && (y < 136) );
+	
+	/* draw a test string */
+	mode_13h.drawstring(8,184,"Test String");
 }

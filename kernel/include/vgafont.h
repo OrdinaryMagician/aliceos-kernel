@@ -7,7 +7,6 @@
 #ifndef VGAFONT_H
 #define VGAFONT_H
 #include <types.h>
-#include <vgatext.h>
 /* local copy of bios font */
 Uint8 biosfnt[4096];
 /* apply patches to the BIOS font, save a local copy */

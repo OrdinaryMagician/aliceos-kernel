@@ -5,6 +5,7 @@
 	Released under the MIT License.
 */
 #include <vgafont.h>
+#include <vgatext.h>
 
 /* apply patches to the BIOS font, save a local copy */
 void vga_initfont( void )

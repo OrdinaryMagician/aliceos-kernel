@@ -5,6 +5,7 @@
 	Released under the MIT License.
 */
 #include <vgareg.h>
+#include <port.h>
 
 /* set the value of a VGA register, return previous value */
 Uint8 vga_setreg( Uint16 port, Uint8 index, Uint8 value )

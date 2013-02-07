@@ -3,6 +3,8 @@
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
+	
+	[DEPRECATED]
 */
 #ifndef VGAMODESET_H
 #define VGAMODESET_H

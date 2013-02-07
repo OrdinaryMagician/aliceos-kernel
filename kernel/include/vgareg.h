@@ -5,7 +5,6 @@
 	Released under the MIT License.
 */
 #include <types.h>
-#include <port.h>
 
 #define VGA_AC_I 0x3C0 /* Attribute Controller Address */
 #define VGA_AC_W 0x3C0 /* Attribute Controller Write */
