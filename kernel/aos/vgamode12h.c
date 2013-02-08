@@ -13,7 +13,7 @@
 /* mode 12h variables */
 Uint8 *m12h_mem = (Uint8*)0xA0000; /* memory area */
 fnt_t *m12h_fnt = NULL; /* font (currently empty) */
-Uint16 m12h_cx = 0, m12h_cy = 0; /* cursor position for text */
+Sint32 m12h_cx = 0, m12h_cy = 0; /* cursor position for text */
 Uint8 m12h_cv = 1; /* cursor visibility for text */
 Uint16 m12h_fbw = 80, m12h_fbh = 60; /* framebuffer console columns and rows */
 Uint8 m12h_attrs[3] = {7,0,0}; /* current text attributes */
@@ -38,9 +38,9 @@ void m12h_drawwchar( Uint16 x, Uint16 y, wchar c );
 void m12h_drawstring( Uint16 x, Uint16 y, char *s );
 void m12h_drawwstring( Uint16 x, Uint16 y, wchar *s );
 void m12h_fbgetres( Uint16 *cols, Uint16 *rows );
-void m12h_fbgetcursor( Uint16 *col, Uint16 *row );
-void m12h_fbsetcursor( Uint16 col, Uint16 row );
-void m12h_fbmovecursor( Uint16 cols, Uint16 rows );
+void m12h_fbgetcursor( Sint32 *col, Sint32 *row );
+void m12h_fbsetcursor( Sint32 col, Sint32 row );
+void m12h_fbmovecursor( Sint32 cols, Sint32 rows );
 void m12h_fbcursorvis( Uint8 on );
 void m12h_fbputc( char c );
 void m12h_fbwputc( wchar c );
@@ -189,17 +189,17 @@ void m12h_fbgetres( Uint16 *cols, Uint16 *rows )
 	return;	/* not yet implemented */
 }
 
-void m12h_fbgetcursor( Uint16 *col, Uint16 *row )
+void m12h_fbgetcursor( Sint32 *col, Sint32 *row )
 {
 	return;	/* not yet implemented */
 }
 
-void m12h_fbsetcursor( Uint16 col, Uint16 row )
+void m12h_fbsetcursor( Sint32 col, Sint32 row )
 {
 	return;	/* not yet implemented */
 }
 
-void m12h_fbmovecursor( Uint16 cols, Uint16 rows )
+void m12h_fbmovecursor( Sint32 cols, Sint32 rows )
 {
 	return;	/* not yet implemented */
 }

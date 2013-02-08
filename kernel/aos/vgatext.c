@@ -252,10 +252,10 @@ void vga_putd( Sint32 val, Uint16 width, Uint8 zeropad )
 			val /= 10;
 		}
 		while ( (val != 0) && (i < width) );
-		while ( i < width )
-			c[i++] = (zeropad)?'0':' ';
 		if ( isneg )
 			vga_putc('-');
+		while ( i < width )
+			c[i++] = (zeropad)?'0':' ';
 		while ( i > 0 )
 			vga_putc(c[--i]);
 	}

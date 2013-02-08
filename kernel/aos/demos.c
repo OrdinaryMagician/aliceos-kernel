@@ -320,21 +320,116 @@ void demo_realgfx( void )
 	}
 	/* user palettes left out */
 	
-	/* draw some colorful noise (using the 64 color palette) */
-	x = 160;
+	/* draw some colorful noise (using each subpalette) */
+	x = 80;
 	y = 8;
 	do
 	{
-		mode_13h.putpixel(x,y,16+krand()%64);
+		mode_13h.putpixel(x,y,krand()%16);
 		x++;
-		if ( x >= 288 )
+		if ( x >= 144 )
 		{
-			x = 160;
+			x = 80;
 			y++;
 		}
 	}
-	while ( (x < 288) && (y < 136) );
+	while ( (x < 144) && (y < 24) );
+	x = 80;
+	y = 32;
+	do
+	{
+		mode_13h.putpixel(x,y,16+(krand()%64));
+		x++;
+		if ( x >= 144 )
+		{
+			x = 80;
+			y++;
+		}
+	}
+	while ( (x < 144) && (y < 96) );
+	while ( (x < 144) && (y < 24) );
+	x = 80;
+	y = 104;
+	do
+	{
+		mode_13h.putpixel(x,y,80+(krand()%64));
+		x++;
+		if ( x >= 144 )
+		{
+			x = 80;
+			y++;
+		}
+	}
+	while ( (x < 144) && (y < 168) );
+	/* draw some gradients using the 64 color subpalettes */
+	Uint32 val;
+	val = 0;
+	x = 152;
+	y = 8;
+	do
+	{
+		mode_13h.putpixel(x,y,16+(val/32));
+		val++;
+		x++;
+		if ( x >= 280 )
+		{
+			x = 152;
+			y++;
+			val = 0;
+		}
+	}
+	while ( (x < 280) && (y < 24) );
+	val = 0;
+	x = 152;
+	y = 24;
+	do
+	{
+		mode_13h.putpixel(x,y,16+(val/32)*4);
+		val++;
+		x++;
+		if ( x >= 280 )
+		{
+			x = 152;
+			y++;
+			val = 0;
+		}
+	}
+	while ( (x < 280) && (y < 40) );
+	val = 0;
+	x = 152;
+	y = 40;
+	do
+	{
+		mode_13h.putpixel(x,y,16+(val/32)*16);
+		val++;
+		x++;
+		if ( x >= 280 )
+		{
+			x = 152;
+			y++;
+			val = 0;
+		}
+	}
+	while ( (x < 280) && (y < 56) );
+	val = 0;
+	x = 152;
+	y = 56;
+	do
+	{
+		mode_13h.putpixel(x,y,80+(val/2));
+		val++;
+		x++;
+		if ( x >= 280 )
+		{
+			x = 152;
+			y++;
+			val = 0;
+		}
+	}
+	while ( (x < 280) && (y < 72) );
+	
 	
 	/* draw a test string */
-	mode_13h.drawstring(8,184,"Test String");
+	mode_13h.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	mode_13h.fbprintf("%[7%{-14,-2Mode 13h test");
 }

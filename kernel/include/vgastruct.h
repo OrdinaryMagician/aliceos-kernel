@@ -64,9 +64,9 @@ typedef struct
 	void (*drawwstring)( Uint16 x, Uint16 y, wchar *s );
 	/* framebuffer (console) management */
 	void (*fbgetres)( Uint16 *cols, Uint16 *rows );
-	void (*fbgetcursor)( Uint16 *col, Uint16 *row );
-	void (*fbsetcursor)( Uint16 col, Uint16 row );
-	void (*fbmovecursor)( Uint16 cols, Uint16 rows );
+	void (*fbgetcursor)( Sint32 *col, Sint32 *row );
+	void (*fbsetcursor)( Sint32 col, Sint32 row );
+	void (*fbmovecursor)( Sint32 cols, Sint32 rows );
 	void (*fbcursorvis)( Uint8 on );
 	void (*fbputc)( char c );
 	void (*fbwputc)( wchar c );
