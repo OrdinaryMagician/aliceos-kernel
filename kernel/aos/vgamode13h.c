@@ -471,7 +471,7 @@ void m13h_fbputc( char c )
 		m13h_cx = 0;
 		m13h_cy++;
 	}
-	if ( (m13h_cy >= m13h_fbh) && !(m13h_attrs[3]&EXATTR_NOSCR) )
+	if ( (m13h_cy >= m13h_fbh) && !(m13h_attrs[2]&EXATTR_NOSCR) )
 	{
 		m13h_vscroll(m13h_fnt.h*(-1));
 		m13h_cy--;
