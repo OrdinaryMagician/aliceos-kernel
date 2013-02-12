@@ -217,15 +217,16 @@ void m13h_hscroll( Sint32 offset )
 	{
 		for ( ln=0; ln<200; ln++ )
 		{
-			memmove(m13h_mem+(ln*320),m13h_mem+(ln*320)+offset,320-offset);
+			memmove(m13h_mem+(ln*320)+offset,m13h_mem+(ln*320),320-offset);
 			memset(m13h_mem+(ln*320),0x00,offset);
 		}
 	}
 	else
 	{
+		offset *= -1;
 		for ( ln=0; ln<200; ln++ )
 		{
-			memmove(m13h_mem+(ln*320)+offset,m13h_mem+(ln*320),320-offset);
+			memmove(m13h_mem+(ln*320),m13h_mem+(ln*320)+offset,320-offset);
 			memset(m13h_mem+(ln*320)+(320-offset),0x00,offset);
 		}
 	}
@@ -245,13 +246,14 @@ void m13h_vscroll( Sint32 offset )
 	/* vertical scrolling seems faster in theory */
 	if ( offset > 0 )
 	{
-		memmove(m13h_mem,m13h_mem+(offset*320),320*(200-offset));
+		memmove(m13h_mem+(offset*320),m13h_mem,320*(200-offset));
 		memset(m13h_mem,0x00,offset*320);
 	}
 	else
 	{
-		memmove(m13h_mem+(offset*320),m13h_mem,320*(200-offset));
-		memset(m13h_mem+(offset*320),0x00,offset*320);
+		offset *= -1;
+		memmove(m13h_mem,m13h_mem+(offset*320),320*(200-offset));
+		memset(m13h_mem+((200-offset)*320),0x00,offset*320);
 	}
 }
 
@@ -359,7 +361,33 @@ void m13h_drawchar( Uint16 x, Uint16 y, char c )
 	cy = 0;
 	while ( (px < lx) && (py < ly) )
 	{
-		m13h_mem[px+py*320] = (m13h_fnt.data[off+cx+cy*cw])?m13h_attrs[0]:m13h_attrs[1];
+		Uint8 c2;
+		Uint16 cx2, cy2;
+		Uint16 ctmp;
+		cx2 = cx;
+		cy2 = cy;
+		if ( m13h_attrs[2]&EXATTR_HFLIP )
+			cx2 = (cw-1)-cx;
+		if ( m13h_attrs[2]&EXATTR_VFLIP )
+			cy2 = (ch-1)-cy;
+		if ( m13h_attrs[2]&EXATTR_RCW90 )
+		{
+			ctmp = (cw-1)-cx2;
+			cx2 = cy2;
+			cy2 = ctmp;
+		}
+		if ( m13h_attrs[2]&EXATTR_RCCW90 )
+		{
+			ctmp = (ch-1)-cy2;
+			cy2 = cx2;
+			cx2 = ctmp;
+		}
+		c2 = m13h_attrs[1];
+		if ( m13h_fnt.data[off+cx2+cy2*cw] )
+			c2 = (m13h_attrs[2]&EXATTR_REVBG)?(255-c):m13h_attrs[0];
+		else if ( m13h_attrs[2]&EXATTR_MASKED )
+			c2 = m13h_mem[px+py*320];
+		m13h_mem[px+py*320] = (m13h_attrs[2]&EXATTR_NODW)?m13h_attrs[1]:c2;
 		cx++;
 		if ( cx >= cw )
 		{

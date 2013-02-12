@@ -121,9 +121,12 @@ Uint8 *memrev( Uint8 *dest, Uint32 count )
 {
 	Uint32 i = 0;
 	Uint32 j = count-1;
+	Uint8 tmp;
 	while ( i < j )
 	{
+		tmp = dest[i];
 		dest[i] = dest[j];
+		dest[j] = tmp;
 		i++;
 		j--;
 	}
@@ -135,9 +138,12 @@ Uint16 *memrevw( Uint16 *dest, Uint32 count )
 {
 	Uint32 i = 0;
 	Uint32 j = count-1;
+	Uint16 tmp;
 	while ( i < j )
 	{
+		tmp = dest[i];
 		dest[i] = dest[j];
+		dest[j] = tmp;
 		i++;
 		j--;
 	}

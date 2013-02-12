@@ -361,6 +361,7 @@ void demo_realgfx( void )
 		}
 	}
 	while ( (x < 144) && (y < 168) );
+
 	/* draw some gradients using the 64 color subpalettes */
 	Uint32 val;
 	val = 0;
@@ -428,8 +429,35 @@ void demo_realgfx( void )
 	}
 	while ( (x < 280) && (y < 72) );
 	
-	
-	/* draw a test string */
+	/* draw test strings */
+	mode_13h.fbsetattr(7,0,EXATTR_MASKED);
 	mode_13h.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 	mode_13h.fbprintf("%[7%{-14,-2Mode 13h test");
+	mode_13h.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
+	mode_13h.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
+	
+	/* draw some lines */
+	mode_13h.drawhline(0,0,320,8);
+	mode_13h.drawhline(1,1,318,7);
+	mode_13h.drawhline(2,2,316,15);
+	mode_13h.drawhline(3,3,314,7);
+	mode_13h.drawhline(4,4,312,8);
+	
+	mode_13h.drawhline(0,199,320,8);
+	mode_13h.drawhline(1,198,318,7);
+	mode_13h.drawhline(2,197,316,15);
+	mode_13h.drawhline(3,196,314,7);
+	mode_13h.drawhline(4,195,312,8);
+	
+	mode_13h.drawvline(0,0,200,8);
+	mode_13h.drawvline(1,1,198,7);
+	mode_13h.drawvline(2,2,196,15);
+	mode_13h.drawvline(3,3,194,7);
+	mode_13h.drawvline(4,4,192,8);
+	
+	mode_13h.drawvline(319,0,200,8);
+	mode_13h.drawvline(318,1,198,7);
+	mode_13h.drawvline(317,2,196,15);
+	mode_13h.drawvline(316,3,194,7);
+	mode_13h.drawvline(315,4,192,8);
 }
