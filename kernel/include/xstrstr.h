@@ -8,8 +8,7 @@
 */
 #ifndef XSTRSTR_H
 #define XSTRSTR_H
-#include <types.h>
-#include <strops.h>
+#include <sys/types.h>
 
 /* extended substring search */
 char *xstrstr_o(char *mainstr, char *searchstr, Uint32 startoff);

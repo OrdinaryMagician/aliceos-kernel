@@ -6,13 +6,7 @@
 */
 #ifndef BERP_H
 #define BERP_H
-#include <types.h>
-#include <helpers.h>
-#include <printk.h>
-#include <vgatext.h>
-#include <vgamodeset.h>
-#include <vgafont.h>
-#include <palettes.h>
+#include <sys/types.h>
 #define BERP(msg) berp(msg,__FILE__,__LINE__);
 extern void berp( const char *message, const char *file, Uint32 line );
 #endif

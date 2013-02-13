@@ -6,8 +6,7 @@
 */
 #ifndef MATH_H
 #define MATH_H
-#include <types.h>
-#include <berp.h>
+#include <sys/types.h>
 
 #define M_PI 3.141592653589793
 #define M_E 2.718281828459045

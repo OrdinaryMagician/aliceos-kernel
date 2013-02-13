@@ -1,18 +1,14 @@
 /*
-	printk.h : The almighty function.
+	printk.h : The almighty debug function.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
 #ifndef PRINTK_H
 #define PRINTK_H
-#include <types.h>
-#include <vgatext.h>
-#include <va_list.h>
-#include <serial.h>
+#include <sys/types.h>
 
-/* kernel's own personal printf */
-void printk( char *s, ... );
-void printk_s( Uint16 dev, char *s, ... );
+/* printing to a serial device, for debug purposes */
+void printk( Uint16 dev, char *s, ... );
 
 #endif

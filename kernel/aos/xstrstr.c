@@ -7,6 +7,7 @@
 	(This is a modified version that can be integrated into AOS)
 */
 #include <xstrstr.h>
+#include <strops.h>
 
 /* extended substring search */
 char *xstrstr_o(char *mainstr, char *searchstr, Uint32 startoff)

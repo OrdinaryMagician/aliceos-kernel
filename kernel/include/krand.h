@@ -6,7 +6,7 @@
 */
 #ifndef KRAND_H
 #define KRAND_H
-#include <types.h>
+#include <sys/types.h>
 
 /* get next random number */
 Uint32 krand();

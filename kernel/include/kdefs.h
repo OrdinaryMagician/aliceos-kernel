@@ -6,7 +6,6 @@
 */
 #ifndef KDEFS_H
 #define KDEFS_H
-#include <types.h>
 
 /* kernel stuff */
 const char *_kname;

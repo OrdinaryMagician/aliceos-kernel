@@ -6,7 +6,7 @@
 */
 #ifndef MEMOPS_H
 #define MEMOPS_H
-#include <types.h>
+#include <sys/types.h>
 
 /* copy byte blocks */
 Uint8 *memcpy( Uint8 *dest, const Uint8 *src, Uint32 count );

@@ -5,6 +5,7 @@
 	Released under the MIT License.
 */
 #include <math.h>
+#include <berp.h>
 
 /*
    at the moment, pretty much everything is undefined and will result in

@@ -6,8 +6,7 @@
 */
 #ifndef SERIAL_H
 #define SERIAL_H
-#include <types.h>
-#include <port.h>
+#include <sys/types.h>
 
 #define SERIAL_A 0x3F8
 #define SERIAL_B 0x2F8

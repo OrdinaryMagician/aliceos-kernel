@@ -5,6 +5,7 @@
 	Released under the MIT License.
 */
 #include <cmos.h>
+#include <sys/port.h>
 
 void cmos_dump( Uint8 *here )
 {

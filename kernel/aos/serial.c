@@ -5,6 +5,8 @@
 	Released under the MIT License.
 */
 #include <serial.h>
+#include <sys/port.h>
+#include <sys/helpers.h>
 
 void serial_on( Uint16 dev )
 {

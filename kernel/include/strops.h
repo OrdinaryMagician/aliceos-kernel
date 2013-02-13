@@ -6,7 +6,7 @@
 */
 #ifndef STROPS_H
 #define STROPS_H
-#include <types.h>
+#include <sys/types.h>
 
 /* return lowercase of a character */
 char chrlcaps( char c );
