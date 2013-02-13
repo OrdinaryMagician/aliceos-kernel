@@ -385,7 +385,7 @@ void m13h_drawchar( Uint16 x, Uint16 y, char c )
 		c2 = m13h_attrs[1];
 		if ( m13h_fnt.data[off+cx2+cy2*cw] )
 			c2 = (m13h_attrs[2]&EXATTR_REVBG)?(255-c):m13h_attrs[0];
-		else if ( m13h_attrs[2]&EXATTR_MASKED )
+		else if ( m13h_attrs[2]&EXATTR_MASKED && !m13h_attrs[1] )
 			c2 = m13h_mem[px+py*320];
 		m13h_mem[px+py*320] = (m13h_attrs[2]&EXATTR_NODW)?m13h_attrs[1]:c2;
 		cx++;

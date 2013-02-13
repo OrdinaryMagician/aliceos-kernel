@@ -212,7 +212,47 @@ void m12h_clear( void )
 
 void m12h_hscroll( Sint32 offset )
 {
-	return;	/* unsupported because it's too much of a mess */
+	offset /= 8;	/* deal with it */
+	Uint8 p;
+	/* noscroll */
+	if ( !offset )
+		return;
+	/* scrolling 80 blocks? that's just like clearing the screen */
+	if ( abs(offset) >= 80 )
+	{
+		for ( p=0; p<4; p++ )
+		{
+			vga_planeswitch(p);
+			memset(m12h_mem,0x00,38400);
+		}
+		return;
+	}
+	Uint16 ln;
+	if ( offset > 0 )
+	{
+		for ( p=0; p<4; p++ )
+		{
+			vga_planeswitch(p);
+			for ( ln=0; ln<480; ln++ )
+			{
+				memmove(m12h_mem+(ln*80)+offset,m12h_mem+(ln*80),80-offset);
+				memset(m12h_mem+(ln*80),0x00,offset);
+			}
+		}
+	}
+	else
+	{
+		offset *= -1;
+		for ( p=0; p<4; p++ )
+		{
+			vga_planeswitch(p);
+			for ( ln=0; ln<480; ln++ )
+			{
+				memmove(m12h_mem+(ln*80),m12h_mem+(ln*80)+offset,80-offset);
+				memset(m12h_mem+(ln*80)+(80-offset),0x00,offset);
+			}
+		}
+	}
 }
 
 void m12h_vscroll( Sint32 offset )
@@ -237,18 +277,18 @@ void m12h_vscroll( Sint32 offset )
 		for ( p=0; p<4; p++ )
 		{
 			vga_planeswitch(p);
-			memmove(m12h_mem+(offset*640),m12h_mem,640*(480-offset));
-			memset(m12h_mem,0x00,offset*640);
+			memmove(m12h_mem+(offset*80),m12h_mem,80*(480-offset));
+			memset(m12h_mem,0x00,offset*80);
 		}
 	}
 	else
 	{
+		offset *= -1;
 		for ( p=0; p<4; p++ )
 		{
 			vga_planeswitch(p);
-			offset *= -1;
-			memmove(m12h_mem,m12h_mem+(offset*640),640*(480-offset));
-			memset(m12h_mem+((480-offset)*640),0x00,offset*640);
+			memmove(m12h_mem,m12h_mem+(offset*80),80*(480-offset));
+			memset(m12h_mem+((480-offset)*80),0x00,offset*80);
 		}
 	}
 }
@@ -257,7 +297,7 @@ void m12h_putpixel( Uint16 x, Uint16 y, Uint8 c )
 {
 	x %= 640;
 	y %= 480;
-	c &= 0x0F;
+	c &= 15;
 	Uint8 p;
 	Uint16 coord = (x+y*640)/8;
 	Uint8 off = 7-(x%8);
@@ -290,11 +330,20 @@ void m12h_putpixelsp( Uint16 x, Uint16 y, Uint8 c )
 {
 	x %= 640;
 	y %= 480;
-	c &= 0x01;
+	c &= 1;
 	Uint16 coord = (x+y*640)/8;
 	Uint8 off = 7-(x%8);
 	m12h_mem[coord] &= ~(1<<off);
 	m12h_mem[coord] |= c<<off;
+}
+
+Uint8 m12h_getpixelsp( Uint16 x, Uint16 y )
+{
+	x %= 640;
+	y %= 480;
+	Uint16 coord = (x+y*640)/8;
+	Uint8 off = 7-(x%8);
+	return (m12h_mem[coord]>>off)&1;
 }
 
 void m12h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
@@ -445,14 +494,12 @@ void m12h_drawchar( Uint16 x, Uint16 y, char c )
 			c2 = m12h_attrs[1];
 			if ( m12h_fnt.data[off+cx2+cy2*cw] )
 				c2 = (m12h_attrs[2]&EXATTR_REVBG)?(15-c):m12h_attrs[0];
-			else if ( m12h_attrs[2]&EXATTR_MASKED )
+			else if ( m12h_attrs[2]&EXATTR_MASKED && !m12h_attrs[1] )
 			{
-				c2 = m12h_getpixel(px,py);
-			vga_planeswitch(p);
+				c2 = m12h_getpixelsp(px,py);
+				c2 <<=p;
 			}
-			if ( m12h_attrs[2]&EXATTR_NODW )
-				c2 = m12h_attrs[1];
-			m12h_putpixelsp(px,py,(c2>>p)&1);
+			m12h_putpixelsp(px,py,(((m12h_attrs[2]&EXATTR_NODW)?m12h_attrs[1]:c2)>>p)&1);
 			cx++;
 			if ( cx >= cw )
 			{
