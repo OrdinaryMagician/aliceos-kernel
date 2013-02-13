@@ -139,6 +139,34 @@ void demo_crapgfx( void )
 	if ( loadimg(&aliceimg2,"alice3h.img") )
 		BERP("error loading alice3h.img");
 	mode_12h.drawimg(&aliceimg2,336,80,0,0,80,50,0);
+	
+	/* drawing a character map would be fine too */
+	mode_12h.fbsetattr(15,0,EXATTR_MASKED);
+	x = 8;
+	y = 288;
+	for ( i=0; i<128; i++ )
+	{
+		mode_12h.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 136 )
+		{
+			x = 8;
+			y+=8;
+		}
+	}
+	x = 144;
+	y = 288;
+	for ( i=128; i<256; i++ )
+	{
+		mode_12h.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 272 )
+		{
+			x = 144;
+			y+=8;
+		}
+	}
+	
 
 	/* draw test strings */
 	mode_12h.fbsetattr(7,0,EXATTR_MASKED);
