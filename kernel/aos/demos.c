@@ -19,10 +19,12 @@
 #include <berp.h>
 #include <vgaplanar16.h>
 #include <vgamode13h.h>
+#include <vgamode12h.h>
 
 demo_t demos[DEMO_COUNT] =
 {
 	{"blockgfx", "80x50 16-color block graphics demo", demo_blockgfx},
+	{"crapgfx", "basic mode 12h demo", demo_crapgfx},
 	{"realgfx", "basic mode 13h demo", demo_realgfx},
 	{"img16", "mode 13h alice16 color set image", demo_a16gfx},
 	{"img64", "mode 13h alice64 color set image", demo_a64gfx},
@@ -267,6 +269,91 @@ void demo_cfullgfx( void )
 	mode_13h.setmode();
 	mode_13h.setpal(&aliceimg.pal[0]);
 	mode_13h.drawimg(&aliceimg,0,0,0,0,320,200,0);
+}
+
+/* mode 12h graphics demo */
+void demo_crapgfx( void )
+{
+	printk_s(SERIAL_A,"Running Mode 12h GFX demo\n");
+	mode_12h.setmode();
+	mode_12h.setpal(&alicepal[0]);
+	fnt_t font8;
+	if ( vga_loadfnt(&font8,"fbfont8.fnt") )
+		BERP("error loading fbfont8.fnt");
+	mode_12h.setfont(&font8);
+	Uint16 x,y;
+	int i = 0;
+	/* 16 color set */
+	x = 8;
+	y = 8;
+	while ( i < 16 )
+	{
+		mode_12h.drawrect(x,y,32,32,i);
+		x+=32;
+		if ( !((++i)%8) )
+		{
+			x=8;
+			y+=32;
+		}
+	}
+	
+	/* draw some colorful noise */
+	x = 272;
+	y = 8;
+	do
+	{
+		mode_12h.putpixel(x,y,krand()%16);
+		x++;
+		if ( x >= 528 )
+		{
+			x = 272;
+			y++;
+		}
+	}
+	while ( (x < 528) && (y < 72) );
+	
+	/* there's enough space to draw this */
+	img_t aliceimg;
+	if ( vga_loadimg(&aliceimg,"alice13h_16.img") )
+		BERP("error loading alice13h_16.img");
+	mode_12h.drawimg(&aliceimg,8,80,0,0,320,200,0);
+	
+	img_t aliceimg2;
+	if ( vga_loadimg(&aliceimg2,"alice3h.img") )
+		BERP("error loading alice3h.img");
+	mode_12h.drawimg(&aliceimg2,336,80,0,0,80,50,0);
+
+	/* draw test strings */
+	mode_12h.fbsetattr(7,0,EXATTR_MASKED);
+	mode_12h.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	mode_12h.fbprintf("%[7%{-14,-2Mode 12h test");
+	mode_12h.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
+	mode_12h.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
+	
+	/* draw some lines */
+	mode_12h.drawhline(0,0,640,8);
+	mode_12h.drawhline(1,1,638,7);
+	mode_12h.drawhline(2,2,636,15);
+	mode_12h.drawhline(3,3,634,7);
+	mode_12h.drawhline(4,4,632,8);
+	
+	mode_12h.drawhline(0,479,640,8);
+	mode_12h.drawhline(1,478,638,7);
+	mode_12h.drawhline(2,477,636,15);
+	mode_12h.drawhline(3,476,634,7);
+	mode_12h.drawhline(4,475,632,8);
+	
+	mode_12h.drawvline(0,0,480,8);
+	mode_12h.drawvline(1,1,478,7);
+	mode_12h.drawvline(2,2,476,15);
+	mode_12h.drawvline(3,3,474,7);
+	mode_12h.drawvline(4,4,472,8);
+	
+	mode_12h.drawvline(639,0,480,8);
+	mode_12h.drawvline(638,1,478,7);
+	mode_12h.drawvline(637,2,476,15);
+	mode_12h.drawvline(636,3,474,7);
+	mode_12h.drawvline(635,4,472,8);
 }
 
 /* mode 13h graphics demo */
