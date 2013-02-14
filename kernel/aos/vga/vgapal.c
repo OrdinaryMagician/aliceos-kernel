@@ -1,10 +1,10 @@
 /*
-	palettes.c : Colors!
+	vgapal.c : Colors!
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/palettes.h>
+#include <vga/vgapal.h>
 
 /* Alice standard 16 color palette, reduced from 8-bit to DAC's 6-bit */
 Uint8 alicepal[48] =

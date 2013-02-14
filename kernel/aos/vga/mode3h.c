@@ -10,8 +10,7 @@
 #include <vga/mode13h.h>
 #include <vga/vgareg.h>
 #include <vga/vgamisc.h>
-#include <vga/font.h>
-#include <vga/loadimg.h>
+#include <vga/vgafont.h>
 #include <memops.h>
 
 /* mode 3h variables */

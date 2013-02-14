@@ -11,6 +11,10 @@ SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/sys/*.c))
 SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/sys/*.s))
 SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/vga/*.c))
 SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/vga/*.s))
+SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/video/*.c))
+SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/video/*.s))
+SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/bga/*.c))
+SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/bga/*.s))
 .PHONY: clean
 aliceos-kernel: $(SOURCES) link
 clean:

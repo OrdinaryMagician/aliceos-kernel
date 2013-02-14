@@ -1,11 +1,11 @@
 /*
-	font.h : BIOS font functions and patching.
+	vgafont.h : BIOS font functions and patching.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef FONT_H
-#define FONT_H
+#ifndef VGAFONT_H
+#define VGAFONT_H
 #include <sys/types.h>
 /* local copy of bios font */
 Uint8 biosfnt[4096];

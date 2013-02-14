@@ -15,8 +15,8 @@
 #include <strops.h>
 #include <demos.h>
 #include <fs/ramdisk.h>
-#include <vga/palettes.h>
-#include <vga/font.h>
+#include <vga/vgapal.h>
+#include <vga/vgafont.h>
 #include <vga/mode3h.h>
 
 Uint32 *initial_esp;

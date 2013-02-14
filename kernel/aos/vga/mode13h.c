@@ -7,7 +7,6 @@
 #include <sys/port.h>
 #include <sys/helpers.h>
 #include <sys/va_list.h>
-#include <vga/loadimg.h>
 #include <vga/mode13h.h>
 #include <vga/vgareg.h>
 #include <vga/vgamisc.h>
@@ -384,7 +383,7 @@ void m13h_drawchar( Uint16 x, Uint16 y, char c )
 		}
 		c2 = m13h_attrs[1];
 		if ( m13h_fnt.data[off+cx2+cy2*cw] )
-			c2 = (m13h_attrs[2]&EXATTR_REVBG)?(255-c):m13h_attrs[0];
+			c2 = (m13h_attrs[2]&EXATTR_REVBG)?(255-m13h_mem[px+py*320]):m13h_attrs[0];
 		else if ( m13h_attrs[2]&EXATTR_MASKED && !m13h_attrs[1] )
 			c2 = m13h_mem[px+py*320];
 		m13h_mem[px+py*320] = (m13h_attrs[2]&EXATTR_NODW)?m13h_attrs[1]:c2;

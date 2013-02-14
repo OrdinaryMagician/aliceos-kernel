@@ -13,11 +13,15 @@
 #include <serial.h>
 #include <berp.h>
 #include <fs/ramdisk.h>
-#include <vga/palettes.h>
-#include <vga/font.h>
+#include <vga/vgapal.h>
+#include <vga/vgafont.h>
 #include <vga/mode13h.h>
 #include <vga/mode12h.h>
 #include <vga/mode3h.h>
+#include <video/loadimg.h>
+#include <video/loadfnt.h>
+#include <video/vidtypes.h>
+#include <bga/bga.h>
 
 demo_t demos[DEMO_COUNT] =
 {
@@ -25,6 +29,7 @@ demo_t demos[DEMO_COUNT] =
 	{"crapgfx", "basic mode 12h demo", demo_crapgfx},
 	{"realgfx", "basic mode 13h demo", demo_realgfx},
 	{"cmap", "text mode character map", demo_cmap},
+	{"bochsgfx", "Bochs/QEMU BGA demo", demo_bochsgfx},
 };
 
 /* list available demos */
@@ -86,6 +91,32 @@ void demo_blockgfx( void )
 	mode_3h.drawhline(0,49,80,7);
 	mode_3h.drawvline(0,0,50,7);
 	mode_3h.drawvline(79,0,50,7);
+}
+
+/* Bochs/QEMU BGA demo */
+void demo_bochsgfx( void )
+{
+	printk(SERIAL_A,"Running BGA GFX demo\n");
+	if ( bga_drv.setmode(320,240) )
+		BERP("could not set video mode");
+	fnt_t font8;
+	if ( loadfnt(&font8,"fbfont8.fnt") )
+		BERP("error loading fbfont8.fnt");
+	bga_drv.setfont(&font8);
+	
+	color_t px = {0,255,0,0};
+	bga_drv.drawrect(8,8,32,32,px);
+	
+	Uint32 i = 0;
+	for ( i=0; i<(16*1024*1024); i++ )
+	{
+		bga_drv.mem[i] = 255;
+		if ( mode_13h.mem[32] == 255 )
+		{
+			printk(SERIAL_A,"%u\n",i);
+			break;
+		}
+	}
 }
 
 /* mode 12h graphics demo */

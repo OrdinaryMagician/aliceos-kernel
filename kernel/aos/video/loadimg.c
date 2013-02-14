@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/loadimg.h>
+#include <video/loadimg.h>
 #include <fs/ramdisk.h>
 #include <memops.h>
 

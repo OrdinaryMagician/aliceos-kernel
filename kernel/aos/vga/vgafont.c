@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/font.h>
+#include <vga/vgafont.h>
 #include <vga/vgareg.h>
 #include <memops.h>
 

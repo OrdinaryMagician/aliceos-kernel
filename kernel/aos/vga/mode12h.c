@@ -10,7 +10,6 @@
 #include <vga/mode12h.h>
 #include <vga/vgareg.h>
 #include <vga/vgamisc.h>
-#include <vga/loadimg.h>
 #include <memops.h>
 
 /* mode 12h variables */
