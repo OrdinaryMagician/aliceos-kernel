@@ -8,7 +8,7 @@
 
 /* kernel stuff */
 const char *_kname = "AliceOS kernel";
-const char *_kver_fmt = "%d.%d.%d-%s";
+const char *_kver_fmt = "%d.%d.%d%s";
 const char *_kver_maj = "0";
 const char *_kver_min = "0";
 const char *_kver_low = "2";
