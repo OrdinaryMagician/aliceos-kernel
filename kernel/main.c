@@ -32,7 +32,6 @@ void init_console( void )
 	/* initialize some vga settings */
 	mode_3h.setmode();
 	initfont();
-	mode_3h.setpal(&alicepal[0]);
 
 	/* pretty screen fill */
 	mode_3h.clear();

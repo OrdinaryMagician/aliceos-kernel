@@ -105,7 +105,10 @@ void demo_bochsgfx( void )
 	fnt_t font8;
 	if ( loadfnt(&font8,"fbfont8.fnt") )
 		BERP("error loading fbfont8.fnt");
-	bga_drv.setfont(&font8);
+	fnt_t font16;
+	if ( loadfnt(&font16,"fbfont16.fnt") )
+		BERP("error loading fbfont16.fnt");
+	bga_drv.setfont(&font16);
 	bga_drv.setpal(&alicepalfc[0]);
 	
 	Uint16 x,y;
@@ -152,6 +155,9 @@ void demo_bochsgfx( void )
 
 	/* drawing a character map would be fine too */
 	bga_drv.fbsetattr(15,0,EXATTR_MASKED);
+	
+	/* 8x16 font */
+	bga_drv.setfont(&font16);
 	x = 8;
 	y = 288;
 	for ( i=0; i<128; i++ )
@@ -160,8 +166,8 @@ void demo_bochsgfx( void )
 		x+=8;
 		if ( x >= 136 )
 		{
-			x = 8;
-			y+=8;
+			x=8;
+			y+=16;
 		}
 	}
 	x = 144;
@@ -172,68 +178,107 @@ void demo_bochsgfx( void )
 		x+=8;
 		if ( x >= 272 )
 		{
-			x = 144;
+			x=144;
+			y+=16;
+		}
+	}
+	/* 8x8 font */
+	bga_drv.setfont(&font8);
+	x = 8;
+	y = 424;
+	for ( i=0; i<128; i++ )
+	{
+		bga_drv.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 136 )
+		{
+			x=8;
+			y+=8;
+		}
+	}
+	x = 144;
+	y = 424;
+	for ( i=128; i<256; i++ )
+	{
+		bga_drv.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 272 )
+		{
+			x=144;
 			y+=8;
 		}
 	}
 
 	/* let's put some cute gradients */
 	x = 8;
-	y = 368;
+	y = 504;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_RED(x-8));
 		x++;
 	}
 	x = 8;
-	y = 376;
+	y = 512;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_GREEN(x-8));
 		x++;
 	}
 	x = 8;
-	y = 384;
+	y = 520;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_YELLOW(x-8));
 		x++;
 	}
 	x = 8;
-	y = 392;
+	y = 528;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_BLUE(x-8));
 		x++;
 	}
 	x = 8;
-	y = 400;
+	y = 536;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_MAGENTA(x-8));
 		x++;
 	}
 	x = 8;
-	y = 408;
+	y = 544;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_CYAN(x-8));
 		x++;
 	}
 	x = 8;
-	y = 416;
+	y = 552;
 	while ( x < 264 )
 	{
 		bga_drv.drawvline(x,y,8,COLOR_GRAY(x-8));
 		x++;
 	}
 	
-	/* big noisebox */
+	/* noise blocks */
 	x = 8;
-	y = 432;
-	while ( (x < 264 ) && (y < 688 ) )
+	y = 568;
+	while ( (x < 264 ) && (y < 632 ) )
 	{
 		bga_drv.putpixel(x,y,COLOR_RANDOM);
+		x++;
+		if ( x >= 264 )
+		{
+			x = 8;
+			y++;
+		}
+	}
+	x = 8;
+	y = 640;
+	while ( (x < 264 ) && (y < 704 ) )
+	{
+		Uint8 rval = krand();
+		bga_drv.putpixel(x,y,COLOR_GRAY(rval));
 		x++;
 		if ( x >= 264 )
 		{
@@ -253,10 +298,31 @@ void demo_bochsgfx( void )
 	bga_drv.drawimg(&aliceimg4,280,288,0,0,480,480);
 	bga_drv.drawimg(&aliceimg3,536,8,0,40,640,400);
 
-	/* draw test strings */
+	/* draw test strings with 8x16 font */
+	bga_drv.setfont(&font16);
 	bga_drv.fbsetattr(7,0,EXATTR_MASKED);
-	bga_drv.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
-	bga_drv.fbprintf("%[7%{-18,-2BGA graphics test");
+
+	/* colored texts */
+	x = 768;
+	y = 416;
+	char *str = "The quick brown fox jumps over the lazy dog.";
+	for ( i=0; i<8; i++ )
+	{
+		bga_drv.fbsetattr(i,0,EXATTR_MASKED);
+		bga_drv.drawstring(x+2,y+2,str);
+		bga_drv.fbsetattr(i,0,EXATTR_MASKED);
+		bga_drv.drawstring(x+1,y+1,str);
+		bga_drv.fbsetattr(i+8,0,EXATTR_MASKED);
+		bga_drv.drawstring(x,y,str);
+		y += 20;
+	}
+	
+	/* version and stuff */
+	bga_drv.fbprintf("%[E%{2,-3%s %s%{2,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	bga_drv.fbprintf("%[7%{-19,-2BGA graphics test");
+
+	/* rotation doesn't really work with non-square fonts, so change the font back to 8x8 */
+	bga_drv.setfont(&font8);
 	bga_drv.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
 	bga_drv.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
 
