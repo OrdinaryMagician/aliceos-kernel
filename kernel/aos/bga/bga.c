@@ -364,7 +364,7 @@ void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w
 	{
 		/* not supported */
 		bga_drawrect(x,y,w,h,COLOR_RED(255));
-		return;	
+		return;
 	}
 	Uint16 px, py;
 	Uint16 lx, ly;

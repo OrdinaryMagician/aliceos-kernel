@@ -312,6 +312,12 @@ void m13h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 
 void m13h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
 {
+	if ( (img->depth < IMG_DP_16COL) || (img->depth > IMG_DP_256COL) )
+	{
+		/* not supported */
+		m13h_drawrect(x,y,w,h,1);
+		return;
+	}
 	Uint16 px, py;
 	Uint16 lx, ly;
 	Uint16 iw, ih;
@@ -530,7 +536,7 @@ Uint32 m13h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 	if ( ((*s >= '0') && (*s <= '9')) || ((*s >= 'A') && (*s <= 'F')) || (*s == '-') )
 	{
 		if ( *s == '-' )
-			col = ((col&0x0F)<<4)|ofg;
+			col = ((col&0x0F)<<4)|obg;
 		else
 			col = ((col&0x0F)<<4)|(((*s <= '9')?(*s-'0'):((*s+0xA)-'A'))&0x0F);
 		s++;
@@ -538,7 +544,7 @@ Uint32 m13h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 	if ( ((*s >= '0') && (*s <= '9')) || ((*s >= 'A') && (*s <= 'F')) || (*s == '-') )
 	{
 		if ( *s == '-' )
-			col = ((col&0x0F)<<4)|obg;
+			col = ((col&0x0F)<<4)|ofg;
 		else
 			col = ((col&0x0F)<<4)|(((*s <= '9')?(*s-'0'):((*s+0xA)-'A'))&0x0F);
 		s++;
