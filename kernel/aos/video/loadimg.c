@@ -28,15 +28,6 @@ typedef struct
 } img_header_t;
 /* header is followed by palette data (if available), then image data */
 
-/* flag definitions (most reserved) */
-#define FLAG_NOPAL   1 /* no embedded palette */
-#define FLAG_RESV2   2
-#define FLAG_RESV3   4
-#define FLAG_RESV4   8
-#define FLAG_RESV5  16
-#define FLAG_RESV6  32
-#define FLAG_RESV7  64
-#define FLAG_RESV8 128
 
 /* load an image from the ramdisk */
 Uint8 loadimg( img_t *dest, char *fname )
@@ -56,7 +47,7 @@ Uint8 loadimg( img_t *dest, char *fname )
 		return 1;
 	/* data retrieval */
 	imgdata += sizeof(img_header_t);
-	if ( !(hd->flags&FLAG_NOPAL) )
+	if ( !(hd->flags&IMG_FL_NOPAL) )
 	{
 		dest->pal = imgdata;
 		imgdata += hd->palsz;

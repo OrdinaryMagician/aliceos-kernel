@@ -1,10 +1,24 @@
 #!/bin/bash
-if [[ ! -e initramfs-aliceos.img ]]; then
-  echo "you haven't created an initial ramdisk"
-else
-  if [[ ! -n $* ]]; then
-    qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img
+
+if [[ ! -e vmaliceos ]]; then
+  echo -n "building aliceos kernel... "
+  make >/dev/null
+  if [ $? != 0 ]; then
+    echo "error"
+    exit 1
   else
-    qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img -append "$@"
+    echo "done"
   fi
+fi
+
+if [[ ! -e initramfs-aliceos.img ]]; then
+  ./makerd
+fi
+
+if [[ ! -n $* ]]; then
+  echo "running aliceos with no commandline"
+  qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img
+else
+  echo "running aliceos with commandline \"$@\""
+  qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img -append "$@"
 fi

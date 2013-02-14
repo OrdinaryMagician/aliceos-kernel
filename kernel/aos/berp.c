@@ -13,7 +13,7 @@
 extern void berp( const char *message, const char *file, Uint32 line )
 {
 	/* PANIC HARD */
-	printk(SERIAL_A,"%[07ERR INST %s,%u (%s) BERP\n",file,line,message);
+	printk(SERIAL_A,"\033[0;31mERR INST %s,%u (%s) BERP\033[0m\n",file,line,message);
 	/* stahp */
 	asm volatile ("cli");
 	asm volatile ("hlt");

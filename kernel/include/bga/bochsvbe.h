@@ -7,56 +7,58 @@
 #ifndef BOCHSVBE_H
 #define BOCHSVBE_H
 
-#define VBE_DISPI_TOTAL_VIDEO_MEMORY_MB  16
-#define VBE_DISPI_4BPP_PLANE_SHIFT       22
+#define BGA_MEM_MB 0x10
+#define BGA_MEM_KB 0x4000
+#define BGA_MEM    0x1000000
 
-#define VBE_DISPI_BANK_ADDRESS           0xA0000
-#define VBE_DISPI_BANK_SIZE_KB           64
+#define BGA_4BPP_SHIFT 22
 
-#define VBE_DISPI_MAX_XRES               2560
-#define VBE_DISPI_MAX_YRES               1600
-#define VBE_DISPI_MAX_BPP                32
+#define BGA_BANK_ADDR 0xA0000
+#define BGA_BANK_SIZE 0x10000
+#define BGA_BANK_MAX  250
 
-#define VBE_DISPI_IOPORT_INDEX           0x01CE
-#define VBE_DISPI_IOPORT_DATA            0x01CF
+#define BGA_LFB_ADDR 0xE0000000
 
-#define VBE_DISPI_INDEX_ID               0x0
-#define VBE_DISPI_INDEX_XRES             0x1
-#define VBE_DISPI_INDEX_YRES             0x2
-#define VBE_DISPI_INDEX_BPP              0x3
-#define VBE_DISPI_INDEX_ENABLE           0x4
-#define VBE_DISPI_INDEX_BANK             0x5
-#define VBE_DISPI_INDEX_VIRT_WIDTH       0x6
-#define VBE_DISPI_INDEX_VIRT_HEIGHT      0x7
-#define VBE_DISPI_INDEX_X_OFFSET         0x8
-#define VBE_DISPI_INDEX_Y_OFFSET         0x9
-#define VBE_DISPI_INDEX_VIDEO_MEMORY_64K 0xa
+#define BGA_MAX_XRES 2560
+#define BGA_MAX_YRES 1600
+#define BGA_MAX_BPP  32
 
-#define VBE_DISPI_ID0                    0xB0C0
-#define VBE_DISPI_ID1                    0xB0C1
-#define VBE_DISPI_ID2                    0xB0C2
-#define VBE_DISPI_ID3                    0xB0C3
-#define VBE_DISPI_ID4                    0xB0C4
-#define VBE_DISPI_ID5                    0xB0C5
-#define VBE_DISPI_ID6                    0xB0C6
+#define BGA_PORT 0x01CE
 
-#define VBE_DISPI_BPP_4                  0x04
-#define VBE_DISPI_BPP_8                  0x08
-#define VBE_DISPI_BPP_15                 0x0F
-#define VBE_DISPI_BPP_16                 0x10
-#define VBE_DISPI_BPP_24                 0x18
-#define VBE_DISPI_BPP_32                 0x20
+#define BGA_REG_VER     0x00
+#define BGA_REG_XRES    0x01
+#define BGA_REG_YRES    0x02
+#define BGA_REG_BPP     0x03
+#define BGA_REG_ENABLE  0x04
+#define BGA_REG_BANK    0x05
+#define BGA_REG_VXRES   0x06
+#define BGA_REG_VYRES   0x07
+#define BGA_REG_XOFF    0x08
+#define BGA_REG_YOFF    0x09
+#define BGA_REG_VMEM64K 0x0A
 
-#define VBE_DISPI_DISABLED               0x00
-#define VBE_DISPI_ENABLED                0x01
-#define VBE_DISPI_GETCAPS                0x02
-#define VBE_DISPI_8BIT_DAC               0x20
-#define VBE_DISPI_LFB_ENABLED            0x40
-#define VBE_DISPI_NOCLEARMEM             0x80
+#define BGA_VER0 0xB0C0
+#define BGA_VER1 0xB0C1
+#define BGA_VER2 0xB0C2
+#define BGA_VER3 0xB0C3
+#define BGA_VER4 0xB0C4
+#define BGA_VER5 0xB0C5
+#define BGA_VER6 0xB0C6
+#define BGA_VERL BGA_VER0
+#define BGA_VERH BGA_VER6
 
-#define VBE_DISPI_LFB_PHYSICAL_ADDRESS   0xE0000000
+#define BGA_BPP_4  0x04
+#define BGA_BPP_8  0x08
+#define BGA_BPP_15 0x0F
+#define BGA_BPP_16 0x10
+#define BGA_BPP_24 0x18
+#define BGA_BPP_32 0x20
 
-#define VBE_DISPI_TOTAL_VIDEO_MEMORY_KB  (VBE_DISPI_TOTAL_VIDEO_MEMORY_MB * 1024)
-#define VBE_DISPI_TOTAL_VIDEO_MEMORY_BYTES (VBE_DISPI_TOTAL_VIDEO_MEMORY_KB * 1024)
+#define BGA_DISABLED   0x00
+#define BGA_ENABLED    0x01
+#define BGA_GETCAPS    0x02
+#define BGA_8BITDAC    0x20
+#define BGA_LFBENABLED 0x40
+#define BGA_NOCLEARMEM 0x80
 
 #endif

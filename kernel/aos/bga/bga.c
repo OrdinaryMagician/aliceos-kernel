@@ -22,6 +22,29 @@ Uint8 bga_cv = 1; /* cursor visibility for text */
 Uint16 bga_fbw = 0, bga_fbh = 0; /* framebuffer console columns and rows */
 Uint8 bga_attrs[3] = {7,0,0}; /* current text attributes */
 color_t bga_fbpal[16];	/* 16-color palette for framebuffer text */
+Uint8 cbank = 0;
+
+/* some necessary functions */
+void setbgareg(Uint8 reg, Uint16 val)
+{
+	outport_w(BGA_PORT,reg);
+	outport_w(BGA_PORT+1,val);
+}
+
+Uint16 getbgareg(Uint8 reg)
+{
+	outport_w(BGA_PORT,reg);
+	return inport_w(BGA_PORT+1);
+}
+
+void bga_bankswitch(Uint8 bank)
+{
+	bank %= 250;
+	if ( bank == cbank )
+		return;
+	setbgareg(BGA_REG_BANK,bank);
+	cbank = bank;
+}
 
 /* bga function prototypes */
 Uint8 bga_setmode( Uint16 w, Uint16 h );
@@ -100,41 +123,34 @@ bga_driver_t bga_drv =
 Uint8 bga_setmode( Uint16 w, Uint16 h )
 {
 	/* check if we can ACTUALLY use BGA */
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ID);
-	Uint16 id = inport_w(VBE_DISPI_IOPORT_DATA);
-	if ( (id < VBE_DISPI_ID0) || (id > VBE_DISPI_ID5) )
+	Uint16 id = getbgareg(BGA_REG_VER);
+	/* we should allow only minimum version 3, but QEMU always reports 0 */
+	if ( (id < BGA_VERL) || (id > BGA_VERH) )
 		return 1;
 	/* VBE must be disabled before changing mode */
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ENABLE);
-	outport_w(VBE_DISPI_IOPORT_DATA,VBE_DISPI_DISABLED);
+	setbgareg(BGA_REG_ENABLE,BGA_DISABLED);
 	/* parameter validation */
-	if ( w > VBE_DISPI_MAX_XRES )
+	if ( w > BGA_MAX_XRES )
 		return 2;
-	if ( h > VBE_DISPI_MAX_YRES )
+	if ( h > BGA_MAX_YRES )
 		return 2;
 	/* actual mode setting */
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_XRES);
-	outport_w(VBE_DISPI_IOPORT_DATA,w);
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_YRES);
-	outport_w(VBE_DISPI_IOPORT_DATA,h);
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_BPP);
-	outport_w(VBE_DISPI_IOPORT_DATA,VBE_DISPI_BPP_32);	/* always 32BPP */
+	setbgareg(BGA_REG_XRES,w);
+	setbgareg(BGA_REG_YRES,h);
+	setbgareg(BGA_REG_BPP,BGA_BPP_32);	/* always 32BPP */
 	/* no virtual resolution and offset thingies will be used */
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_VIRT_WIDTH);
-	outport_w(VBE_DISPI_IOPORT_DATA,w);
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_VIRT_HEIGHT);
-	outport_w(VBE_DISPI_IOPORT_DATA,h);
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_X_OFFSET);
-	outport_w(VBE_DISPI_IOPORT_DATA,0);
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_Y_OFFSET);
-	outport_w(VBE_DISPI_IOPORT_DATA,0);
+	setbgareg(BGA_REG_VXRES,w);
+	setbgareg(BGA_REG_VXRES,h);
+	setbgareg(BGA_REG_XOFF,0);
+	setbgareg(BGA_REG_YOFF,0);
 	/* re-enable */
-	outport_w(VBE_DISPI_IOPORT_INDEX,VBE_DISPI_INDEX_ENABLE);
-	outport_w(VBE_DISPI_IOPORT_DATA,VBE_DISPI_ENABLED|VBE_DISPI_LFB_ENABLED);
-	bga_mem = (Uint8*)VBE_DISPI_BANK_ADDRESS;
+	setbgareg(BGA_REG_ENABLE,BGA_ENABLED);
+	bga_mem = (Uint8*)BGA_BANK_ADDR;
 	bga_drv.w = w;
 	bga_drv.h = h;
-	bga_drv.mem = (Uint8*)VBE_DISPI_BANK_ADDRESS;
+	bga_drv.mem = (Uint8*)BGA_BANK_ADDR;
+	setbgareg(BGA_REG_BANK,0);
+	cbank = 0;
 	return 0;
 }
 
@@ -156,13 +172,8 @@ void bga_setfont( fnt_t* fnt )
 {
 	bga_fnt = *fnt;
 	/* update framebuffer res */
-	while ( bga_fbw*bga_fnt.w < bga_drv.w )
-		bga_fbw += bga_fnt.w;
-	bga_fbw -= bga_fnt.w;
-	while ( bga_fbh*bga_fnt.h < bga_drv.h )
-		bga_fbh += bga_fnt.h;
-	bga_fbh -= bga_fnt.h;
-	/* I know there's an easier way, but I can't figure it out right now */
+	bga_fbw = bga_drv.w/bga_fnt.w;
+	bga_fbh = bga_drv.h/bga_fnt.h;
 }
 
 fnt_t* bga_getfont( void )
@@ -172,7 +183,39 @@ fnt_t* bga_getfont( void )
 
 void bga_clear( void )
 {
-	memset(bga_mem,0,bga_drv.w*bga_drv.h*4);
+	Uint8 nbank = 0;
+	while ( nbank < BGA_BANK_MAX )
+	{
+		if ( nbank*BGA_BANK_SIZE >= (bga_drv.w*bga_drv.h*4) )
+			break;
+		nbank++;
+	}
+	Uint8 i;
+	for ( i=0; i<nbank; i++ )
+	{
+		bga_bankswitch(i);
+		memset(bga_mem,0,BGA_BANK_SIZE);
+	}
+}
+
+void bga_linescr( Uint16 y, Sint32 o )
+{
+	Uint16 x;
+	if ( o < 0 )
+	{
+		o *= -1;
+		for ( x=o; x<bga_drv.w; x++ )
+			bga_putpixel(x-o,y,bga_getpixel(x,y));
+		for ( x=bga_drv.w-o; x<bga_drv.w; x++ )
+			bga_putpixel(x,y,color(0,0,0,0));
+	}
+	else
+	{
+		for ( x=0; x<bga_drv.w-o; x++ )
+			bga_putpixel(x,y,bga_getpixel(x+o,y));
+		for ( x=o; x<bga_drv.w-o; x++ )
+			bga_putpixel(x,y,color(0,0,0,0));
+	}
 }
 
 void bga_hscroll( Sint32 offset )
@@ -180,29 +223,35 @@ void bga_hscroll( Sint32 offset )
 	/* noscroll */
 	if ( !offset )
 		return;
-	/* scrolling beyond screen width? that's just like clearing the screen */
+	/* scrolling offscreen? that's just like clearing it */
 	if ( abs(offset) >= bga_drv.w )
 	{
-		memset(bga_mem,0,bga_drv.w*bga_drv.h*4);
+		bga_clear();
 		return;
 	}
-	Uint16 ln;
-	if ( offset > 0 )
+	Uint16 y;
+	/* due to the way I'm using banks, this will be slow */
+	for ( y=0; y<bga_drv.h; y++ )
+		bga_linescr(y,offset);
+}
+
+void bga_rowscr( Uint16 x, Sint32 o )
+{
+	Uint16 y;
+	if ( o < 0 )
 	{
-		for ( ln=0; ln<bga_drv.h; ln++ )
-		{
-			memmove(bga_mem+(ln*bga_drv.w*4)+offset,bga_mem+(ln*bga_drv.w*4),bga_drv.w*4-offset);
-			memset(bga_mem+(ln*bga_drv.w*4),0x00,offset);
-		}
+		o *= -1;
+		for ( y=o; y<bga_drv.h; y++ )
+			bga_putpixel(x,y-o,bga_getpixel(x,y));
+		for ( y=bga_drv.h-o; y<bga_drv.h; y++ )
+			bga_putpixel(x,y,color(0,0,0,0));
 	}
 	else
 	{
-		offset *= -1;
-		for ( ln=0; ln<bga_drv.h; ln++ )
-		{
-			memmove(bga_mem+(ln*bga_drv.w*4),bga_mem+(ln*bga_drv.w*4)+offset,bga_drv.w*4-offset);
-			memset(bga_mem+(ln*bga_drv.w*4)+(bga_drv.w*4-offset),0x00,offset);
-		}
+		for ( y=0; y<bga_drv.h-o; y++ )
+			bga_putpixel(x,y,bga_getpixel(x,y+o));
+		for ( y=o; y<bga_drv.h-o; y++ )
+			bga_putpixel(x,y,color(0,0,0,0));
 	}
 }
 
@@ -211,41 +260,46 @@ void bga_vscroll( Sint32 offset )
 	/* noscroll */
 	if ( !offset )
 		return;
-	/* scrolling beyond screen height? that's just like clearing the screen */
+	/* scrolling offscreen? that's just like clearing it */
 	if ( abs(offset) >= bga_drv.h )
 	{
-		memset(bga_mem,0,bga_drv.w*bga_drv.h*4);
+		bga_clear();
 		return;
 	}
-	/* vertical scrolling seems faster in theory */
-	if ( offset > 0 )
-	{
-		memmove(bga_mem+(offset*320),bga_mem,320*(200-offset));
-		memset(bga_mem,0x00,offset*320);
-	}
-	else
-	{
-		offset *= -1;
-		memmove(bga_mem,bga_mem+(offset*320),320*(200-offset));
-		memset(bga_mem+((200-offset)*320),0x00,offset*320);
-	}
+	Uint16 x;
+	/* this is going to be EVEN SLOWER than horizontal scrolling */
+	/* better grab some popcorn */
+	for ( x=0; x<bga_drv.w; x++ )
+		bga_rowscr(x,offset);
 }
 
 void bga_putpixel( Uint16 x, Uint16 y, color_t c )
 {
-	bga_mem[x+y*bga_drv.w*4] = c.a;
-	bga_mem[x+y*bga_drv.w*4+1] = c.b;
-	bga_mem[x+y*bga_drv.w*4+2] = c.g;
-	bga_mem[x+y*bga_drv.w*4+3] = c.r;
+	/* find what bank we need to be on */
+	Uint32 off = (x+y*bga_drv.w)*4;
+	Uint8 bank = off/BGA_BANK_SIZE;
+	off -= bank*BGA_BANK_SIZE;
+	bga_bankswitch(bank);
+	/* color values are in reverse order */
+	bga_mem[off] = c.b;
+	bga_mem[off+1] = c.g;
+	bga_mem[off+2] = c.r;
+	bga_mem[off+3] = c.a;
 }
 
 color_t bga_getpixel( Uint16 x, Uint16 y )
 {
+	/* find what bank we need to be on */
+	Uint32 off = (x+y*bga_drv.w)*4;
+	Uint8 bank = off/BGA_BANK_SIZE;
+	off -= bank*BGA_BANK_SIZE;
+	bga_bankswitch(bank);
+	/* color values are in reverse order */
 	color_t got;
-	got.a = bga_mem[x+y*bga_drv.w*4];
-	got.b = bga_mem[x+y*bga_drv.w*4+1];
-	got.g = bga_mem[x+y*bga_drv.w*4+2];
-	got.r = bga_mem[x+y*bga_drv.w*4+3];
+	got.b = bga_mem[off];
+	got.g = bga_mem[off+1];
+	got.r = bga_mem[off+2];
+	got.a = bga_mem[off+3];
 	return got;
 }
 
@@ -291,33 +345,66 @@ void bga_drawvline( Uint16 x, Uint16 y, Uint16 l, color_t c )
 
 void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h )
 {
+	Uint8 sk = 4;
+	Uint8 usealpha = 1;
+	Uint8 idx = 0;
+	if ( (img->depth == IMG_DP_16COL) || (img->depth == IMG_DP_256COL) )
+	{
+		idx = 1;
+		sk = 1;
+		usealpha = 0;
+	}
+	else if ( img->depth == IMG_DP_RGB8 )
+	{
+		idx = 0;
+		sk = 3;
+		usealpha = 0;
+	}
+	else if ( img->depth != IMG_DP_RGBA8 )
+	{
+		/* not supported */
+		bga_drawrect(x,y,w,h,COLOR_RED(255));
+		return;	
+	}
 	Uint16 px, py;
 	Uint16 lx, ly;
 	Uint16 iw, ih;
-	iw = img->w;
+	iw = img->w*sk;
 	ih = img->h;
 	px = x;
 	py = y;
 	lx = x+w;
 	ly = y+h;
 	Uint16 ix, iy;
-	ix = ox;
+	ix = (ox*sk);
 	iy = oy;
 	color_t imgc;
 	while ( (px < lx) && (py < ly) )
 	{
-		imgc.a = img->data[ix+iy*iw];
-		imgc.r = img->data[ix+iy*iw+1];
-		imgc.g = img->data[ix+iy*iw+2];
-		imgc.b = img->data[ix+iy*iw+3];
+		if ( idx )
+		{
+			imgc.r = bga_fbpal[img->data[ix+iy*iw]&15].r;
+			imgc.g = bga_fbpal[img->data[ix+iy*iw]&15].g;
+			imgc.b = bga_fbpal[img->data[ix+iy*iw]&15].b;
+			imgc.a = bga_fbpal[img->data[ix+iy*iw]&15].a;
+			if ( img->data[ix+iy*iw] == 255 )
+				imgc = bga_getpixel(px,py);
+		}
+		else
+		{
+			imgc.r = img->data[ix+iy*iw];
+			imgc.g = img->data[ix+iy*iw+1];
+			imgc.b = img->data[ix+iy*iw+2];
+			imgc.a = (usealpha)?img->data[ix+iy*iw+3]:255;
+		}
 		bga_putpixel(px,py,imgc);
-		ix++;
-		if ( ix >= iw )
-			ix = ox;
+		ix+=sk;
+		if ( ix >= (iw*sk) )
+			ix = (ox*sk);
 		px++;
 		if ( px >= lx )
 		{
-			ix = ox;
+			ix = (ox*sk);
 			px = x;
 			py++;
 			iy++;
@@ -519,7 +606,7 @@ Uint32 bga_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 	if ( ((*s >= '0') && (*s <= '9')) || ((*s >= 'A') && (*s <= 'F')) || (*s == '-') )
 	{
 		if ( *s == '-' )
-			col = ((col&0x0F)<<4)|ofg;
+			col = ((col&0x0F)<<4)|obg;
 		else
 			col = ((col&0x0F)<<4)|(((*s <= '9')?(*s-'0'):((*s+0xA)-'A'))&0x0F);
 		s++;
@@ -527,7 +614,7 @@ Uint32 bga_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 	if ( ((*s >= '0') && (*s <= '9')) || ((*s >= 'A') && (*s <= 'F')) || (*s == '-') )
 	{
 		if ( *s == '-' )
-			col = ((col&0x0F)<<4)|obg;
+			col = ((col&0x0F)<<4)|ofg;
 		else
 			col = ((col&0x0F)<<4)|(((*s <= '9')?(*s-'0'):((*s+0xA)-'A'))&0x0F);
 		s++;

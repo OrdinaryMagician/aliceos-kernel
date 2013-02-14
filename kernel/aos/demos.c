@@ -21,6 +21,7 @@
 #include <video/loadimg.h>
 #include <video/loadfnt.h>
 #include <video/vidtypes.h>
+#include <video/fcpalette.h>
 #include <bga/bga.h>
 
 demo_t demos[DEMO_COUNT] =
@@ -96,27 +97,193 @@ void demo_blockgfx( void )
 /* Bochs/QEMU BGA demo */
 void demo_bochsgfx( void )
 {
+	Uint16 rx = 1280;
+	Uint16 ry = 800;
 	printk(SERIAL_A,"Running BGA GFX demo\n");
-	if ( bga_drv.setmode(320,240) )
+	if ( bga_drv.setmode(rx,ry) )
 		BERP("could not set video mode");
 	fnt_t font8;
 	if ( loadfnt(&font8,"fbfont8.fnt") )
 		BERP("error loading fbfont8.fnt");
 	bga_drv.setfont(&font8);
+	bga_drv.setpal(&alicepalfc[0]);
 	
-	color_t px = {0,255,0,0};
-	bga_drv.drawrect(8,8,32,32,px);
-	
-	Uint32 i = 0;
-	for ( i=0; i<(16*1024*1024); i++ )
+	Uint16 x,y;
+	int i = 0;
+	/* 16 color set */
+	x = 8;
+	y = 8;
+	while ( i < 16 )
 	{
-		bga_drv.mem[i] = 255;
-		if ( mode_13h.mem[32] == 255 )
+		bga_drv.drawrect(x,y,32,32,alicepalfc[i]);
+		x+=32;
+		if ( !((++i)%8) )
 		{
-			printk(SERIAL_A,"%u\n",i);
-			break;
+			x=8;
+			y+=32;
 		}
 	}
+	
+	/* draw some colorful noise */
+	x = 272;
+	y = 8;
+	do
+	{
+		bga_drv.putpixel(x,y,alicepalfc[krand()&15]);
+		x++;
+		if ( x >= 528 )
+		{
+			x = 272;
+			y++;
+		}
+	}
+	while ( (x < 528) && (y < 72) );
+
+	/* there's enough space to draw this */
+	img_t aliceimg;
+	if ( loadimg(&aliceimg,"alice13h_16.img") )
+		BERP("error loading alice13h_16.img");
+	bga_drv.drawimg(&aliceimg,8,80,0,0,320,200);
+
+	img_t aliceimg2;
+	if ( loadimg(&aliceimg2,"alice3h.img") )
+		BERP("error loading alice3h.img");
+	bga_drv.drawimg(&aliceimg2,336,80,0,0,80,50);
+
+	/* drawing a character map would be fine too */
+	bga_drv.fbsetattr(15,0,EXATTR_MASKED);
+	x = 8;
+	y = 288;
+	for ( i=0; i<128; i++ )
+	{
+		bga_drv.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 136 )
+		{
+			x = 8;
+			y+=8;
+		}
+	}
+	x = 144;
+	y = 288;
+	for ( i=128; i<256; i++ )
+	{
+		bga_drv.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 272 )
+		{
+			x = 144;
+			y+=8;
+		}
+	}
+
+	/* let's put some cute gradients */
+	x = 8;
+	y = 368;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_RED(x-8));
+		x++;
+	}
+	x = 8;
+	y = 376;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_GREEN(x-8));
+		x++;
+	}
+	x = 8;
+	y = 384;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_YELLOW(x-8));
+		x++;
+	}
+	x = 8;
+	y = 392;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_BLUE(x-8));
+		x++;
+	}
+	x = 8;
+	y = 400;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_MAGENTA(x-8));
+		x++;
+	}
+	x = 8;
+	y = 408;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_CYAN(x-8));
+		x++;
+	}
+	x = 8;
+	y = 416;
+	while ( x < 264 )
+	{
+		bga_drv.drawvline(x,y,8,COLOR_GRAY(x-8));
+		x++;
+	}
+	
+	/* big noisebox */
+	x = 8;
+	y = 432;
+	while ( (x < 264 ) && (y < 688 ) )
+	{
+		bga_drv.putpixel(x,y,COLOR_RANDOM);
+		x++;
+		if ( x >= 264 )
+		{
+			x = 8;
+			y++;
+		}
+	}
+
+	/* big 24bpp images (NEW) */
+	img_t aliceimg3;
+	if ( loadimg(&aliceimg3,"alice24bpp.img") )
+		BERP("error loading alice24bpp.img");
+	img_t aliceimg4;
+	if ( loadimg(&aliceimg4,"mascot24bpp.img") )
+		BERP("error loading mascot24bpp.img");
+	/* draw the bottom image first */
+	bga_drv.drawimg(&aliceimg4,280,288,0,0,480,480);
+	bga_drv.drawimg(&aliceimg3,536,8,0,40,640,400);
+
+	/* draw test strings */
+	bga_drv.fbsetattr(7,0,EXATTR_MASKED);
+	bga_drv.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	bga_drv.fbprintf("%[7%{-18,-2BGA graphics test");
+	bga_drv.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
+	bga_drv.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
+
+	/* draw some lines */
+	bga_drv.drawhline(0,0,rx,COLOR_GRAY(160));
+	bga_drv.drawhline(1,1,rx-2,COLOR_GRAY(255));
+	bga_drv.drawhline(2,2,rx-4,COLOR_GRAY(128));
+	bga_drv.drawhline(3,3,rx-6,COLOR_GRAY(96));
+	bga_drv.drawhline(4,4,rx-8,COLOR_GRAY(64));
+
+	bga_drv.drawhline(0,ry-1,rx,COLOR_GRAY(160));
+	bga_drv.drawhline(1,ry-2,rx-2,COLOR_GRAY(255));
+	bga_drv.drawhline(2,ry-3,rx-4,COLOR_GRAY(128));
+	bga_drv.drawhline(3,ry-4,rx-6,COLOR_GRAY(96));
+	bga_drv.drawhline(4,ry-5,rx-8,COLOR_GRAY(64));
+
+	bga_drv.drawvline(0,0,ry,COLOR_GRAY(160));
+	bga_drv.drawvline(1,1,ry-2,COLOR_GRAY(255));
+	bga_drv.drawvline(2,2,ry-4,COLOR_GRAY(128));
+	bga_drv.drawvline(3,3,ry-6,COLOR_GRAY(96));
+	bga_drv.drawvline(4,4,ry-8,COLOR_GRAY(64));
+
+	bga_drv.drawvline(rx-1,0,ry,COLOR_GRAY(160));
+	bga_drv.drawvline(rx-2,1,ry-2,COLOR_GRAY(255));
+	bga_drv.drawvline(rx-3,2,ry-4,COLOR_GRAY(128));
+	bga_drv.drawvline(rx-4,3,ry-6,COLOR_GRAY(96));
+	bga_drv.drawvline(rx-5,4,ry-8,COLOR_GRAY(64));
 }
 
 /* mode 12h graphics demo */
@@ -198,7 +365,6 @@ void demo_crapgfx( void )
 		}
 	}
 	
-
 	/* draw test strings */
 	mode_12h.fbsetattr(7,0,EXATTR_MASKED);
 	mode_12h.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);

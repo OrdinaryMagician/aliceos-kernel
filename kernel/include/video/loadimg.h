@@ -7,6 +7,24 @@
 #ifndef LOADIMG_H
 #define LOADIMG_H
 #include <sys/types.h>
+/* depth types */
+#define IMG_DP_MONO   0 /* 8bpp monochrome */
+#define IMG_DP_4COL   1 /* 8bpp 4 color */
+#define IMG_DP_16COL  2 /* 8bpp 16 color */
+#define IMG_DP_256COL 3 /* 8bpp 256 color */
+#define IMG_DP_RGB8   4 /* 24bpp RGB */
+#define IMG_DP_RGBA8  5 /* 32bpp RGBA */
+
+/* flag definitions (most reserved) */
+#define IMG_FL_NOPAL   1 /* no embedded palette */
+#define IMG_FL_RESV2   2
+#define IMG_FL_RESV3   4
+#define IMG_FL_RESV4   8
+#define IMG_FL_RESV5  16
+#define IMG_FL_RESV6  32
+#define IMG_FL_RESV7  64
+#define IMG_FL_RESV8 128
+
 /* struct for an image */
 typedef struct
 {

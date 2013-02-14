@@ -1,7 +1,37 @@
 #!/bin/bash
+
 if [[ ! -e ramdisk/bin/mkrd ]]; then
-  pushd ramdisk
-  make
-  popd
+  pushd ramdisk >/dev/null
+  echo -n "building mkrd... "
+  make >/dev/null
+  if [ $? != 0 ]; then
+    echo "error"
+    exit 1
+  else
+    echo "done"
+  fi
+  popd >/dev/null
 fi
-ramdisk/bin/mkrd initramfs-aliceos.img rdcontents/*
+
+mkdir -p rdtemp
+pushd rdtemp >/dev/null
+echo -n "extracting rdcontents... "
+tar xf ../rdcontents.tar.xz
+if [ $? != 0 ]; then
+  echo "error"
+  exit 1
+else
+  echo "done"
+fi
+popd >/dev/null
+
+echo -n "creating ramdisk... "
+ramdisk/bin/mkrd initramfs-aliceos.img rdtemp/*
+if [ $? != 0 ]; then
+  echo "error"
+  exit 1
+else
+  echo "done"
+fi
+
+rm -rf rdtemp

@@ -11,6 +11,11 @@
 #include <video/loadimg.h>
 #include <video/loadfnt.h>
 
+/* some necessary functions */
+void setbgareg(Uint8 reg, Uint16 val);
+Uint16 getbgareg(Uint8 reg);
+void bga_bankswitch(Uint8 bank);
+
 /* extended attributes for text drawing */
 #define EXATTR_MASKED  1 /* Zero brightness pixels of font (and background) are transparent when drawing (NOTE: Will break cursor drawing) */
 #define EXATTR_HFLIP   2 /* Mirror characters horizontally */
