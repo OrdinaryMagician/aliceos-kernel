@@ -18,6 +18,7 @@
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 #include <vga/mode3h.h>
+#include <desc/tables.h>
 
 Uint32 *initial_esp;
 
@@ -63,6 +64,7 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	initial_esp = esp;
 
 	/* start stuff */
+	init_descriptor_tables();
 	init_serial();
 	init_console();
 	draw_header();

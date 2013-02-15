@@ -750,7 +750,7 @@ void m12h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 		Sint32 i = 0;
 		do
 		{
-			c[i++] = '0'-val%10;
+			c[i++] = '0'+val%10;
 			val /= 10;
 		}
 		while ( val != 0 );
@@ -784,7 +784,7 @@ void m12h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 		Sint32 i = 0;
 		do
 		{
-			c[i++] = '0'-val%10;
+			c[i++] = '0'+val%10;
 			val /= 10;
 		}
 		while ( val != 0 );
