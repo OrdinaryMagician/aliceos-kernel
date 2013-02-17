@@ -7,10 +7,10 @@
 #include <sys/types.h>
 #include <sys/helpers.h>
 #include <kdefs.h>
-#include <multiboot.h>
+#include <sys/multiboot.h>
 #include <printk.h>
-#include <serial.h>
-#include <cmos.h>
+#include <sys/serial.h>
+#include <sys/cmos.h>
 #include <berp.h>
 #include <strops.h>
 #include <demos.h>
@@ -18,7 +18,7 @@
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 #include <vga/mode3h.h>
-#include <desc/tables.h>
+#include <sys/desc_tables.h>
 
 Uint32 *initial_esp;
 

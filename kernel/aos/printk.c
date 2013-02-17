@@ -6,7 +6,7 @@
 */
 #include <printk.h>
 #include <sys/va_list.h>
-#include <serial.h>
+#include <sys/serial.h>
 
 /* behind-the-scenes function */
 void vaprintk( Uint16 dev, char *s, va_list args )

@@ -54,6 +54,6 @@ void OHSHI( char *mesg, regs_t regs )
 		mode_3h.fbprintf("%u",regs.eflags>>(31-i)&1);
 	mode_3h.fbprintf("]");
 	/* heh */
-	mode_3h.fbprintf("%[F%{1,-3Computer will now halt and catch fire, have a good day.");
+	mode_3h.fbprintf("%[F%{1,-3Computer will now halt and catch fire, have a nice day! :)");
 	asm volatile("hlt");
 }

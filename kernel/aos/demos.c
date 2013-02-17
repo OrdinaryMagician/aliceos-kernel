@@ -10,7 +10,7 @@
 #include <kdefs.h>
 #include <krand.h>
 #include <printk.h>
-#include <serial.h>
+#include <sys/serial.h>
 #include <berp.h>
 #include <fs/ramdisk.h>
 #include <vga/vgapal.h>

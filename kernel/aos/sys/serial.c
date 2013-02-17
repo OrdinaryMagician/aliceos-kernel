@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <serial.h>
+#include <sys/serial.h>
 #include <sys/port.h>
 #include <sys/helpers.h>
 

@@ -1,5 +1,5 @@
 /*
-	isr_handler.c : Common interrupt handler.
+	isr_handler.c : Common interrupt service routine handler.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.

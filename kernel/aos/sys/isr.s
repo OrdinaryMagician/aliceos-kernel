@@ -1,4 +1,4 @@
-; isr.s : Interrupt handlers.
+; isr.s : Interrupt service routines.
 ; (C)2012-2013 Marisa Kirisame, UnSX Team.
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.

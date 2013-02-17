@@ -1,10 +1,13 @@
 /*
-	tables.h : definitions for descriptor tables.
+	desc_tables.c : definitions for descriptor tables.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <desc/tables.h>
+#include <sys/desc_tables.h>
+#include <sys/isr.h>
+#include <sys/irq.h>
+#include <sys/pic.h>
 #include <memops.h>
 
 /* Write the actual GDT pointer */
@@ -67,10 +70,12 @@ void init_idt( void )
 {
 	idt_ptr.limit = sizeof(idt_entry_t)*256-1;
 	idt_ptr.base = (Uint32)&idt_ents;
-	
 	/* we have to zero everything out */
 	memset((Uint8*)&idt_ents[0],0,sizeof(idt_entry_t)*256);
-	/* lots of stuff */
+	/* remap PICs so IRQs use IDT gates 32-47 */
+	pic_remap(32,40);
+	/* setting up gates */
+	/* ISRs */
 	idt_setgate(0,(Uint32)isr0,0x08,0x8E);
 	idt_setgate(1,(Uint32)isr1,0x08,0x8E);
 	idt_setgate(2,(Uint32)isr2,0x08,0x8E);
@@ -103,6 +108,23 @@ void init_idt( void )
 	idt_setgate(29,(Uint32)isr29,0x08,0x8E);
 	idt_setgate(30,(Uint32)isr30,0x08,0x8E);
 	idt_setgate(31,(Uint32)isr31,0x08,0x8E);
+	/* IRQs */
+	idt_setgate(32,(Uint32)irq0,0x08,0x8E);
+	idt_setgate(33,(Uint32)irq1,0x08,0x8E);
+	idt_setgate(34,(Uint32)irq2,0x08,0x8E);
+	idt_setgate(35,(Uint32)irq3,0x08,0x8E);
+	idt_setgate(36,(Uint32)irq4,0x08,0x8E);
+	idt_setgate(37,(Uint32)irq5,0x08,0x8E);
+	idt_setgate(38,(Uint32)irq6,0x08,0x8E);
+	idt_setgate(39,(Uint32)irq7,0x08,0x8E);
+	idt_setgate(40,(Uint32)irq8,0x08,0x8E);
+	idt_setgate(41,(Uint32)irq9,0x08,0x8E);
+	idt_setgate(42,(Uint32)irq10,0x08,0x8E);
+	idt_setgate(43,(Uint32)irq11,0x08,0x8E);
+	idt_setgate(44,(Uint32)irq12,0x08,0x8E);
+	idt_setgate(45,(Uint32)irq13,0x08,0x8E);
+	idt_setgate(46,(Uint32)irq14,0x08,0x8E);
+	idt_setgate(47,(Uint32)irq15,0x08,0x8E);
 	/* flush~ */
 	idt_flush((Uint32)&idt_ptr);
 }

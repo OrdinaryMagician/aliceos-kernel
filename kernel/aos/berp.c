@@ -7,7 +7,7 @@
 #include <berp.h>
 #include <sys/helpers.h>
 #include <printk.h>
-#include <serial.h>
+#include <sys/serial.h>
 #include <vga/mode3h.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>

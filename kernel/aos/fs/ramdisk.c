@@ -9,7 +9,7 @@
 #include <strops.h>
 #include <printk.h>
 #include <berp.h>
-#include <serial.h>
+#include <sys/serial.h>
 
 Uint8 aosrd_hdmagic[4] = {0xFE,0xED,0xCA,0xFE};
 Uint8 aosrd_trmagic[4] = {0xAD,0xEA,0xDB,0xED};
