@@ -7,8 +7,10 @@
 #include <sys/desc_tables.h>
 #include <sys/isr.h>
 #include <sys/irq.h>
-#include <sys/pic.h>
+#include <sys/port.h>
 #include <memops.h>
+#include <sys/helpers.h>
+#include <sys/irq_handlers.h>
 
 /* Write the actual GDT pointer */
 extern void gdt_flush( Uint32 ptr );
@@ -36,6 +38,7 @@ void init_descriptor_tables( void )
 	init_gdt();
 	/* interrupt descriptor table */
 	init_idt();
+	asm volatile("sti");
 }
 
 /* start up GDT */
@@ -72,8 +75,19 @@ void init_idt( void )
 	idt_ptr.base = (Uint32)&idt_ents;
 	/* we have to zero everything out */
 	memset((Uint8*)&idt_ents[0],0,sizeof(idt_entry_t)*256);
+	irq_clearhandlers();
 	/* remap PICs so IRQs use IDT gates 32-47 */
-	pic_remap(32,40);
+	/* this code will look confusing, sorry for the inconvenience */
+	outport_b(0x20,0x11);
+	outport_b(0xA0,0x11);
+	outport_b(0x21,0x20);
+	outport_b(0xA1,0x28);
+	outport_b(0x21,0x04);
+	outport_b(0xA1,0x02);
+	outport_b(0x21,0x01);
+	outport_b(0xA1,0x01);
+	outport_b(0x21,0x00);
+	outport_b(0xA1,0x00);
 	/* setting up gates */
 	/* ISRs */
 	idt_setgate(0,(Uint32)isr0,0x08,0x8E);

@@ -19,6 +19,7 @@
 #include <vga/vgafont.h>
 #include <vga/mode3h.h>
 #include <sys/desc_tables.h>
+#include <sys/timer.h>
 
 Uint32 *initial_esp;
 
@@ -68,6 +69,7 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	init_serial();
 	init_console();
 	draw_header();
+	init_timer(TIMER_HZ);
 	if ( mboot->mods_count )
 		init_ramdisk(*((Uint32*)mboot->mods_addr),*(Uint32*)(mboot->mods_addr+4));
 

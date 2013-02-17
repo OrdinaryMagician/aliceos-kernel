@@ -23,6 +23,8 @@
 #include <video/vidtypes.h>
 #include <video/fcpalette.h>
 #include <bga/bga.h>
+#include <sys/timer.h>
+#include <sys/cmos.h>
 
 demo_t demos[DEMO_COUNT] =
 {
@@ -31,6 +33,7 @@ demo_t demos[DEMO_COUNT] =
 	{"realgfx", "basic mode 13h demo", demo_realgfx},
 	{"cmap", "text mode character map", demo_cmap},
 	{"bochsgfx", "Bochs/QEMU BGA demo", demo_bochsgfx},
+	{"timers", "timers demo", demo_timers},
 };
 
 /* list available demos */
@@ -42,11 +45,97 @@ void listdemos( void )
 		mode_3h.fbprintf(" - %s : %s\n",demos[i].name,demos[i].desc);
 }
 
+/* update the header every second */
+void dt_updateheader( void )
+{
+	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
+	mode_3h.fbprintf("%{1,0%s %s - %s.%s.%s%s (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	/* pretty print time and date */
+	Uint8 cmosval[128];
+	cmos_dump(&cmosval[0]);
+	char weekdays[7][4] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
+	mode_3h.fbprintf("%{-26,0%s %02x/%02x/20%02x | %02x:%02x:%02x",weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],cmosval[8],cmosval[9],cmosval[4],cmosval[2],cmosval[0]);
+}
+
+/* bottom animation */
+Uint8 base_angle = 0;
+void dt_wave( void )
+{
+	char wave[8] = {0x20, 0xB0, 0xB1, 0xB2, 0xDB, 0xB2, 0xB1, 0xB0};
+	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
+	Uint8 i;
+	for ( i=0; i<80; i++ )
+		mode_3h.drawchar(i,24,wave[(i+base_angle)%8]);
+	base_angle++;
+	if ( base_angle >= 8 )
+		base_angle = 0;
+}
+
+/* bouncing ball */
+Sint16 ball_x, ball_y;
+Sint16 vel_x, vel_y;
+void dt_bounce( void )
+{
+	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_DARKGRAY);
+	ball_x += vel_x;
+	ball_y += vel_y;
+	if ( ball_x > 76 )
+	{
+		ball_x = 76;
+		vel_x = -1;
+	}
+	if ( ball_y > 42 )
+	{
+		ball_y = 42;
+		vel_y = -1;
+	}
+	if ( ball_x < 0 )
+	{
+		ball_x = 0;
+		vel_x = 1;
+	}
+	if ( ball_y < 4 )
+	{
+		ball_y = 4;
+		vel_y = 1;
+	}
+	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_YELLOW);
+}
+
+/* timer demo */
+void demo_timers( void )
+{
+	/* we already assume we're in mode 3h since boot */
+	mode_3h.fbcursorvis(0);
+	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
+	mode_3h.drawrect(0,4,80,42,APAL_DARKGRAY);
+	printk(SERIAL_A,"Running Timers demo\n");
+	ball_x = 12;
+	ball_y = 8;
+	vel_x = 1;
+	vel_y = 1;
+	int i = 0;
+	while ( i < 80 )
+		mode_3h.drawchar(i++,24,' ');
+	/* register the tasks */
+	printk(SERIAL_A,"update header, every second\n");
+	if ( timer_addtask(dt_updateheader,timer_sec(1)) )
+		BERP("Couldn't add task");
+	printk(SERIAL_A,"bottom wave animation, every 100ms\n");
+	if ( timer_addtask(dt_wave,timer_msec(100)) )
+		BERP("Couldn't add task");
+	printk(SERIAL_A,"bouncing ball, every 50ms\n");
+	if ( timer_addtask(dt_bounce,timer_msec(50)) )
+		BERP("Couldn't add task");
+}
+
 /* Character map */
 void demo_cmap( void )
 {
 	/* no startup code, we already assume we're in mode 3h since boot */
 	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
+	printk(SERIAL_A,"Running Character Map demo\n");
 	Uint16 i;
 	Uint16 x,y;
 	x = 4;

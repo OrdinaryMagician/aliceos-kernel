@@ -5,8 +5,11 @@
 	Released under the MIT License.
 */
 #include <sys/irq_handlers.h>
-#include <sys/pic.h>
+#include <sys/port.h>
 #include <sys/types.h>
+#include <sys/serial.h>
+#include <printk.h>
+#include <memops.h>
 
 irq_handler_t irq_handlers[256];
 
@@ -19,7 +22,20 @@ void register_irq_handler( Uint8 n, irq_handler_t handler )
 /* the common handler (which will call any registered handlers) */
 void irq_handler( regs_t regs )
 {
-	pic_eoi(regs.intno-32); /* must take into account the offset */
+	/* send end-of-interrupt to PIC */
+	if ( regs.intno >= 40 )
+		outport_b(0xA0,0x20);
+	outport_b(0x20,0x20);
+	/* call a specific handler if available */
 	if ( irq_handlers[regs.intno] )
-		irq_handlers[regs.intno](regs);
+	{
+		irq_handler_t hnd = irq_handlers[regs.intno];
+		hnd(regs);
+	}
+}
+
+/* clear IRQ handlers */
+void irq_clearhandlers( void )
+{
+	memset((Uint8*)&irq_handlers[0],0,sizeof(irq_handler_t)*256);
 }

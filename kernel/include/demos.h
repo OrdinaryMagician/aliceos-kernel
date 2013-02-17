@@ -7,7 +7,7 @@
 #ifndef DEMOS_H
 #define DEMOS_H
 
-#define DEMO_COUNT 5
+#define DEMO_COUNT 6
 
 typedef void (*demo_func_t)( void );
 typedef struct
@@ -34,6 +34,9 @@ void demo_crapgfx( void );
 
 /* mode 13h graphics demo */
 void demo_realgfx( void );
+
+/* timer demo */
+void demo_timers( void );
 
 demo_t demos[DEMO_COUNT];
 #endif

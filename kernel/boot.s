@@ -28,6 +28,8 @@ mboot:
 [GLOBAL start]
 [EXTERN kmain]
 start:
+	; no interrupts pls
+	cli
 	; muh stack pointer
 	mov esp, 0x7FFFF
 	push esp

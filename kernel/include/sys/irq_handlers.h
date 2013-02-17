@@ -38,5 +38,7 @@ typedef struct
 typedef void (*irq_handler_t)( regs_t regs );
 /* register an IRQ handler function */
 void register_irq_handler( Uint8 n, irq_handler_t handler );
+/* clear IRQ handlers */
+void irq_clearhandlers( void );
 
 #endif

@@ -7,6 +7,9 @@
 #ifndef KDEFS_H
 #define KDEFS_H
 
+/* internal timer resolution */
+#define TIMER_HZ 1000
+
 /* kernel stuff */
 const char *_kname;
 const char *_kver_fmt;
