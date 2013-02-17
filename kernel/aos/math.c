@@ -99,7 +99,7 @@ double fact( double val )
 		return 1.0;
 	/* just trim decimals, I don't think anyone would mind */
 	val = floor(val);
-	return val+fact(val-1.0);
+	return val*fact(val-1.0);
 }
 
 double floor( double val )
