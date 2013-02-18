@@ -7,13 +7,7 @@
 #ifndef HCF_H
 #define HCF_H
 #include <sys/types.h>
-typedef struct
-{
-	Uint32 ds;
-	Uint32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
-	Uint32 intno, errno;
-	Uint32 eip, cs, eflags, uesp, ss;
-} regs_t;
+#include <sys/regs.h>
 
 /* predefined messages */
 #define HCF_UNHANDLEDINT "Unhandled Interrupt"
@@ -39,5 +33,5 @@ typedef struct
 #define HCF_RESV "Reserved Interrupt"
 
 /* for when you screwed up pretty bad */
-void OHSHI( char *mesg, regs_t regs );
+void OHSHI( char *mesg, regs_t *regs );
 #endif

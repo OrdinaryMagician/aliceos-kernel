@@ -4,13 +4,41 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/isr_handlers.h>
+#include <sys/regs.h>
 #include <sys/types.h>
+#include <sys/helpers.h>
+#include <memops.h>
 #include <hcf.h>
 
-/* the handler itself */
-void isr_handler( regs_t regs )
+isr_handler_t isr_handlers[32];
+
+/* register an ISR handler function */
+void register_isr_handler( Uint8 n, isr_handler_t handler )
 {
-	switch ( regs.intno )
+	isr_handlers[n] = handler;
+}
+
+/* clear ISR handlers */
+void isr_clearhandlers( void )
+{
+	memset((Uint8*)&isr_handlers[0],0,sizeof(isr_handler_t)*32);
+}
+
+/* the handler itself */
+void isr_handler( regs_t *regs )
+{
+	asm volatile("cli");
+	/* call a specific handler if available */
+	if ( (regs->intno < 32) && isr_handlers[regs->intno] )
+	{
+		isr_handler_t hnd = isr_handlers[regs->intno];
+		hnd(regs);
+		asm volatile("sti");
+		return;
+	}
+	/* default handlers, mostly just calls to halt and catch fire */
+	switch ( regs->intno )
 	{
 	case 0: /* Division by zero exception */
 		OHSHI(HCF_DIVZERO, regs);
@@ -31,7 +59,12 @@ void isr_handler( regs_t regs )
 		OHSHI(HCF_OOB, regs);
 		break;
 	case 6: /* Invalid opcode exception */
-		/* ignored, seems to happen constantly for no reason */
+		/*
+		   Ignored
+		   Seems to happen for some reason due to a bug
+		   I just can't fix at all
+		*/
+		/*OHSHI(HCF_INVOPCODE, regs);*/
 		break;
 	case 7: /* No coprocessor exception */
 		OHSHI(HCF_NOCPROC, regs);
@@ -69,7 +102,8 @@ void isr_handler( regs_t regs )
 	case 18: /* Machine check exception */
 		OHSHI(HCF_MCHKEX, regs);
 		break;
-	case 19: /* Reserved */
+	/* Reserved */
+	case 19:
 	case 20:
 	case 21:
 	case 22:
@@ -84,8 +118,21 @@ void isr_handler( regs_t regs )
 	case 31:
 		OHSHI(HCF_RESV, regs);
 		break;
+	/* syscall handlers, not yet implemented */
+	/*
+	case 80:
+		aos_syscall0(regs);
+		break;
+	case 81:
+		aos_syscall1(regs);
+		break;
+	case 82:
+		aos_syscall2(regs);
+		break;
+	*/
 	default: /* Unhandled */
 		OHSHI(HCF_UNHANDLEDINT, regs);
 		break;
 	}
+	asm volatile("sti");
 }

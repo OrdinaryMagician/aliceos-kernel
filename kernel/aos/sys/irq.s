@@ -31,28 +31,26 @@ IRQ 14, 46
 IRQ 15, 47
 [EXTERN irq_handler]
 irq_common_stub:
-	pusha ; push all the general purpose registers
-	; save data segment descriptor
-	mov ax, ds
-	push eax
-	; load kernel data segment descriptor
+	pusha
+	push ds
+	push es
+	push fs
+	push gs
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
+	mov eax, esp
+	push eax
 	; call the C function
-	call irq_handler
-	; reload original data segment descriptor
-	pop ebx
-	mov ds, bx
-	mov es, bx
-	mov fs, bx
-	mov gs, bx
-	; pop registers back
+	mov eax, irq_handler
+	call eax
+	pop eax
+	pop gs
+	pop fs
+	pop es
+	pop ds
 	popa
-	; clean up code, enable interrupts
 	add esp, 8
-	sti
-	; pop CS, EIP, EFLAGS, SS and ESP
 	iret

@@ -24,6 +24,6 @@ clean:
 link:
 	ld $(LDFLAGS) -o vmaliceos $(SOURCES)
 .s.o:
-	nasm $(ASFLAGS) $<
+	yasm $(ASFLAGS) -o $@ $<
 .c.o:
 	$(CC) $(CFLAGS) -c -o $@ $<

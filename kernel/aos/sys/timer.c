@@ -70,7 +70,7 @@ void timer_calltask( ttasklist_t tl )
 }
 
 /* function to increment ticker and call all registered tasks */
-static void timer_callback( regs_t regs )
+static void timer_callback( regs_t *regs )
 {
 	ticker++;
 	Uint8 i;
@@ -83,7 +83,7 @@ void init_timer( Uint32 hz )
 {
 	timer_tasks = 0;
 	memset((Uint8*)&timer_tasklist[0],0,sizeof(ttasklist_t)*TTASKLIST_SZ);
-	register_irq_handler(IRQ0,&timer_callback);
+	register_irq_handler(0,&timer_callback);
 	Uint32 divisor = 1193180/hz;
 	thz = hz;
 	tscale = 1000000/hz;
