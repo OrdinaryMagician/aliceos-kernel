@@ -11,7 +11,7 @@
 #include <memops.h>
 #include <hcf.h>
 
-isr_handler_t isr_handlers[32];
+static isr_handler_t isr_handlers[32];
 
 /* register an ISR handler function */
 void register_isr_handler( Uint8 n, isr_handler_t handler )

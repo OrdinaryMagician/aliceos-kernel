@@ -19,8 +19,8 @@ static Uint32 tscale = 0;
 static Uint32 thz = 0;
 
 #define TTASKLIST_SZ 16
-ttasklist_t timer_tasklist[TTASKLIST_SZ];
-Uint8 timer_tasks = 0;
+static ttasklist_t timer_tasklist[TTASKLIST_SZ];
+static Uint8 timer_tasks = 0;
 
 /* get current ticks passed */
 Uint32 get_ticks( void )
@@ -57,7 +57,7 @@ Uint32 timer_usec( Uint32 u )
 }
 
 /* calls a timer task if specific conditions are met */
-void timer_calltask( ttasklist_t tl )
+static void timer_calltask( ttasklist_t tl )
 {
 	if ( !tl.interval )		/* zero interval */
 		return;
@@ -106,7 +106,7 @@ Uint8 timer_addtask( ttask_t task, Uint32 interval )
 }
 
 /* rearrange the task array, removing a specific task in the process */
-void timer_rmtaskid( Uint8 id )
+static void timer_rmtaskid( Uint8 id )
 {
 	memmove((Uint8*)&timer_tasklist[id+1],(Uint8*)&timer_tasklist[id],sizeof(ttasklist_t)*(timer_tasks-id));
 	timer_tasks--;

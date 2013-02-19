@@ -13,45 +13,45 @@
 #include <memops.h>
 
 /* mode 12h variables */
-Uint8 *m12h_mem = (Uint8*)0xA0000; /* memory area */
-fnt_t m12h_fnt; /* font (currently empty) */
-Sint32 m12h_cx = 0, m12h_cy = 0; /* cursor position for text */
-Uint8 m12h_cv = 1; /* cursor visibility for text */
-Uint16 m12h_fbw = 80, m12h_fbh = 60; /* framebuffer console columns and rows */
-Uint8 m12h_attrs[3] = {7,0,0}; /* current text attributes */
+static Uint8 *m12h_mem = (Uint8*)0xA0000; /* memory area */
+static fnt_t m12h_fnt; /* font (currently empty) */
+static Sint32 m12h_cx = 0, m12h_cy = 0; /* cursor position for text */
+static Uint8 m12h_cv = 1; /* cursor visibility for text */
+static Uint16 m12h_fbw = 80, m12h_fbh = 60; /* framebuffer console columns and rows */
+static Uint8 m12h_attrs[3] = {7,0,0}; /* current text attributes */
 
 /* mode 12h function prototypes */
-void m12h_setmode( void );
-void m12h_setpal( Uint8* pal );
-void m12h_getpal( Uint8* pal );
-void m12h_setfont( fnt_t* fnt );
-fnt_t* m12h_getfont( void );
-void m12h_clear( void );
-void m12h_hscroll( Sint32 offset );
-void m12h_vscroll( Sint32 offset );
-void m12h_putpixel( Uint16 x, Uint16 y, Uint8 c );
-Uint8 m12h_getpixel( Uint16 x, Uint16 y );
-void m12h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
-void m12h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-void m12h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-void m12h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift );
-void m12h_drawchar( Uint16 x, Uint16 y, char c );
-void m12h_drawwchar( Uint16 x, Uint16 y, wchar c );
-void m12h_drawstring( Uint16 x, Uint16 y, char *s );
-void m12h_drawwstring( Uint16 x, Uint16 y, wchar *s );
-void m12h_fbgetres( Uint16 *cols, Uint16 *rows );
-void m12h_fbgetcursor( Sint32 *col, Sint32 *row );
-void m12h_fbsetcursor( Sint32 col, Sint32 row );
-void m12h_fbmovecursor( Sint32 cols, Sint32 rows );
-void m12h_fbcursorvis( Uint8 on );
-void m12h_fbputc( char c );
-void m12h_fbwputc( wchar c );
-void m12h_fbputs( char *s );
-void m12h_fbwputs( wchar *s );
-void m12h_fbprintf( char *s, ... );
-void m12h_fbwprintf( wchar *s, ... );
-void m12h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex );
-void m12h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex );
+static void m12h_setmode( void );
+static void m12h_setpal( Uint8* pal );
+static void m12h_getpal( Uint8* pal );
+static void m12h_setfont( fnt_t* fnt );
+static fnt_t* m12h_getfont( void );
+static void m12h_clear( void );
+static void m12h_hscroll( Sint32 offset );
+static void m12h_vscroll( Sint32 offset );
+static void m12h_putpixel( Uint16 x, Uint16 y, Uint8 c );
+static Uint8 m12h_getpixel( Uint16 x, Uint16 y );
+static void m12h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
+static void m12h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
+static void m12h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
+static void m12h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift );
+static void m12h_drawchar( Uint16 x, Uint16 y, char c );
+static void m12h_drawwchar( Uint16 x, Uint16 y, wchar c );
+static void m12h_drawstring( Uint16 x, Uint16 y, char *s );
+static void m12h_drawwstring( Uint16 x, Uint16 y, wchar *s );
+static void m12h_fbgetres( Uint16 *cols, Uint16 *rows );
+static void m12h_fbgetcursor( Sint32 *col, Sint32 *row );
+static void m12h_fbsetcursor( Sint32 col, Sint32 row );
+static void m12h_fbmovecursor( Sint32 cols, Sint32 rows );
+static void m12h_fbcursorvis( Uint8 on );
+static void m12h_fbputc( char c );
+static void m12h_fbwputc( wchar c );
+static void m12h_fbputs( char *s );
+static void m12h_fbwputs( wchar *s );
+static void m12h_fbprintf( char *s, ... );
+static void m12h_fbwprintf( wchar *s, ... );
+static void m12h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex );
+static void m12h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex );
 
 /* mode 12h struct */
 vga_mode_t mode_12h = 
@@ -96,7 +96,7 @@ vga_mode_t mode_12h =
 	.fbgetattr = m12h_fbgetattr,
 };
 
-void m12h_setmode( void )
+static void m12h_setmode( void )
 {
 	int i;
 	Uint8 regs[] =
@@ -164,7 +164,7 @@ void m12h_setmode( void )
 	}
 }
 
-void m12h_setpal( Uint8* pal )
+static void m12h_setpal( Uint8* pal )
 {
 	int i;
 	/* CGA->EGA mapping */
@@ -178,7 +178,7 @@ void m12h_setpal( Uint8* pal )
 	}
 }
 
-void m12h_getpal( Uint8* pal )
+static void m12h_getpal( Uint8* pal )
 {
 	int i;
 	/* CGA->EGA mapping */
@@ -192,17 +192,17 @@ void m12h_getpal( Uint8* pal )
 	}
 }
 
-void m12h_setfont( fnt_t* fnt )
+static void m12h_setfont( fnt_t* fnt )
 {
 	m12h_fnt = *fnt;
 }
 
-fnt_t* m12h_getfont( void )
+static fnt_t* m12h_getfont( void )
 {
 	return &m12h_fnt;
 }
 
-void m12h_clear( void )
+static void m12h_clear( void )
 {
 	Uint8 p;
 	for ( p=0; p<4; p++ )
@@ -212,7 +212,7 @@ void m12h_clear( void )
 	}
 }
 
-void m12h_hscroll( Sint32 offset )
+static void m12h_hscroll( Sint32 offset )
 {
 	offset /= 8;	/* deal with it */
 	Uint8 p;
@@ -257,7 +257,7 @@ void m12h_hscroll( Sint32 offset )
 	}
 }
 
-void m12h_vscroll( Sint32 offset )
+static void m12h_vscroll( Sint32 offset )
 {
 	Uint8 p;
 	/* noscroll */
@@ -295,7 +295,7 @@ void m12h_vscroll( Sint32 offset )
 	}
 }
 
-void m12h_putpixel( Uint16 x, Uint16 y, Uint8 c )
+static void m12h_putpixel( Uint16 x, Uint16 y, Uint8 c )
 {
 	x %= 640;
 	y %= 480;
@@ -312,7 +312,7 @@ void m12h_putpixel( Uint16 x, Uint16 y, Uint8 c )
 	}
 }
 
-Uint8 m12h_getpixel( Uint16 x, Uint16 y )
+static Uint8 m12h_getpixel( Uint16 x, Uint16 y )
 {
 	x %= 640;
 	y %= 480;
@@ -328,7 +328,7 @@ Uint8 m12h_getpixel( Uint16 x, Uint16 y )
 	return c2[0]&(c2[1]<<1)&(c2[2]<<2)&(c2[3]<<4);
 }
 
-void m12h_putpixelsp( Uint16 x, Uint16 y, Uint8 c )
+static void m12h_putpixelsp( Uint16 x, Uint16 y, Uint8 c )
 {
 	x %= 640;
 	y %= 480;
@@ -339,7 +339,7 @@ void m12h_putpixelsp( Uint16 x, Uint16 y, Uint8 c )
 	m12h_mem[coord] |= c<<off;
 }
 
-Uint8 m12h_getpixelsp( Uint16 x, Uint16 y )
+static Uint8 m12h_getpixelsp( Uint16 x, Uint16 y )
 {
 	x %= 640;
 	y %= 480;
@@ -348,7 +348,7 @@ Uint8 m12h_getpixelsp( Uint16 x, Uint16 y )
 	return (m12h_mem[coord]>>off)&1;
 }
 
-void m12h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
+static void m12h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 {
 	Uint8 p;
 	Uint16 px, py;
@@ -370,7 +370,7 @@ void m12h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 	}
 }
 
-void m12h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
+static void m12h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 {
 	Uint8 p;
 	Uint16 px;
@@ -388,7 +388,7 @@ void m12h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 	}
 }
 
-void m12h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
+static void m12h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 {
 	Uint8 p;
 	Uint16 py;
@@ -406,7 +406,7 @@ void m12h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 	}
 }
 
-void m12h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
+static void m12h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
 {
 	if ( img->depth != IMG_DP_16COL )
 	{
@@ -456,7 +456,7 @@ void m12h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 
 	}
 }
 
-void m12h_drawchar( Uint16 x, Uint16 y, char c )
+static void m12h_drawchar( Uint16 x, Uint16 y, char c )
 {
 	Uint16 px, py;
 	Uint16 lx, ly;
@@ -524,12 +524,12 @@ void m12h_drawchar( Uint16 x, Uint16 y, char c )
 	}
 }
 
-void m12h_drawwchar( Uint16 x, Uint16 y, wchar c )
+static void m12h_drawwchar( Uint16 x, Uint16 y, wchar c )
 {
 	return;	/* not yet implemented */
 }
 
-void m12h_drawstring( Uint16 x, Uint16 y, char *s )
+static void m12h_drawstring( Uint16 x, Uint16 y, char *s )
 {
 	while ( *s )
 	{
@@ -538,24 +538,24 @@ void m12h_drawstring( Uint16 x, Uint16 y, char *s )
 	}
 }
 
-void m12h_drawwstring( Uint16 x, Uint16 y, wchar *s )
+static void m12h_drawwstring( Uint16 x, Uint16 y, wchar *s )
 {
 	return;	/* not yet implemented */
 }
 
-void m12h_fbgetres( Uint16 *cols, Uint16 *rows )
+static void m12h_fbgetres( Uint16 *cols, Uint16 *rows )
 {
 	*cols = m12h_fbw;
 	*rows = m12h_fbh;
 }
 
-void m12h_fbgetcursor( Sint32 *col, Sint32 *row )
+static void m12h_fbgetcursor( Sint32 *col, Sint32 *row )
 {
 	*col = m12h_cx;
 	*row = m12h_cy;
 }
 
-void m12h_fbsetcursor( Sint32 col, Sint32 row )
+static void m12h_fbsetcursor( Sint32 col, Sint32 row )
 {
 	while ( col >= m12h_fbw )
 		col -= m12h_fbw;
@@ -569,7 +569,7 @@ void m12h_fbsetcursor( Sint32 col, Sint32 row )
 	m12h_cy = row;
 }
 
-void m12h_fbmovecursor( Sint32 cols, Sint32 rows )
+static void m12h_fbmovecursor( Sint32 cols, Sint32 rows )
 {
 	Sint32 px, py;
 	px = m12h_cx+cols;
@@ -586,12 +586,12 @@ void m12h_fbmovecursor( Sint32 cols, Sint32 rows )
 	m12h_cy += py;
 }
 
-void m12h_fbcursorvis( Uint8 on )
+static void m12h_fbcursorvis( Uint8 on )
 {
 	m12h_cv = on&1;
 }
 
-void m12h_fbputc( char c )
+static void m12h_fbputc( char c )
 {
 	if ( m12h_cy >= m12h_fbh )	/* offscreen */
 		return;
@@ -623,23 +623,23 @@ void m12h_fbputc( char c )
 	}
 }
 
-void m12h_fbwputc( wchar c )
+static void m12h_fbwputc( wchar c )
 {
 	return;	/* not yet implemented */
 }
 
-void m12h_fbputs( char *s )
+static void m12h_fbputs( char *s )
 {
 	while ( *s )
 		m12h_fbputc(*(s++));
 }
 
-void m12h_fbwputs( wchar *s )
+static void m12h_fbwputs( wchar *s )
 {
 	return;	/* not yet implemented */
 }
 
-Uint32 m12h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
+static Uint32 m12h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 {
 	char *os = s;
 	Uint8 col = obg;
@@ -675,7 +675,7 @@ Uint32 m12h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 	return (Uint32)s-(Uint32)os;
 }
 
-Uint32 m12h_vafbprintf_curmv( char *s )
+static Uint32 m12h_vafbprintf_curmv( char *s )
 {
 	char *os = s;
 	Uint8 neg = 0;
@@ -708,7 +708,7 @@ Uint32 m12h_vafbprintf_curmv( char *s )
 	return (Uint32)s-(Uint32)os;
 }
 
-Uint32 m12h_vafbprintf_curset( char *s, Sint32 y )
+static Uint32 m12h_vafbprintf_curset( char *s, Sint32 y )
 {
 	char *os = s;
 	Uint8 neg = 0;
@@ -741,7 +741,7 @@ Uint32 m12h_vafbprintf_curset( char *s, Sint32 y )
 	return (Uint32)s-(Uint32)os;
 }
 
-void m12h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
+static void m12h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -773,7 +773,7 @@ void m12h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void m12h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
+static void m12h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 {
 	Uint8 isneg = (val<0);
 	val = abs(val);
@@ -811,7 +811,7 @@ void m12h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void m12h_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
+static void m12h_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -843,7 +843,7 @@ void m12h_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void m12h_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
+static void m12h_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -875,7 +875,7 @@ void m12h_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void m12h_vafbprintf( char *s, va_list args )
+static void m12h_vafbprintf( char *s, va_list args )
 {
 	Uint8 fg, bg, ex;
 	Sint32 x, y;
@@ -990,7 +990,7 @@ void m12h_vafbprintf( char *s, va_list args )
 	}
 }
 
-void m12h_fbprintf( char *s, ... )
+static void m12h_fbprintf( char *s, ... )
 {
 	va_list args;
 	va_start(args,s);
@@ -998,19 +998,19 @@ void m12h_fbprintf( char *s, ... )
 	va_end(args);
 }
 
-void m12h_fbwprintf( wchar *s, ... )
+static void m12h_fbwprintf( wchar *s, ... )
 {
 	return;	/* not yet implemented */
 }
 
-void m12h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex )
+static void m12h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex )
 {
 	m12h_attrs[0] = fg;
 	m12h_attrs[1] = bg;
 	m12h_attrs[2] = ex;
 }
 
-void m12h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex )
+static void m12h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex )
 {
 	*fg = m12h_attrs[0];
 	*bg = m12h_attrs[1];

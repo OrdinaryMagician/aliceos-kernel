@@ -16,7 +16,6 @@
 #define SERIAL_IRQ 4
 
 void serial_on( Uint16 dev );
-void serial_ins( void );
 Uint8 serial_recv_d( Uint16 dev );
 char serial_recv( Uint16 dev );
 char serial_recv_async( Uint16 dev );

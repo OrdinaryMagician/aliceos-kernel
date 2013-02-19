@@ -16,14 +16,14 @@
 #include <sys/helpers.h>
 
 /* bga variables */
-Uint8 *bga_mem = (Uint8*)0; /* memory area */
-fnt_t bga_fnt; /* font (currently empty) */
-Sint32 bga_cx = 0, bga_cy = 0; /* cursor position for text */
-Uint8 bga_cv = 1; /* cursor visibility for text */
-Uint16 bga_fbw = 0, bga_fbh = 0; /* framebuffer console columns and rows */
-Uint8 bga_attrs[3] = {7,0,0}; /* current text attributes */
-color_t bga_fbpal[16];	/* 16-color palette for framebuffer text */
-Uint8 cbank = 0;
+static Uint8 *bga_mem = (Uint8*)0; /* memory area */
+static fnt_t bga_fnt; /* font (currently empty) */
+static Sint32 bga_cx = 0, bga_cy = 0; /* cursor position for text */
+static Uint8 bga_cv = 1; /* cursor visibility for text */
+static Uint16 bga_fbw = 0, bga_fbh = 0; /* framebuffer console columns and rows */
+static Uint8 bga_attrs[3] = {7,0,0}; /* current text attributes */
+static color_t bga_fbpal[16];	/* 16-color palette for framebuffer text */
+static Uint8 cbank = 0;
 
 /* some necessary functions */
 void setbgareg(Uint8 reg, Uint16 val)
@@ -45,37 +45,37 @@ void bga_bankswitch(Uint8 bank)
 }
 
 /* bga function prototypes */
-Uint8 bga_setmode( Uint16 w, Uint16 h );
-void bga_setpal( color_t* pal );
-void bga_getpal( color_t* pal );
-void bga_setfont( fnt_t* fnt );
-fnt_t* bga_getfont( void );
-void bga_clear( void );
-void bga_hscroll( Sint32 offset );
-void bga_vscroll( Sint32 offset );
-void bga_putpixel( Uint16 x, Uint16 y, color_t c );
-color_t bga_getpixel( Uint16 x, Uint16 y );
-void bga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, color_t c );
-void bga_drawhline( Uint16 x, Uint16 y, Uint16 l, color_t c );
-void bga_drawvline( Uint16 x, Uint16 y, Uint16 l, color_t c );
-void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h );
-void bga_drawchar( Uint16 x, Uint16 y, char c );
-void bga_drawwchar( Uint16 x, Uint16 y, wchar c );
-void bga_drawstring( Uint16 x, Uint16 y, char *s );
-void bga_drawwstring( Uint16 x, Uint16 y, wchar *s );
-void bga_fbgetres( Uint16 *cols, Uint16 *rows );
-void bga_fbgetcursor( Sint32 *col, Sint32 *row );
-void bga_fbsetcursor( Sint32 col, Sint32 row );
-void bga_fbmovecursor( Sint32 cols, Sint32 rows );
-void bga_fbcursorvis( Uint8 on );
-void bga_fbputc( char c );
-void bga_fbwputc( wchar c );
-void bga_fbputs( char *s );
-void bga_fbwputs( wchar *s );
-void bga_fbprintf( char *s, ... );
-void bga_fbwprintf( wchar *s, ... );
-void bga_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex );
-void bga_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex );
+static Uint8 bga_setmode( Uint16 w, Uint16 h );
+static void bga_setpal( color_t* pal );
+static void bga_getpal( color_t* pal );
+static void bga_setfont( fnt_t* fnt );
+static fnt_t* bga_getfont( void );
+static void bga_clear( void );
+static void bga_hscroll( Sint32 offset );
+static void bga_vscroll( Sint32 offset );
+static void bga_putpixel( Uint16 x, Uint16 y, color_t c );
+static color_t bga_getpixel( Uint16 x, Uint16 y );
+static void bga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, color_t c );
+static void bga_drawhline( Uint16 x, Uint16 y, Uint16 l, color_t c );
+static void bga_drawvline( Uint16 x, Uint16 y, Uint16 l, color_t c );
+static void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h );
+static void bga_drawchar( Uint16 x, Uint16 y, char c );
+static void bga_drawwchar( Uint16 x, Uint16 y, wchar c );
+static void bga_drawstring( Uint16 x, Uint16 y, char *s );
+static void bga_drawwstring( Uint16 x, Uint16 y, wchar *s );
+static void bga_fbgetres( Uint16 *cols, Uint16 *rows );
+static void bga_fbgetcursor( Sint32 *col, Sint32 *row );
+static void bga_fbsetcursor( Sint32 col, Sint32 row );
+static void bga_fbmovecursor( Sint32 cols, Sint32 rows );
+static void bga_fbcursorvis( Uint8 on );
+static void bga_fbputc( char c );
+static void bga_fbwputc( wchar c );
+static void bga_fbputs( char *s );
+static void bga_fbwputs( wchar *s );
+static void bga_fbprintf( char *s, ... );
+static void bga_fbwprintf( wchar *s, ... );
+static void bga_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex );
+static void bga_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex );
 
 /* bga driver struct */
 bga_driver_t bga_drv =
@@ -118,7 +118,7 @@ bga_driver_t bga_drv =
 	.fbgetattr = bga_fbgetattr,
 };
 
-Uint8 bga_setmode( Uint16 w, Uint16 h )
+static Uint8 bga_setmode( Uint16 w, Uint16 h )
 {
 	/* check if we can ACTUALLY use BGA */
 	Uint16 id = getbgareg(BGA_REG_VER);
@@ -150,17 +150,17 @@ Uint8 bga_setmode( Uint16 w, Uint16 h )
 	return 0;
 }
 
-void bga_setpal( color_t* pal )
+static void bga_setpal( color_t* pal )
 {
 	memcpy((Uint8*)&bga_fbpal,(Uint8*)pal,sizeof(color_t)*16);
 }
 
-void bga_getpal( color_t* pal )
+static void bga_getpal( color_t* pal )
 {
 	memcpy((Uint8*)pal,(Uint8*)&bga_fbpal,sizeof(color_t)*16);
 }
 
-void bga_setfont( fnt_t* fnt )
+static void bga_setfont( fnt_t* fnt )
 {
 	memcpy((Uint8*)&bga_fnt,(Uint8*)fnt,sizeof(fnt_t));
 	/* update framebuffer res */
@@ -168,12 +168,12 @@ void bga_setfont( fnt_t* fnt )
 	bga_fbh = bga_drv.h/bga_fnt.h;
 }
 
-fnt_t* bga_getfont( void )
+static fnt_t* bga_getfont( void )
 {
 	return &bga_fnt;
 }
 
-void bga_clear( void )
+static void bga_clear( void )
 {
 	Uint8 nbank = 0;
 	while ( nbank < BGA_BANK_MAX )
@@ -190,7 +190,7 @@ void bga_clear( void )
 	}
 }
 
-void bga_linescrh( Uint16 y, Sint32 o )
+static void bga_linescrh( Uint16 y, Sint32 o )
 {
 	Uint16 x;
 	if ( o < 0 )
@@ -210,7 +210,7 @@ void bga_linescrh( Uint16 y, Sint32 o )
 	}
 }
 
-void bga_hscroll( Sint32 offset )
+static void bga_hscroll( Sint32 offset )
 {
 	/* noscroll */
 	if ( !offset )
@@ -227,7 +227,7 @@ void bga_hscroll( Sint32 offset )
 		bga_linescrh(y,offset);
 }
 
-void bga_linescrv( Uint16 y, Sint32 o )
+static void bga_linescrv( Uint16 y, Sint32 o )
 {
 	Uint16 x;
 	if ( o < 0 )
@@ -243,7 +243,7 @@ void bga_linescrv( Uint16 y, Sint32 o )
 	}
 }
 
-void bga_vscroll( Sint32 offset )
+static void bga_vscroll( Sint32 offset )
 {
 	/* noscroll */
 	if ( !offset )
@@ -262,7 +262,7 @@ void bga_vscroll( Sint32 offset )
 	
 }
 
-void bga_putpixel( Uint16 x, Uint16 y, color_t c )
+static void bga_putpixel( Uint16 x, Uint16 y, color_t c )
 {
 	/* find what bank we need to be on */
 	Uint32 off = (x+y*bga_drv.w)*4;
@@ -277,7 +277,7 @@ void bga_putpixel( Uint16 x, Uint16 y, color_t c )
 	bga_mem[off+3] = c.a;
 }
 
-color_t bga_getpixel( Uint16 x, Uint16 y )
+static color_t bga_getpixel( Uint16 x, Uint16 y )
 {
 	/* find what bank we need to be on */
 	Uint32 off = (x+y*bga_drv.w)*4;
@@ -294,7 +294,7 @@ color_t bga_getpixel( Uint16 x, Uint16 y )
 	return got;
 }
 
-void bga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, color_t c )
+static void bga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, color_t c )
 {
 	Uint16 px, py;
 	Uint16 lx, ly;
@@ -314,7 +314,7 @@ void bga_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, color_t c )
 	}
 }
 
-void bga_drawhline( Uint16 x, Uint16 y, Uint16 l, color_t c )
+static void bga_drawhline( Uint16 x, Uint16 y, Uint16 l, color_t c )
 {
 	Uint16 px;
 	Uint16 lx;
@@ -324,7 +324,7 @@ void bga_drawhline( Uint16 x, Uint16 y, Uint16 l, color_t c )
 		bga_putpixel(px++,y,c);
 }
 
-void bga_drawvline( Uint16 x, Uint16 y, Uint16 l, color_t c )
+static void bga_drawvline( Uint16 x, Uint16 y, Uint16 l, color_t c )
 {
 	Uint16 py;
 	Uint16 ly;
@@ -334,7 +334,7 @@ void bga_drawvline( Uint16 x, Uint16 y, Uint16 l, color_t c )
 		bga_putpixel(x,py++,c);
 }
 
-void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h )
+static void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h )
 {
 	Uint8 sk = 4;
 	Uint8 usealpha = 1;
@@ -405,7 +405,7 @@ void bga_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w
 	}
 }
 
-void bga_drawchar( Uint16 x, Uint16 y, char c )
+static void bga_drawchar( Uint16 x, Uint16 y, char c )
 {
 	Uint16 px, py;
 	Uint16 lx, ly;
@@ -468,12 +468,12 @@ void bga_drawchar( Uint16 x, Uint16 y, char c )
 	}
 }
 
-void bga_drawwchar( Uint16 x, Uint16 y, wchar c )
+static void bga_drawwchar( Uint16 x, Uint16 y, wchar c )
 {
 	return;	/* not yet implemented */
 }
 
-void bga_drawstring( Uint16 x, Uint16 y, char *s )
+static void bga_drawstring( Uint16 x, Uint16 y, char *s )
 {
 	while ( *s )
 	{
@@ -482,7 +482,7 @@ void bga_drawstring( Uint16 x, Uint16 y, char *s )
 	}
 }
 
-void bga_drawwstring( Uint16 x, Uint16 y, wchar *s )
+static void bga_drawwstring( Uint16 x, Uint16 y, wchar *s )
 {
 	while ( *s )
 	{
@@ -491,19 +491,19 @@ void bga_drawwstring( Uint16 x, Uint16 y, wchar *s )
 	}
 }
 
-void bga_fbgetres( Uint16 *cols, Uint16 *rows )
+static void bga_fbgetres( Uint16 *cols, Uint16 *rows )
 {
 	*cols = bga_fbw;
 	*rows = bga_fbh;
 }
 
-void bga_fbgetcursor( Sint32 *col, Sint32 *row )
+static void bga_fbgetcursor( Sint32 *col, Sint32 *row )
 {
 	*col = bga_cx;
 	*row = bga_cy;
 }
 
-void bga_fbsetcursor( Sint32 col, Sint32 row )
+static void bga_fbsetcursor( Sint32 col, Sint32 row )
 {
 	while ( col >= bga_fbw )
 		col -= bga_fbw;
@@ -517,7 +517,7 @@ void bga_fbsetcursor( Sint32 col, Sint32 row )
 	bga_cy = row;
 }
 
-void bga_fbmovecursor( Sint32 cols, Sint32 rows )
+static void bga_fbmovecursor( Sint32 cols, Sint32 rows )
 {
 	Sint32 px, py;
 	px = bga_cx+cols;
@@ -534,12 +534,12 @@ void bga_fbmovecursor( Sint32 cols, Sint32 rows )
 	bga_cy += py;
 }
 
-void bga_fbcursorvis( Uint8 on )
+static void bga_fbcursorvis( Uint8 on )
 {
 	bga_cv = on&1;
 }
 
-void bga_fbputc( char c )
+static void bga_fbputc( char c )
 {
 	if ( bga_cy >= bga_fbh )	/* offscreen */
 		return;
@@ -571,24 +571,24 @@ void bga_fbputc( char c )
 	}
 }
 
-void bga_fbwputc( wchar c )
+static void bga_fbwputc( wchar c )
 {
 	return;	/* not yet implemented */
 }
 
-void bga_fbputs( char *s )
+static void bga_fbputs( char *s )
 {
 	while ( *s )
 		bga_fbputc(*(s++));
 }
 
-void bga_fbwputs( wchar *s )
+static void bga_fbwputs( wchar *s )
 {
 	while ( *s )
 		bga_fbwputc(*(s++));
 }
 
-Uint32 bga_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
+static Uint32 bga_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 {
 	char *os = s;
 	Uint8 col = obg;
@@ -624,7 +624,7 @@ Uint32 bga_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 	return (Uint32)s-(Uint32)os;
 }
 
-Uint32 bga_vafbprintf_curmv( char *s )
+static Uint32 bga_vafbprintf_curmv( char *s )
 {
 	char *os = s;
 	Uint8 neg = 0;
@@ -657,7 +657,7 @@ Uint32 bga_vafbprintf_curmv( char *s )
 	return (Uint32)s-(Uint32)os;
 }
 
-Uint32 bga_vafbprintf_curset( char *s, Sint32 y )
+static Uint32 bga_vafbprintf_curset( char *s, Sint32 y )
 {
 	char *os = s;
 	Uint8 neg = 0;
@@ -690,7 +690,7 @@ Uint32 bga_vafbprintf_curset( char *s, Sint32 y )
 	return (Uint32)s-(Uint32)os;
 }
 
-void bga_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
+static void bga_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -722,7 +722,7 @@ void bga_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void bga_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
+static void bga_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 {
 	Uint8 isneg = (val<0);
 	val = abs(val);
@@ -760,7 +760,7 @@ void bga_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void bga_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
+static void bga_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -792,7 +792,7 @@ void bga_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void bga_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
+static void bga_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
 {
 	if ( !width )
 	{
@@ -824,7 +824,7 @@ void bga_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
 	}
 }
 
-void bga_vafbprintf( char *s, va_list args )
+static void bga_vafbprintf( char *s, va_list args )
 {
 	Uint8 fg, bg, ex;
 	Sint32 x, y;
@@ -939,7 +939,7 @@ void bga_vafbprintf( char *s, va_list args )
 	}
 }
 
-void bga_fbprintf( char *s, ... )
+static void bga_fbprintf( char *s, ... )
 {
 	va_list args;
 	va_start(args,s);
@@ -947,19 +947,19 @@ void bga_fbprintf( char *s, ... )
 	va_end(args);
 }
 
-void bga_fbwprintf( wchar *s, ... )
+static void bga_fbwprintf( wchar *s, ... )
 {
 	return;	/* not yet implemented */
 }
 
-void bga_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex )
+static void bga_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex )
 {
 	bga_attrs[0] = fg;
 	bga_attrs[1] = bg;
 	bga_attrs[2] = ex;
 }
 
-void bga_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex )
+static void bga_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex )
 {
 	*fg = bga_attrs[0];
 	*bg = bga_attrs[1];

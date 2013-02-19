@@ -25,7 +25,7 @@ Uint32 *initial_esp;
 
 static void init_serial( void )
 {
-	serial_ins();
+	serial_on(SERIAL_A);
 	printk(SERIAL_A,"\033[1;36m%s %s - %s.%s.%s%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
 

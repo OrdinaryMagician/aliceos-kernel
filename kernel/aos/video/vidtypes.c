@@ -5,6 +5,7 @@
 	Released under the MIT License.
 */
 #include <video/vidtypes.h>
+
 /* easy color_t creation */
 color_t color(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {

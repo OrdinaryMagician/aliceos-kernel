@@ -19,12 +19,6 @@ void serial_on( Uint16 dev )
 	outport_b(dev+4,0x0B);
 }
 
-void serial_ins( void )
-{
-	serial_on(SERIAL_A);
-	serial_on(SERIAL_B);
-}
-
 Uint8 serial_recv_d( Uint16 dev )
 {
 	return inport_b(dev+5)&1;

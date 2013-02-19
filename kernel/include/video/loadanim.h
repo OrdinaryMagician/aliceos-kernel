@@ -15,7 +15,7 @@
 #define ANM_DP_RGB8   4 /* 24bpp RGB */
 #define ANM_DP_RGBA8  5 /* 32bpp RGBA */
 
-/* flag definitions (most reserved) */
+/* flag definitions */
 #define ANM_FL_NOPAL   1 /* no embedded palette */
 #define ANM_FL_ONESH   2 /* one-shot (doesn't loop) */
 #define ANM_FL_RESV3   4

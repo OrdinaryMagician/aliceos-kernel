@@ -9,7 +9,7 @@
 #include <memops.h>
 
 /* fnt file magic (OS magic + file format magic) */
-Uint8 fnt_magic[24] = 
+static Uint8 fnt_magic[24] = 
 {
 	'A', 'L', 'I', 'C', 'E', 'O', 'S',
 	0xE3, 0x81, 0xA7, 0xE3, 0x82, 0x8C, /* Hiragana "dere", UTF-8 */
@@ -27,16 +27,6 @@ typedef struct
 	Uint32 limit; /* highest defined character (usually 255 for non-unicode fonts) */
 } fnt_header_t;
 /* header is followed by the raw glyph bitmaps */
-
-/* flag definitions (reserved at the moment) */
-#define FLAG_RESV1   1
-#define FLAG_RESV2   2
-#define FLAG_RESV3   4
-#define FLAG_RESV4   8
-#define FLAG_RESV5  16
-#define FLAG_RESV6  32
-#define FLAG_RESV7  64
-#define FLAG_RESV8 128
 
 /* load a font from the ramdisk */
 Uint8 loadfnt( fnt_t *dest, char *fname )

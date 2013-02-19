@@ -15,7 +15,7 @@
 #define IMG_DP_RGB8   4 /* 24bpp RGB */
 #define IMG_DP_RGBA8  5 /* 32bpp RGBA */
 
-/* flag definitions (most reserved) */
+/* flag definitions */
 #define IMG_FL_NOPAL   1 /* no embedded palette */
 #define IMG_FL_RESV2   2
 #define IMG_FL_RESV3   4

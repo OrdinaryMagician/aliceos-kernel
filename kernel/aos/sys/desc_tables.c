@@ -18,18 +18,18 @@ extern void gdt_flush( Uint32 ptr );
 extern void idt_flush( Uint32 ptr );
 
 /* start up GDT */
-void init_gdt( void );
+static void init_gdt( void );
 /* set the values of a GDT entry */
-void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn );
+static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn );
 /* start up IDT */
-void init_idt( void );
+static void init_idt( void );
 /* set the values of a IDT entry */
-void idt_setgate( Uint8 num, Uint32 bas, Uint16 sel, Uint8 flg );
+static void idt_setgate( Uint8 num, Uint32 bas, Uint16 sel, Uint8 flg );
 
-gdt_entry_t gdt_ents[5];
-gdt_ptr_t gdt_ptr;
-idt_entry_t idt_ents[256];
-idt_ptr_t idt_ptr;
+static gdt_entry_t gdt_ents[5];
+static gdt_ptr_t gdt_ptr;
+static idt_entry_t idt_ents[256];
+static idt_ptr_t idt_ptr;
 
 /* Initialize descriptor tables (duh) */
 void init_descriptor_tables( void )
@@ -42,7 +42,7 @@ void init_descriptor_tables( void )
 }
 
 /* start up GDT */
-void init_gdt( void )
+static void init_gdt( void )
 {
 	gdt_ptr.limit = (sizeof(gdt_entry_t)*5)-1;
 	gdt_ptr.base = (Uint32)&gdt_ents;
@@ -58,7 +58,7 @@ void init_gdt( void )
 }
 
 /* set the values of a GDT entry */
-void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn )
+static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn )
 {
 	gdt_ents[num].base_l = (bas&0xFFFF);
 	gdt_ents[num].base_m = (bas>>16)&0xFF;
@@ -69,7 +69,7 @@ void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn )
 }
 
 /* start up IDT */
-void init_idt( void )
+static void init_idt( void )
 {
 	idt_ptr.limit = sizeof(idt_entry_t)*256-1;
 	idt_ptr.base = (Uint32)&idt_ents;
@@ -144,7 +144,7 @@ void init_idt( void )
 }
 
 /* set the values of a IDT entry */
-void idt_setgate( Uint8 num, Uint32 bas, Uint16 sel, Uint8 flg )
+static void idt_setgate( Uint8 num, Uint32 bas, Uint16 sel, Uint8 flg )
 {
 	idt_ents[num].base_l = bas&0xFFFF;
 	idt_ents[num].base_h = (bas>>16)&0xFFFF;

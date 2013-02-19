@@ -9,7 +9,7 @@
 #include <sys/serial.h>
 
 /* behind-the-scenes function */
-void vaprintk( Uint16 dev, char *s, va_list args )
+static void vaprintk( Uint16 dev, char *s, va_list args )
 {
 	Uint8 alt;
 	Uint8 zp;
