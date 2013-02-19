@@ -6,7 +6,7 @@ Yes, I want to write a kernel. Any problem with that?
 
 ## How?
 
-Lowest level parts of the kernel are done in x86 assembly (nasm), everything else is pure C.
+Lowest level parts of the kernel are done in x86 assembly (yasm), everything else is pure C.
 
 I'm not very experienced but I try to learn from other projects.
 
