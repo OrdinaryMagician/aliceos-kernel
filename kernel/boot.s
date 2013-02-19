@@ -13,6 +13,7 @@ MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
 MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
 [BITS 32] ; we're going to target i386, anyway
+[ALIGN 4]
 
 ; putting all them datas in the kernel img
 [GLOBAL mboot]
@@ -38,7 +39,9 @@ start:
 	push ebx
 	; ... and we're done with asm for now
 	call kmain
+	; that's all, folks!
 	hlt
+	jmp $
 
 ; BEES
 SECTION .bss

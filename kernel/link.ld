@@ -1,10 +1,11 @@
 /* The linker script for AliceOS kernel */
 OUTPUT_FORMAT(elf32-i386)	/* I don't know how to x86_64 so deal w/ it */
 ENTRY(start)
+phys = 0x00100000;
 SECTIONS
 {
 	/* Code */
-	.text 0x100000 :
+	.text phys : AT(phys)
 	{
 		code = .;
 		*(.text)
@@ -12,7 +13,7 @@ SECTIONS
 		. = ALIGN(4096);
 	}
 	/* All the data */
-	.data :
+	.data : AT(phys + (data - code))
 	{
 		data = .;
 		*(.data)
@@ -20,7 +21,7 @@ SECTIONS
 		. = ALIGN(4096);
 	}
 	/* Static vars */
-	.bss :
+	.bss : AT(phys + (bss - code))
 	{
 		bss = .;
 		*(.bss)

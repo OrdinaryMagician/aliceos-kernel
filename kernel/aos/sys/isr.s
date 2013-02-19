@@ -3,6 +3,7 @@
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.
 [BITS 32]
+[ALIGN 4]
 ; good thing we have macros
 %macro ISR_NOERR 1
 [GLOBAL isr%1]

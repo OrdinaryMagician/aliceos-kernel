@@ -155,7 +155,6 @@ void m12h_setmode( void )
 	vgaunblank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,0x20);
-
 	/* clear video memory */
 	Uint8 p;
 	for ( p=0; p<4; p++ )

@@ -158,7 +158,6 @@ void m3h_setmode( void )
 	vgaunblank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,0x20);
-
 	/* clear video memory */
 	memsetw(m3h_mem,0x00,2000);
 }

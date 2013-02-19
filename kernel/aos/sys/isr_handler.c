@@ -59,12 +59,7 @@ void isr_handler( regs_t *regs )
 		OHSHI(HCF_OOB, regs);
 		break;
 	case 6: /* Invalid opcode exception */
-		/*
-		   Ignored
-		   Seems to happen for some reason due to a bug
-		   I just can't fix at all
-		*/
-		/*OHSHI(HCF_INVOPCODE, regs);*/
+		OHSHI(HCF_INVOPCODE, regs);
 		break;
 	case 7: /* No coprocessor exception */
 		OHSHI(HCF_NOCPROC, regs);

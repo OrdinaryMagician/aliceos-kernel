@@ -7,6 +7,7 @@
 #include <vga/vgamisc.h>
 #include <vga/vgareg.h>
 #include <sys/port.h>
+#include <sys/helpers.h>
 
 /* plane switch */
 void planeswitch( Uint8 p )

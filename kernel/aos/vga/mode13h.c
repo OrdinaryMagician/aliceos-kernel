@@ -156,7 +156,6 @@ void m13h_setmode( void )
 	vgaunblank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,0x20);
-
 	/* clear video memory */
 	memset(m13h_mem,0x00,64000);
 }

@@ -13,6 +13,7 @@
 #include <video/loadfnt.h>
 #include <video/vidtypes.h>
 #include <memops.h>
+#include <sys/helpers.h>
 
 /* bga variables */
 Uint8 *bga_mem = (Uint8*)0; /* memory area */
@@ -39,9 +40,6 @@ Uint16 getbgareg(Uint8 reg)
 
 void bga_bankswitch(Uint8 bank)
 {
-	bank %= 250;
-	if ( bank == cbank )
-		return;
 	setbgareg(BGA_REG_BANK,bank);
 	cbank = bank;
 }
@@ -130,9 +128,7 @@ Uint8 bga_setmode( Uint16 w, Uint16 h )
 	/* VBE must be disabled before changing mode */
 	setbgareg(BGA_REG_ENABLE,BGA_DISABLED);
 	/* parameter validation */
-	if ( w > BGA_MAX_XRES )
-		return 2;
-	if ( h > BGA_MAX_YRES )
+	if ( (w > BGA_MAX_XRES) || (h > BGA_MAX_YRES) )
 		return 2;
 	/* actual mode setting */
 	setbgareg(BGA_REG_XRES,w);
@@ -156,21 +152,17 @@ Uint8 bga_setmode( Uint16 w, Uint16 h )
 
 void bga_setpal( color_t* pal )
 {
-	Uint8 i;
-	for ( i=0; i<16; i++ )
-		bga_fbpal[i] = *(pal+i);
+	memcpy((Uint8*)&bga_fbpal,(Uint8*)pal,sizeof(color_t)*16);
 }
 
 void bga_getpal( color_t* pal )
 {
-	Uint8 i;
-	for ( i=0; i<16; i++ )
-		*(pal+i) = bga_fbpal[i];
+	memcpy((Uint8*)pal,(Uint8*)&bga_fbpal,sizeof(color_t)*16);
 }
 
 void bga_setfont( fnt_t* fnt )
 {
-	bga_fnt = *fnt;
+	memcpy((Uint8*)&bga_fnt,(Uint8*)fnt,sizeof(fnt_t));
 	/* update framebuffer res */
 	bga_fbw = bga_drv.w/bga_fnt.w;
 	bga_fbh = bga_drv.h/bga_fnt.h;
@@ -198,7 +190,7 @@ void bga_clear( void )
 	}
 }
 
-void bga_linescr( Uint16 y, Sint32 o )
+void bga_linescrh( Uint16 y, Sint32 o )
 {
 	Uint16 x;
 	if ( o < 0 )
@@ -232,26 +224,22 @@ void bga_hscroll( Sint32 offset )
 	Uint16 y;
 	/* due to the way I'm using banks, this will be slow */
 	for ( y=0; y<bga_drv.h; y++ )
-		bga_linescr(y,offset);
+		bga_linescrh(y,offset);
 }
 
-void bga_rowscr( Uint16 x, Sint32 o )
+void bga_linescrv( Uint16 y, Sint32 o )
 {
-	Uint16 y;
+	Uint16 x;
 	if ( o < 0 )
 	{
 		o *= -1;
-		for ( y=o; y<bga_drv.h; y++ )
-			bga_putpixel(x,y-o,bga_getpixel(x,y));
-		for ( y=bga_drv.h-o; y<bga_drv.h; y++ )
-			bga_putpixel(x,y,color(0,0,0,0));
+		for ( x=0; x<bga_drv.w; x++ )
+			bga_putpixel(x,y,(y<(bga_drv.h-o))?bga_getpixel(x,y+o):color(0,0,0,0));
 	}
 	else
 	{
-		for ( y=0; y<bga_drv.h-o; y++ )
-			bga_putpixel(x,y,bga_getpixel(x,y+o));
-		for ( y=o; y<bga_drv.h-o; y++ )
-			bga_putpixel(x,y,color(0,0,0,0));
+		for ( x=0; x<bga_drv.w; x++ )
+			bga_putpixel(x,y,(y<o)?bga_getpixel(x,y-o):color(0,0,0,0));
 	}
 }
 
@@ -266,11 +254,12 @@ void bga_vscroll( Sint32 offset )
 		bga_clear();
 		return;
 	}
-	Uint16 x;
+	Uint16 y;
 	/* this is going to be EVEN SLOWER than horizontal scrolling */
 	/* better grab some popcorn */
-	for ( x=0; x<bga_drv.w; x++ )
-		bga_rowscr(x,offset);
+	for ( y=0; y<bga_drv.h; y++ )
+		bga_linescrv(y,offset);
+	
 }
 
 void bga_putpixel( Uint16 x, Uint16 y, color_t c )
@@ -279,7 +268,8 @@ void bga_putpixel( Uint16 x, Uint16 y, color_t c )
 	Uint32 off = (x+y*bga_drv.w)*4;
 	Uint8 bank = off/BGA_BANK_SIZE;
 	off -= bank*BGA_BANK_SIZE;
-	bga_bankswitch(bank);
+	if ( bank != cbank )
+		bga_bankswitch(bank);
 	/* color values are in reverse order */
 	bga_mem[off] = c.b;
 	bga_mem[off+1] = c.g;
@@ -293,7 +283,8 @@ color_t bga_getpixel( Uint16 x, Uint16 y )
 	Uint32 off = (x+y*bga_drv.w)*4;
 	Uint8 bank = off/BGA_BANK_SIZE;
 	off -= bank*BGA_BANK_SIZE;
-	bga_bankswitch(bank);
+	if ( bank != cbank )
+		bga_bankswitch(bank);
 	/* color values are in reverse order */
 	color_t got;
 	got.b = bga_mem[off];

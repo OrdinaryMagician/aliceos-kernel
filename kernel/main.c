@@ -23,13 +23,13 @@
 
 Uint32 *initial_esp;
 
-void init_serial( void )
+static void init_serial( void )
 {
 	serial_ins();
 	printk(SERIAL_A,"\033[1;36m%s %s - %s.%s.%s%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
 
-void init_console( void )
+static void init_console( void )
 {
 	/* initialize some vga settings */
 	mode_3h.setmode();
@@ -41,7 +41,7 @@ void init_console( void )
 	mode_3h.fbsetcursor(0,0);
 }
 
-void draw_header( void )
+static void draw_header( void )
 {
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
 	int i = 0;
@@ -65,9 +65,9 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	initial_esp = esp;
 
 	/* start stuff */
-	init_descriptor_tables();
 	init_serial();
 	init_console();
+	init_descriptor_tables();
 	draw_header();
 	init_timer(TIMER_HZ);
 	if ( mboot->mods_count )
