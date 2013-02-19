@@ -59,5 +59,9 @@ void OHSHI( char *mesg, regs_t *regs )
 	mode_3h.fbprintf("]");
 	/* heh */
 	mode_3h.fbprintf("%[F%{1,-3Computer will now halt and catch fire, have a nice day! :)");
-	asm volatile("hlt");
+	#ifdef ATT_SYNTAX
+	asm volatile("L:jmp L");
+	#else
+	asm volatile("jmp $");
+	#endif
 }

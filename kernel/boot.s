@@ -39,8 +39,7 @@ start:
 	push ebx
 	; ... and we're done with asm for now
 	call kmain
-	; that's all, folks!
-	hlt
+	; an infinite loop at the end
 	jmp $
 
 ; BEES

@@ -12,13 +12,21 @@
 Uint8 inport_b( Uint16 port )
 {
 	Uint8 ret;
+	#ifdef ATT_SYNTAX
 	asm volatile("inb %1, %0":"=a"(ret):"dN"(port));
+	#else
+	asm volatile("in %0, %1":"=a"(ret):"dN"(port));
+	#endif
 	return ret;
 }
 
 void outport_b( Uint16 port, Uint8 data )
 {
+	#ifdef ATT_SYNTAX
 	asm volatile("outb %1, %0"::"dN"(port),"a"(data));
+	#else
+	asm volatile("out %0, %1"::"dN"(port),"a"(data));
+	#endif
 }
 
 /* read/write words */
@@ -26,13 +34,21 @@ void outport_b( Uint16 port, Uint8 data )
 Uint16 inport_w( Uint16 port )
 {
 	Uint16 ret;
+	#ifdef ATT_SYNTAX
 	asm volatile("inw %1, %0":"=a"(ret):"dN"(port));
+	#else
+	asm volatile("in %0, %1":"=a"(ret):"dN"(port));
+	#endif
 	return ret;
 }
 
 void outport_w( Uint16 port, Uint16 data )
 {
+	#ifdef ATT_SYNTAX
 	asm volatile("outw %1, %0"::"dN"(port),"a"(data));
+	#else
+	asm volatile("out %0, %1"::"dN"(port),"a"(data));
+	#endif
 }
 
 /* read/write "longs" */
@@ -40,23 +56,19 @@ void outport_w( Uint16 port, Uint16 data )
 Uint32 inport_l( Uint16 port )
 {
 	Uint32 ret;
+	#ifdef ATT_SYNTAX
 	asm volatile("inl %%dx, %%eax":"=a"(ret):"dN"(port));
+	#else
+	asm volatile("in %%eax, %%dx":"=a"(ret):"dN"(port));
+	#endif
 	return ret;
 }
 
 void outport_l( Uint16 port, Uint32 data )
 {
+	#ifdef ATT_SYNTAX
 	asm volatile("outl %%eax, %%dx"::"dN"(port),"a"(data));
-}
-
-/* read/write multiple words */
-
-void inport_wm( Uint16 port, Uint8 *data, Uint32 size )
-{
-	asm volatile("rep insw":"+D"(data),"+c"(size):"d"(port):"memory");
-}
-
-void outport_wm( Uint16 port, Uint8 *data, Uint32 size )
-{
-	asm volatile("rep outsw":"+D"(data),"+c"(size):"d"(port));
+	#else
+	asm volatile("out %%dx, %%eax"::"dN"(port),"a"(data));
+	#endif
 }

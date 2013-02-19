@@ -20,8 +20,4 @@ void outport_w( Uint16 port, Uint16 data );
 Uint32 inport_l( Uint16 port );
 void outport_l( Uint16 port, Uint32 data );
 
-/* read/write multiple words */
-void inport_wm( Uint16 port, Uint8 *data, Uint32 size );
-void outport_wm( Uint16 port, Uint8 *data, Uint32 size );
-
 #endif

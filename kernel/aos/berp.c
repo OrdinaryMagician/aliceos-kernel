@@ -13,7 +13,7 @@
 #include <vga/vgafont.h>
 
 /* a kernel panic in the style of a nokinan machine basic error response printer */
-extern void berp( const char *message, const char *file, Uint32 line )
+void berp( const char *message, const char *file, Uint32 line )
 {
 	asm volatile ("cli");
 	/* fall back to text mode */
@@ -27,5 +27,9 @@ extern void berp( const char *message, const char *file, Uint32 line )
 	mode_3h.fbputs("BERP");
 	printk(SERIAL_A,"\033[0;5;31mERR INST %s,%u (%s) BERP\033[0m\n",file,line,message);
 	/* stahp */
-	asm volatile ("hlt");
+	#ifdef ATT_SYNTAX
+	asm volatile("L:jmp L");
+	#else
+	asm volatile("jmp $");
+	#endif
 }
