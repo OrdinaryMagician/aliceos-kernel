@@ -1,0 +1,96 @@
+This is kind of a progress log for the development of AliceOS.
+Future phases and plans will be very vague and subject to change.
+Please do not expect any of them to come true.
+Tasks aren't exactly ordered.
+
+Legend:
+- To do
+X Done
+F Failed
+
+Shanghai phase:
+  X Start project
+  F Follow JamesM's tutorial step by step
+  X Restart project
+  X VGA text mode
+  X Implement printk()
+  X Serial port driver
+  X Memory and string functions
+  X Extended VGA graphics
+  X Commandline handling
+  X Ramdisk support
+  X Framebuffer console
+  X BGA driver (Bochs/QEMU)
+  X GDT, IDT...
+  X IRQs
+  X PIT
+  - Fix generic VGA drivers to work on real hardware (very hard)
+  - Keyboard input
+  - Dynamic memory (kalloc/krealloc/kfree)
+  - Paging
+  - Basic PCI/PCI-e support (required for more drivers)
+  - VMWare graphics driver
+  - BGA linear framebuffer
+  - ACPI interface
+  - Multitasking
+  - Executable loader (last step, very very important to reach Hourai phase)
+Hourai phase:
+  - Loadable kernel modules
+  - Move drivers to individual modules
+France:
+  - Generic PATA/SATA drivers
+  - Generic USB drivers
+  - PC speaker driver
+  - USB keyboard and USB mouse drivers
+  - Virtual Filesystem
+  - Filesystem modules
+     - AOSRD
+     - AOSRD2
+     - tmpfs
+     - FAT32
+     - ext2
+     - ReiserFS
+  - Basic NVIDIA video driver
+  - Basic Intel video driver
+  - Basic ATI video driver
+Holland:
+  - Audio subsystem
+  - Specific audio drivers
+     - SB16
+     - AC97 / HD Audio
+     - ES1370
+  - Attempt to get help from GPU manufacturers for more specialized drivers
+     - NVIDIA
+     - Intel
+     - ATI
+  - OpenGL implementation
+Tibet:
+  - AOS C Library
+  - Alice in Userland
+  - Cross-compilers
+     - GCC
+     - Clang
+  - Miscellaneous system scripts
+  - /sbin/init, init scripts
+  - Graphics server/compositor
+  - Window manager
+  - Graphical applications
+Kyoto:
+  - Low-level networking system
+  - Ethernet...
+  - Wireless...
+  - Bluetooth...
+London:
+  - Other misc hardware drivers
+Russia:
+  - x86_64 port
+  - ARM port (Raspberry Pi)
+  - Nokinan Low Level Virtual Machine
+Orleans:
+  - Fix bugs
+Bucuresti:
+  - Release candidates
+Dollmaker:
+  - Go gold
+  - Public announcement
+  - Laugh in /g/'s face and/or become queen of /g/ (depends on how things go)
