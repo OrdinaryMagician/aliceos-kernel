@@ -123,8 +123,6 @@ static void m3h_setmode( void )
 	};
 	int rg = 0;
 	Uint8 reg;
-	/* blank display */
-	vgablank();
 	/* MISC */
 	outport_b(VGA_MSCOUTW,regs[rg]);
 	rg++;
@@ -155,7 +153,6 @@ static void m3h_setmode( void )
 		outport_b(VGA_AC_W,regs[rg++]);
 	}
 	/* unblank display and lock palette */
-	vgaunblank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,0x20);
 	/* clear video memory */

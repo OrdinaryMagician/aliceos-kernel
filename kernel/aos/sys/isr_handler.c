@@ -28,13 +28,13 @@ void isr_clearhandlers( void )
 /* the handler itself */
 void isr_handler( regs_t *regs )
 {
-	asm volatile("cli");
+	int_disable();
 	/* call a specific handler if available */
 	if ( (regs->intno < 32) && isr_handlers[regs->intno] )
 	{
 		isr_handler_t hnd = isr_handlers[regs->intno];
 		hnd(regs);
-		asm volatile("sti");
+		int_enable();
 		return;
 	}
 	/* default handlers, mostly just calls to halt and catch fire */
@@ -129,5 +129,5 @@ void isr_handler( regs_t *regs )
 		OHSHI(HCF_UNHANDLEDINT, regs);
 		break;
 	}
-	asm volatile("sti");
+	int_enable();
 }

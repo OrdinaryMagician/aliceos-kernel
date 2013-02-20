@@ -24,7 +24,7 @@ void register_irq_handler( Uint8 n, irq_handler_t handler )
 /* the common handler (which will call any registered handlers) */
 void irq_handler( regs_t *regs )
 {
-	asm volatile("cli");
+	int_disable();
 	Uint8 irq = regs->intno-32;
 	/* send end-of-interrupt to PIC */
 	if ( irq >= 12 )
@@ -36,7 +36,7 @@ void irq_handler( regs_t *regs )
 		irq_handler_t hnd = irq_handlers[irq];
 		hnd(regs);
 	}
-	asm volatile("sti");
+	int_enable();
 }
 
 /* clear IRQ handlers */

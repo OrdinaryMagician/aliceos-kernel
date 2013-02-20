@@ -15,7 +15,7 @@
 /* a kernel panic in the style of a nokinan machine basic error response printer */
 void berp( const char *message, const char *file, Uint32 line )
 {
-	asm volatile ("cli");
+	int_disable();
 	/* fall back to text mode */
 	mode_3h.setmode();
 	mode_3h.clear();
@@ -27,9 +27,5 @@ void berp( const char *message, const char *file, Uint32 line )
 	mode_3h.fbputs("BERP");
 	printk(SERIAL_A,"\033[0;5;31mERR INST %s,%u (%s) BERP\033[0m\n",file,line,message);
 	/* stahp */
-	#ifdef ATT_SYNTAX
-	asm volatile("L:jmp L");
-	#else
-	asm volatile("jmp $");
-	#endif
+	khalt(EXIT_BERP);
 }

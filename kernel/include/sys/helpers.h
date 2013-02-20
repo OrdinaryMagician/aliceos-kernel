@@ -18,4 +18,18 @@
 #define volatile __volatile__
 #define attribute __attribute__
 
+/* extern functions to minimize inline asm usage */
+
+/* cli */
+extern void int_enable( void );
+/* sti */
+extern void int_disable( void );
+/* halt kernel */
+extern void khalt( Uint32 err );
+
+/* codes for khalt (they are loaded to register eax) */
+#define EXIT_BERP      0x50524542 /* basic error response printer */
+#define EXIT_EXCEPTION 0xDEADBEEF /* after halt and catch fire */
+#define EXIT_SUCCESS   0xADEADBED /* success return value */
+
 #endif

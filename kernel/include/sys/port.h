@@ -9,15 +9,15 @@
 #include <sys/types.h>
 
 /* read/write bytes */
-Uint8 inport_b( Uint16 port );
-void outport_b( Uint16 port, Uint8 data );
+extern Uint8 inport_b( Uint16 port );
+extern void outport_b( Uint16 port, Uint8 data );
 
 /* read/write words */
-Uint16 inport_w( Uint16 port );
-void outport_w( Uint16 port, Uint16 data );
+extern Uint16 inport_w( Uint16 port );
+extern void outport_w( Uint16 port, Uint16 data );
 
 /* read/write "longs" */
-Uint32 inport_l( Uint16 port );
-void outport_l( Uint16 port, Uint32 data );
+extern Uint32 inport_l( Uint16 port );
+extern void outport_l( Uint16 port, Uint32 data );
 
 #endif

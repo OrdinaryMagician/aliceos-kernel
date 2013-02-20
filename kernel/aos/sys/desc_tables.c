@@ -38,7 +38,8 @@ void init_descriptor_tables( void )
 	init_gdt();
 	/* interrupt descriptor table */
 	init_idt();
-	asm volatile("sti");
+	/* now we can start interrupts */
+	int_enable();
 }
 
 /* start up GDT */

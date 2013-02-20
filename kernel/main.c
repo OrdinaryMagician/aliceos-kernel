@@ -80,7 +80,7 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 	{
 		mode_3h.fbputs("No argument specified\n\n");
 		listdemos();
-		return 0xADEADBED;
+		return EXIT_SUCCESS;
 	}
 	unsigned int i = 0;
 	for ( i=0; i<DEMO_COUNT; i++ )
@@ -88,11 +88,11 @@ int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
 		if ( !strcmp(kargs,demos[i].name) )
 		{
 			demos[i].func();
-			return 0xADEADBED;
+			return EXIT_SUCCESS;
 		}
 	}
 	mode_3h.fbprintf("Unrecognized argument \"%s\"\n\n",kargs);
 	listdemos();
 
-	return 0xADEADBED;
+	return EXIT_SUCCESS;
 }
