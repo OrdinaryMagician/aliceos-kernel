@@ -20,13 +20,19 @@
 #include <vga/mode3h.h>
 #include <sys/desc_tables.h>
 #include <sys/timer.h>
+#include <kmem.h>
 
 Uint32 *initial_esp;
+/* location of certain parts of the kernel */
+extern Uint32 code;
+extern Uint32 data;
+extern Uint32 bss;
+extern Uint32 end;
 
 static void init_serial( void )
 {
 	serial_on(SERIAL_A);
-	printk(SERIAL_A,"\033[1;36m%s %s - %s.%s.%s%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	printk("\033[1;36m%s %s - %s.%s.%s%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
 }
 
 static void init_console( void )
@@ -59,17 +65,37 @@ static void draw_header( void )
 }
 
 /* C entry point for the kernel starts here. */
-int kmain( struct multiboot *mboot, Uint32 mboot_mag, Uint32 *esp )
+int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 {
+	/* for pretty-printing */
+	char *left = " \033[1;37m>\033[1;36m>\033[0;36m>\033[0m ";
 	/* set the initial stack pointer */
 	initial_esp = esp;
+	
+	/* calculate placement address for the memory allocator */
+	Uint32 p_addr = end;
+	/* don't crap up command line */
+	p_addr += strlen((char*)mboot->cmdline)+1;
+	/* skip any modules */
+	if ( mboot->mods_count )
+		p_addr = *(Uint32*)((mboot->mods_addr+4)*mboot->mods_count);
 
+	/* kernel signature is located right at the very beginning */
+	char *ksig = (char*)&code;
 	/* start stuff */
 	init_serial();
+	printk("Kernel loaded at %#08x\n",&code);
+	printk("\033[1;32m%s%s\033[0m",ksig,ksig+strlen(ksig)+1);
+	printk("Starting up...\n");
+	printk("%sMemory manager\n",left);
+	init_kmem(p_addr);
+	printk("%sConsole output\n",left);
 	init_console();
+	printk("%sDescriptor tables\n",left);
 	init_descriptor_tables();
-	draw_header();
+	printk("%sInternal timer\n",left);
 	init_timer(TIMER_HZ);
+	draw_header();
 	if ( mboot->mods_count )
 		init_ramdisk(*((Uint32*)mboot->mods_addr),*(Uint32*)(mboot->mods_addr+4));
 

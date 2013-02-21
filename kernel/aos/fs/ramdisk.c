@@ -9,7 +9,6 @@
 #include <strops.h>
 #include <printk.h>
 #include <berp.h>
-#include <sys/serial.h>
 
 Uint8 aosrd_hdmagic[4] = {0xFE,0xED,0xCA,0xFE};
 Uint8 aosrd_trmagic[4] = {0xAD,0xEA,0xDB,0xED};
@@ -23,7 +22,7 @@ rd_entry_t *rd_find( char *fname )
 {
 	if ( !rdpos )
 	{
-		printk(SERIAL_A,"Warning: Attempt to access uninitialized ramdisk\n");
+		printk("Warning: Attempt to access uninitialized ramdisk\n");
 		return NULL;
 	}
 	Uint32 ents = rd_numents();
@@ -53,12 +52,12 @@ rd_entry_t *rd_entry( Uint32 idx )
 {
 	if ( !rdpos )
 	{
-		printk(SERIAL_A,"Warning: Attempt to access uninitialized ramdisk\n");
+		printk("Warning: Attempt to access uninitialized ramdisk\n");
 		return NULL;
 	}
 	if ( idx >= rd_numents() )
 	{
-		printk(SERIAL_A,"Warning: Attempting to access ramdisk entry out of bounds\n");
+		printk("Warning: Attempting to access ramdisk entry out of bounds\n");
 		return NULL;
 	}
 	return (rd_entry_t*)(rdpos+RDHEAD_SIZ+(RDENT_SIZ*idx));
@@ -69,7 +68,7 @@ Uint32 rd_numents( void )
 {
 	if ( !rdpos )
 	{
-		printk(SERIAL_A,"Warning: Attempt to access uninitialized ramdisk\n");
+		printk("Warning: Attempt to access uninitialized ramdisk\n");
 		return 0;
 	}
 	rd_header_t *head = (rd_header_t*)rdpos;
@@ -81,32 +80,43 @@ void init_ramdisk( Uint32 start, Uint32 end )
 {
 	rdpos = start;
 	rdsiz = end-start;
-	printk(SERIAL_A,"Ramdisk at %#08x (%u bytes)\n",rdpos,rdsiz);
+	printk("Loading ramdisk at %#08x (%u bytes)... ",rdpos,rdsiz);
 	/* verify disk */
 	/* header */
 	Uint8 mag[4];
 	memcpy(&mag[0],(Uint8*)rdpos,4);
 	if ( memcmp(&mag[0],&aosrd_hdmagic[0],4) )
 	{
-		printk(SERIAL_A,"Expected magic: 0x%02x%02x%02x%02x\n",aosrd_hdmagic[0],aosrd_hdmagic[1],aosrd_hdmagic[2],aosrd_hdmagic[3]);
-		printk(SERIAL_A,"Ramdisk magic:  0x%02x%02x%02x%02x\n",mag[0],mag[1],mag[2],mag[3]);
-		BERP("Ramdisk failed format checks, incorrect header magic");
+		printk("\033[1;31mfailed\033[0m\nHeader magic invalid: ");
+		printk("expected 0x%02x%02x%02x%02x, ",aosrd_hdmagic[0],aosrd_hdmagic[1],aosrd_hdmagic[2],aosrd_hdmagic[3]);
+		printk("got 0x%02x%02x%02x%02x\n",mag[0],mag[1],mag[2],mag[3]);
+		rdpos = 0;
+		rdsiz = 0;
+		return;
 	}
 	/* footer (trailer) */
 	Uint8 fmg[4];
 	memcpy(&fmg[0],(Uint8*)(rdpos+rdsiz-32),4);
 	Uint8 fsig[28];
 	memcpy(&fsig[0],(Uint8*)(rdpos+rdsiz-28),28);
+	fsig[27] = 0; /* prevent overflow */
 	if ( memcmp(&fmg[0],&aosrd_trmagic[0],4) )
 	{
-		printk(SERIAL_A,"Expected magic: 0x%02x%02x%02x%02x\n",aosrd_trmagic[0],aosrd_trmagic[1],aosrd_trmagic[2],aosrd_trmagic[3]);
-		printk(SERIAL_A,"Ramdisk magic:  0x%02x%02x%02x%02x\n",fmg[0],fmg[1],fmg[2],fmg[3]);
-		BERP("Ramdisk failed format checks, incorrect trailer magic");
+		printk("\033[1;31mfailed\033[0m\nTrailer magic invalid: ");
+		printk("expected 0x%02x%02x%02x%02x, ",aosrd_trmagic[0],aosrd_trmagic[1],aosrd_trmagic[2],aosrd_trmagic[3]);
+		printk("got 0x%02x%02x%02x%02x\n",fmg[0],fmg[1],fmg[2],fmg[3]);
+		rdpos = 0;
+		rdsiz = 0;
+		return;
 	}
 	if ( memcmp((Uint8*)&fsig[0],(Uint8*)&aosrd_trsig[0],28) )
 	{
-		printk(SERIAL_A,"Expected signature: %s",aosrd_trsig);
-		printk(SERIAL_A,"Ramdisk signature:  %s",fsig);
-		BERP("Ramdisk failed format checks, incorrect trailer signature");
+		printk("\033[1;31mfailed\033[0m\nTrailer signature invalid: ");
+		printk("expected \"%s\", ",aosrd_trsig);
+		printk("got \"%s\"\n",fsig);
+		rdpos = 0;
+		rdsiz = 0;
+		return;
 	}
+	printk("\033[1;32mok\033[0m\n");
 }

@@ -15,6 +15,9 @@ MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 [ALIGN 4]
 [BITS 32] ; we're going to target i386, anyway
 
+; these things are defined in the linker script
+[EXTERN code,data,bss,end]
+
 ; don't mind me, I got bored
 [GLOBAL signature]
 signature:

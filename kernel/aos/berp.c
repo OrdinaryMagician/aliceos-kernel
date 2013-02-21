@@ -7,7 +7,6 @@
 #include <berp.h>
 #include <sys/helpers.h>
 #include <printk.h>
-#include <sys/serial.h>
 #include <vga/mode3h.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
@@ -25,7 +24,7 @@ void berp( const char *message, const char *file, Uint32 line )
 	/* PANIC HARD */
 	mode_3h.fbsetattr(APAL_LIGHTGREEN,APAL_BLACK,EXATTR_NOSCR);
 	mode_3h.fbputs("BERP");
-	printk(SERIAL_A,"\033[0;5;31mERR INST %s,%u (%s) BERP\033[0m\n",file,line,message);
+	printk("\033[0;5;31mERR INST %s,%u (%s) BERP\033[0m\n",file,line,message);
 	/* stahp */
 	khalt(EXIT_BERP);
 }

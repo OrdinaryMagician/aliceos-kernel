@@ -10,11 +10,11 @@
 #include <kdefs.h>
 #include <krand.h>
 #include <printk.h>
-#include <sys/serial.h>
 #include <berp.h>
 #include <fs/ramdisk.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
+#include <vga/vgamisc.h>
 #include <vga/mode13h.h>
 #include <vga/mode12h.h>
 #include <vga/mode3h.h>
@@ -107,10 +107,11 @@ void dt_bounce( void )
 void demo_timers( void )
 {
 	/* we already assume we're in mode 3h since boot */
+	disableblink();
 	mode_3h.fbcursorvis(0);
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
 	mode_3h.drawrect(0,4,80,42,APAL_DARKGRAY);
-	printk(SERIAL_A,"Running Timers demo\n");
+	printk("Running Timers demo\n");
 	ball_x = 12;
 	ball_y = 8;
 	vel_x = 1;
@@ -119,13 +120,13 @@ void demo_timers( void )
 	while ( i < 80 )
 		mode_3h.drawchar(i++,24,' ');
 	/* register the tasks */
-	printk(SERIAL_A,"update header, every second\n");
+	printk("update header, every second\n");
 	if ( timer_addtask(dt_updateheader,timer_sec(1)) )
 		BERP("Couldn't add task");
-	printk(SERIAL_A,"bottom wave animation, every 100ms\n");
+	printk("bottom wave animation, every 100ms\n");
 	if ( timer_addtask(dt_wave,timer_msec(100)) )
 		BERP("Couldn't add task");
-	printk(SERIAL_A,"bouncing ball, every 50ms\n");
+	printk("bouncing ball, every 50ms\n");
 	if ( timer_addtask(dt_bounce,timer_msec(50)) )
 		BERP("Couldn't add task");
 }
@@ -135,7 +136,7 @@ void demo_cmap( void )
 {
 	/* no startup code, we already assume we're in mode 3h since boot */
 	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
-	printk(SERIAL_A,"Running Character Map demo\n");
+	printk("Running Character Map demo\n");
 	Uint16 i;
 	Uint16 x,y;
 	x = 4;
@@ -169,7 +170,7 @@ void demo_blockgfx( void )
 {
 	/* no startup code, we already assume we're in mode 3h since boot */
 	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
-	printk(SERIAL_A,"Running Block GFX demo\n");
+	printk("Running Block GFX demo\n");
 	img_t aliceimg;
 	if ( loadimg(&aliceimg,"alice3h.img") )
 		BERP("error loading alice3h.img");
@@ -188,7 +189,7 @@ void demo_bochsgfx( void )
 {
 	Uint16 rx = 1280;
 	Uint16 ry = 800;
-	printk(SERIAL_A,"Running BGA GFX demo\n");
+	printk("Running BGA GFX demo\n");
 	if ( bga_drv.setmode(rx,ry) )
 		BERP("could not set video mode");
 	fnt_t font8;
@@ -444,7 +445,7 @@ void demo_bochsgfx( void )
 /* mode 12h graphics demo */
 void demo_crapgfx( void )
 {
-	printk(SERIAL_A,"Running Mode 12h GFX demo\n");
+	printk("Running Mode 12h GFX demo\n");
 	mode_12h.setmode();
 	mode_12h.setpal(&alicepal[0]);
 	fnt_t font8;
@@ -556,7 +557,7 @@ void demo_crapgfx( void )
 /* mode 13h graphics demo */
 void demo_realgfx( void )
 {
-	printk(SERIAL_A,"Running Mode 13h GFX demo\n");
+	printk("Running Mode 13h GFX demo\n");
 	mode_13h.setmode();
 	/* needed for special "masking" */
 	alicepal256[765] = 0;

@@ -9,7 +9,6 @@ SECTIONS
 	{
 		code = .;
 		*(.text)
-		*(.rodata)
 		. = ALIGN(4096);
 	}
 	/* All the data */

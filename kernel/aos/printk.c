@@ -89,10 +89,19 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 }
 
 /* printing to a serial device, for debug purposes */
-void printk( Uint16 dev, char *s, ... )
+void printk_s( Uint16 dev, char *s, ... )
 {
 	va_list args;
 	va_start(args,s);
 	vaprintk(dev,s,args);
+	va_end(args);
+}
+
+/* print to the first serial device */
+void printk( char *s, ... )
+{
+	va_list args;
+	va_start(args,s);
+	vaprintk(SERIAL_A,s,args);
 	va_end(args);
 }
