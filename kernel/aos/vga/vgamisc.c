@@ -44,7 +44,6 @@ void vgaunblank( void )
 /* disable text blinking and allow all 16 colors for background */
 void disableblink( void )
 {
-	vgablank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
 	Uint8 reg = inport_b(VGA_AC_R);
@@ -53,13 +52,11 @@ void disableblink( void )
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
 	outport_b(VGA_AC_W,reg);
 	outport_b(VGA_AC_I,0x20);
-	vgaunblank();
 }
 
 /* enable text blinking reducing background colors to 8 */
 void enableblink( void )
 {
-	vgablank();
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
 	Uint8 reg = inport_b(VGA_AC_R);
@@ -68,5 +65,4 @@ void enableblink( void )
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
 	outport_b(VGA_AC_W,reg);
 	outport_b(VGA_AC_I,0x20);
-	vgaunblank();
 }
