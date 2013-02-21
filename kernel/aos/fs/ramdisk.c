@@ -76,47 +76,47 @@ Uint32 rd_numents( void )
 }
 
 /* initialize ramdisk handler */
-void init_ramdisk( Uint32 start, Uint32 end )
+Uint8 init_ramdisk( Uint32 start, Uint32 end )
 {
 	rdpos = start;
 	rdsiz = end-start;
-	printk("Loading ramdisk at %#08x (%u bytes)... ",rdpos,rdsiz);
+	printk("Setting up ramdisk at %#08x (%u bytes)... ",rdpos,rdsiz);
 	/* verify disk */
 	/* header */
 	Uint8 mag[4];
 	memcpy(&mag[0],(Uint8*)rdpos,4);
 	if ( memcmp(&mag[0],&aosrd_hdmagic[0],4) )
 	{
-		printk("\033[1;31mfailed\033[0m\nHeader magic invalid: ");
-		printk("expected 0x%02x%02x%02x%02x, ",aosrd_hdmagic[0],aosrd_hdmagic[1],aosrd_hdmagic[2],aosrd_hdmagic[3]);
-		printk("got 0x%02x%02x%02x%02x\n",mag[0],mag[1],mag[2],mag[3]);
+		printk("\033[1;31mfailed\n Header invalid\n");
+		printk("  expected 0x%02x%02x%02x%02x\n",aosrd_hdmagic[0],aosrd_hdmagic[1],aosrd_hdmagic[2],aosrd_hdmagic[3]);
+		printk("  got 0x%02x%02x%02x%02x\033[0m\n",mag[0],mag[1],mag[2],mag[3]);
 		rdpos = 0;
 		rdsiz = 0;
-		return;
+		return 1;
 	}
 	/* footer (trailer) */
 	Uint8 fmg[4];
 	memcpy(&fmg[0],(Uint8*)(rdpos+rdsiz-32),4);
 	Uint8 fsig[28];
-	memcpy(&fsig[0],(Uint8*)(rdpos+rdsiz-28),28);
-	fsig[27] = 0; /* prevent overflow */
+	memcpy(&fsig[0],(Uint8*)(rdpos+rdsiz-28),27);
 	if ( memcmp(&fmg[0],&aosrd_trmagic[0],4) )
 	{
-		printk("\033[1;31mfailed\033[0m\nTrailer magic invalid: ");
-		printk("expected 0x%02x%02x%02x%02x, ",aosrd_trmagic[0],aosrd_trmagic[1],aosrd_trmagic[2],aosrd_trmagic[3]);
-		printk("got 0x%02x%02x%02x%02x\n",fmg[0],fmg[1],fmg[2],fmg[3]);
+		printk("\033[1;31mfailed\n Trailer magic invalid\n");
+		printk("  expected 0x%02x%02x%02x%02x\n",aosrd_trmagic[0],aosrd_trmagic[1],aosrd_trmagic[2],aosrd_trmagic[3]);
+		printk("  got 0x%02x%02x%02x%02x\033[0m\n",fmg[0],fmg[1],fmg[2],fmg[3]);
 		rdpos = 0;
 		rdsiz = 0;
-		return;
+		return 1;
 	}
 	if ( memcmp((Uint8*)&fsig[0],(Uint8*)&aosrd_trsig[0],28) )
 	{
-		printk("\033[1;31mfailed\033[0m\nTrailer signature invalid: ");
-		printk("expected \"%s\", ",aosrd_trsig);
-		printk("got \"%s\"\n",fsig);
+		printk("\033[1;31mfailed\n Trailer signature invalid\n");
+		printk("  expected \"%s\"\n",aosrd_trsig);
+		printk("  got \"%s\"\033[0m\n",fsig);
 		rdpos = 0;
 		rdsiz = 0;
-		return;
+		return 1;
 	}
 	printk("\033[1;32mok\033[0m\n");
+	return 0;
 }

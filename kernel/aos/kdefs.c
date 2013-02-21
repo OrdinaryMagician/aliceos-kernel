@@ -17,3 +17,4 @@ const char *_kver_code = "Shanghai";
 const char *_karch = "i686";
 const char *_kbuild_date = __DATE__;
 const char *_kbuild_time = __TIME__;
+const char *_kosname = "AOS";

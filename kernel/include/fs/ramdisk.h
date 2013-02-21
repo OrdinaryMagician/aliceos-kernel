@@ -72,5 +72,5 @@ rd_entry_t *rd_entry( Uint32 idx );
 Uint32 rd_numents( void );
 
 /* initialize ramdisk handler */
-void init_ramdisk( Uint32 start, Uint32 end );
+Uint8 init_ramdisk( Uint32 start, Uint32 end );
 #endif

@@ -54,7 +54,8 @@ void dt_updateheader( void )
 	char weekdays[7][4] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 	mode_3h.fbsetcursor(0,0);
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
-	mode_3h.fbprintf("%{-26,0%s %02x/%02x/20%02x | %02x:%02x:%02x",weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],cmosval[8],cmosval[9],cmosval[4],cmosval[2],cmosval[0]);
+	mode_3h.fbprintf("%{1,0%s %02x/%02x/20%02x",weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],cmosval[8],cmosval[9]);
+	mode_3h.fbprintf("%{-9,0%02x:%02x:%02x",cmosval[4],cmosval[2],cmosval[0]);
 }
 
 /* bottom animation */
@@ -77,7 +78,7 @@ Sint16 ball_x, ball_y;
 Sint16 vel_x, vel_y;
 void dt_bounce( void )
 {
-	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_DARKGRAY);
+	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_LIGHTGRAY);
 	ball_x += vel_x;
 	ball_y += vel_y;
 	if ( ball_x > 76 )
@@ -110,7 +111,8 @@ void demo_timers( void )
 	disableblink();
 	mode_3h.fbcursorvis(0);
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
-	mode_3h.drawrect(0,4,80,42,APAL_DARKGRAY);
+	mode_3h.drawrect(0,3,80,44,APAL_DARKGRAY);
+	mode_3h.drawrect(0,4,80,42,APAL_LIGHTGRAY);
 	printk("Running Timers demo\n");
 	ball_x = 12;
 	ball_y = 8;
@@ -118,15 +120,16 @@ void demo_timers( void )
 	vel_y = 1;
 	int i = 0;
 	while ( i < 80 )
-		mode_3h.drawchar(i++,24,' ');
+	{
+		mode_3h.drawchar(i,0,' ');
+		mode_3h.drawchar(i,24,' ');
+		i++;
+	}
 	/* register the tasks */
-	printk("update header, every second\n");
-	if ( timer_addtask(dt_updateheader,timer_sec(1)) )
+	if ( timer_addtask(dt_updateheader,timer_msec(100)) )
 		BERP("Couldn't add task");
-	printk("bottom wave animation, every 100ms\n");
 	if ( timer_addtask(dt_wave,timer_msec(100)) )
 		BERP("Couldn't add task");
-	printk("bouncing ball, every 50ms\n");
 	if ( timer_addtask(dt_bounce,timer_msec(50)) )
 		BERP("Couldn't add task");
 }
@@ -175,9 +178,41 @@ void demo_blockgfx( void )
 	if ( loadimg(&aliceimg,"alice3h.img") )
 		BERP("error loading alice3h.img");
 	mode_3h.clear();
-	mode_3h.drawimg(&aliceimg,0,0,0,0,80,50,0);
-	mode_3h.drawrect(50,21,25,8,4);
-	mode_3h.fbprintf("%[4E%{51,11%s %s%{51,13%s.%s.%s%s (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	/* image */
+	mode_3h.drawimg(&aliceimg,30,0,0,0,50,50,0);
+	Uint16 x,y;
+	int i = 0;
+	/* 16 color set */
+	x = 4;
+	y = 8;
+	while ( i < 16 )
+	{
+		mode_3h.drawrect(x,y,3,3,i);
+		x+=3;
+		if ( !((++i)%8) )
+		{
+			x=4;
+			y+=3;
+		}
+	}
+	/* noise */
+	x = 4;
+	y = 16;
+	do
+	{
+		mode_3h.putpixel(x,y,krand()&15);
+		x++;
+		if ( x >= 20 )
+		{
+			x = 4;
+			y++;
+		}
+	}
+	while ( (x<20) && (y<32) );
+	/* strings */
+	mode_3h.fbprintf("%[E%{2,1%s %s %s.%s.%s%s",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf);
+	mode_3h.fbprintf("%[7%{2,-2Mode 3h blockgfx test");
+	/* some lines */
 	mode_3h.drawhline(0,0,80,7);
 	mode_3h.drawhline(0,49,80,7);
 	mode_3h.drawvline(0,0,50,7);
@@ -200,7 +235,7 @@ void demo_bochsgfx( void )
 		BERP("error loading fbfont16.fnt");
 	bga_drv.setfont(&font16);
 	bga_drv.setpal(&alicepalfc[0]);
-	
+
 	Uint16 x,y;
 	int i = 0;
 	/* 16 color set */
@@ -216,7 +251,7 @@ void demo_bochsgfx( void )
 			y+=32;
 		}
 	}
-	
+
 	/* draw some colorful noise */
 	x = 272;
 	y = 8;
@@ -245,7 +280,7 @@ void demo_bochsgfx( void )
 
 	/* drawing a character map would be fine too */
 	bga_drv.fbsetattr(15,0,EXATTR_MASKED);
-	
+
 	/* 8x16 font */
 	bga_drv.setfont(&font16);
 	x = 8;
@@ -349,7 +384,7 @@ void demo_bochsgfx( void )
 		bga_drv.drawvline(x,y,8,COLOR_GRAY(x-8));
 		x++;
 	}
-	
+
 	/* noise blocks */
 	x = 8;
 	y = 568;
@@ -406,9 +441,9 @@ void demo_bochsgfx( void )
 		bga_drv.drawstring(x,y,str);
 		y += 20;
 	}
-	
+
 	/* version and stuff */
-	bga_drv.fbprintf("%[E%{2,-3%s %s%{2,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	bga_drv.fbprintf("%[E%{2,-2%s %s %s.%s.%s%s",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf);
 	bga_drv.fbprintf("%[7%{-19,-2BGA graphics test");
 
 	/* rotation doesn't really work with non-square fonts, so change the font back to 8x8 */
@@ -451,7 +486,10 @@ void demo_crapgfx( void )
 	fnt_t font8;
 	if ( loadfnt(&font8,"fbfont8.fnt") )
 		BERP("error loading fbfont8.fnt");
-	mode_12h.setfont(&font8);
+	fnt_t font16;
+	if ( loadfnt(&font16,"fbfont16.fnt") )
+		BERP("error loading fbfont16.fnt");
+	mode_12h.setfont(&font16);
 	Uint16 x,y;
 	int i = 0;
 	/* 16 color set */
@@ -467,7 +505,7 @@ void demo_crapgfx( void )
 			y+=32;
 		}
 	}
-	
+
 	/* draw some colorful noise */
 	x = 272;
 	y = 8;
@@ -477,25 +515,28 @@ void demo_crapgfx( void )
 		x++;
 		if ( x >= 528 )
 		{
-			x = 272;
+			x=272;
 			y++;
 		}
 	}
 	while ( (x < 528) && (y < 72) );
-	
+
 	/* there's enough space to draw this */
 	img_t aliceimg;
 	if ( loadimg(&aliceimg,"alice13h_16.img") )
 		BERP("error loading alice13h_16.img");
 	mode_12h.drawimg(&aliceimg,8,80,0,0,320,200,0);
-	
+
 	img_t aliceimg2;
 	if ( loadimg(&aliceimg2,"alice3h.img") )
 		BERP("error loading alice3h.img");
 	mode_12h.drawimg(&aliceimg2,336,80,0,0,80,50,0);
-	
+
 	/* drawing a character map would be fine too */
 	mode_12h.fbsetattr(15,0,EXATTR_MASKED);
+
+	/* 8x16 font */
+	mode_12h.setfont(&font16);
 	x = 8;
 	y = 288;
 	for ( i=0; i<128; i++ )
@@ -504,8 +545,8 @@ void demo_crapgfx( void )
 		x+=8;
 		if ( x >= 136 )
 		{
-			x = 8;
-			y+=8;
+			x=8;
+			y+=16;
 		}
 	}
 	x = 144;
@@ -516,37 +557,65 @@ void demo_crapgfx( void )
 		x+=8;
 		if ( x >= 272 )
 		{
-			x = 144;
+			x=144;
+			y+=16;
+		}
+	}
+	/* 8x8 font */
+	mode_12h.setfont(&font8);
+	x = 280;
+	y = 288;
+	for ( i=0; i<128; i++ )
+	{
+		mode_12h.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 408 )
+		{
+			x=280;
 			y+=8;
 		}
 	}
-	
+	x = 416;
+	y = 288;
+	for ( i=128; i<256; i++ )
+	{
+		mode_12h.drawchar(x,y,i);
+		x+=8;
+		if ( x >= 544 )
+		{
+			x=416;
+			y+=8;
+		}
+	}
+
 	/* draw test strings */
+	mode_12h.setfont(&font16);
 	mode_12h.fbsetattr(7,0,EXATTR_MASKED);
-	mode_12h.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
-	mode_12h.fbprintf("%[7%{-14,-2Mode 12h test");
+	mode_12h.fbprintf("%[E%{2,-2%s %s %s.%s.%s%s",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf);
+	mode_12h.fbprintf("%[7%{-15,-2Mode 12h test");
+	mode_12h.setfont(&font8);
 	mode_12h.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
 	mode_12h.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
-	
+
 	/* draw some lines */
 	mode_12h.drawhline(0,0,640,8);
 	mode_12h.drawhline(1,1,638,7);
 	mode_12h.drawhline(2,2,636,15);
 	mode_12h.drawhline(3,3,634,7);
 	mode_12h.drawhline(4,4,632,8);
-	
+
 	mode_12h.drawhline(0,479,640,8);
 	mode_12h.drawhline(1,478,638,7);
 	mode_12h.drawhline(2,477,636,15);
 	mode_12h.drawhline(3,476,634,7);
 	mode_12h.drawhline(4,475,632,8);
-	
+
 	mode_12h.drawvline(0,0,480,8);
 	mode_12h.drawvline(1,1,478,7);
 	mode_12h.drawvline(2,2,476,15);
 	mode_12h.drawvline(3,3,474,7);
 	mode_12h.drawvline(4,4,472,8);
-	
+
 	mode_12h.drawvline(639,0,480,8);
 	mode_12h.drawvline(638,1,478,7);
 	mode_12h.drawvline(637,2,476,15);
@@ -608,7 +677,7 @@ void demo_realgfx( void )
 		}
 	}
 	/* user palettes left out */
-	
+
 	/* draw some colorful noise (using each subpalette) */
 	x = 80;
 	y = 8;
@@ -717,7 +786,7 @@ void demo_realgfx( void )
 		}
 	}
 	while ( (x < 280) && (y < 72) );
-	
+
 	/* enough space to draw this */
 	img_t aliceimg;
 	if ( loadimg(&aliceimg,"alice3h.img") )
@@ -726,30 +795,30 @@ void demo_realgfx( void )
 
 	/* draw test strings */
 	mode_13h.fbsetattr(7,0,EXATTR_MASKED);
-	mode_13h.fbprintf("%[E%{1,-3%s %s%{1,-2%s.%s.%s%s  (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	mode_13h.fbprintf("%[E%{1,-3%s%{1,-2%s %s.%s.%s%s",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf);
 	mode_13h.fbprintf("%[7%{-14,-2Mode 13h test");
 	mode_13h.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
 	mode_13h.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
-	
+
 	/* draw some lines */
 	mode_13h.drawhline(0,0,320,8);
 	mode_13h.drawhline(1,1,318,7);
 	mode_13h.drawhline(2,2,316,15);
 	mode_13h.drawhline(3,3,314,7);
 	mode_13h.drawhline(4,4,312,8);
-	
+
 	mode_13h.drawhline(0,199,320,8);
 	mode_13h.drawhline(1,198,318,7);
 	mode_13h.drawhline(2,197,316,15);
 	mode_13h.drawhline(3,196,314,7);
 	mode_13h.drawhline(4,195,312,8);
-	
+
 	mode_13h.drawvline(0,0,200,8);
 	mode_13h.drawvline(1,1,198,7);
 	mode_13h.drawvline(2,2,196,15);
 	mode_13h.drawvline(3,3,194,7);
 	mode_13h.drawvline(4,4,192,8);
-	
+
 	mode_13h.drawvline(319,0,200,8);
 	mode_13h.drawvline(318,1,198,7);
 	mode_13h.drawvline(317,2,196,15);

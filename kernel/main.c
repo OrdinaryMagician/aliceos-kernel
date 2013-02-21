@@ -32,7 +32,9 @@ extern Uint32 end;
 static void init_serial( void )
 {
 	serial_on(SERIAL_A);
-	printk("\033[1;36m%s %s - %s.%s.%s%s (%s)\033[0m\n",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
+	printk("\n\033[1;36m%s %s %s.%s.%s%s %s %s %s %s\033[0m\n\n",
+		_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,
+		_kbuild_date,_kbuild_time,_karch,_kosname);
 }
 
 static void init_console( void )
@@ -45,47 +47,64 @@ static void init_console( void )
 	mode_3h.clear();
 	mode_3h.fbcursorvis(1);
 	mode_3h.fbsetcursor(0,0);
+	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 }
 
-static void draw_header( void )
+static void draw_info( void )
 {
-	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
-	int i = 0;
-	while ( i < 80 )
-		mode_3h.drawchar(i++,0,' ');
-	mode_3h.fbprintf("%{1,0%s %s - %s.%s.%s%s (%s)",_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,_karch);
-	/* pretty print time and date */
-	Uint8 cmosval[128];
-	cmos_dump(&cmosval[0]);
-	char weekdays[7][4] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
-	mode_3h.fbprintf("%{-26,0%s %02x/%02x/20%02x | %02x:%02x:%02x",weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],cmosval[8],cmosval[9],cmosval[4],cmosval[2],cmosval[0]);
-	mode_3h.fbsetcursor(0,2);
+	mode_3h.fbsetattr(APAL_CYAN,APAL_BLACK,0);
+	/* some kind of uname */
+	mode_3h.fbprintf("%s %s %s.%s.%s%s %s %s %s %s\n\n",
+			_kname,_kver_code,_kver_maj,_kver_min,_kver_low,
+			_kver_suf,_kbuild_date,_kbuild_time,_karch,_kosname);
 	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 }
 
 /* C entry point for the kernel starts here. */
 int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 {
-	/* for pretty-printing */
-	char *left = " \033[1;37m>\033[1;36m>\033[0;36m>\033[0m ";
 	/* set the initial stack pointer */
 	initial_esp = esp;
+
+	/* stuff to save */
+	char kfname[32];
+	char kargs[KCMDLINE_MAX];
+	char kramdisk[32];
+	
+	/* ramdisk module */
+	mbootmod_t *rdisk = NULL;
+
+	/* saving */
+	char *kargs_r = strtok((char*)mboot->cmdline," ");
+	strncpy(kargs,kargs_r,KCMDLINE_MAX-1);
+	strncpy(kfname,(char*)mboot->cmdline,min(31,strlen((char*)mboot->cmdline)));
+	if ( mboot->mods_count )
+	{
+		rdisk = (mbootmod_t*)mboot->mods_addr;
+		strncpy(kramdisk,(char*)rdisk->cmdline,31);
+	}
+
+	/* for pretty-printing */
+	char *left = " \033[1;37m>\033[1;36m>\033[0;36m>\033[0m ";
 	
 	/* calculate placement address for the memory allocator */
 	Uint32 p_addr = end;
-	/* don't crap up command line */
-	p_addr += strlen((char*)mboot->cmdline)+1;
-	/* skip any modules */
-	if ( mboot->mods_count )
-		p_addr = *(Uint32*)((mboot->mods_addr+4)*mboot->mods_count);
+	/* skip ramdisk if loaded */
+	if ( rdisk )
+		p_addr = rdisk->mod_end;
 
 	/* kernel signature is located right at the very beginning */
 	char *ksig = (char*)&code;
 	/* start stuff */
 	init_serial();
-	printk("Kernel loaded at %#08x\n",&code);
-	printk("\033[1;32m%s%s\033[0m",ksig,ksig+strlen(ksig)+1);
+	printk("Kernel: %s loaded at %#08x\n",kfname,&code);
+	printk(" 2-part signature:\n");
+	printk("  \033[1;32m%s\033[0m\n",ksig);
+	printk("  \033[1;32m%s\033[0m\n",ksig+32);
+	if ( kargs[0] )
+		printk(" Kernel arguments: %s\n",kargs);
+	if ( rdisk )
+		printk("Ramdisk: %s loaded at %#08x\n",kramdisk,rdisk->mod_start);
 	printk("Starting up...\n");
 	printk("%sMemory manager\n",left);
 	init_kmem(p_addr);
@@ -95,14 +114,12 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	init_descriptor_tables();
 	printk("%sInternal timer\n",left);
 	init_timer(TIMER_HZ);
-	draw_header();
-	if ( mboot->mods_count )
-		init_ramdisk(*((Uint32*)mboot->mods_addr),*(Uint32*)(mboot->mods_addr+4));
+	draw_info();
+	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
+		BERP("Ramdisk initialization failed");
 
 	/* insert demo code or whatever here */
-	char *kargs = strchr((char*)mboot->cmdline,' ');
-	kargs++;
-	if ( !(*kargs) )
+	if ( !kargs[0] )
 	{
 		mode_3h.fbputs("No argument specified\n\n");
 		listdemos();
