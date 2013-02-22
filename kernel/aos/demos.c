@@ -142,27 +142,27 @@ void demo_cmap( void )
 	printk("Running Character Map demo\n");
 	Uint16 i;
 	Uint16 x,y;
-	x = 4;
-	y = 4;
+	x = 2;
+	y = 2;
 	for ( i=0; i<128; i++ )
 	{
 		mode_3h.drawchar(x,y,i);
 		x++;
-		if ( x >= 20 )
+		if ( x >= 18 )
 		{
-			x = 4;
+			x = 2;
 			y++;
 		}
 	}
-	x = 24;
-	y = 4;
+	x = 20;
+	y = 2;
 	for ( i=128; i<256; i++ )
 	{
 		mode_3h.drawchar(x,y,i);
 		x++;
-		if ( x >= 40 )
+		if ( x >= 36 )
 		{
-			x = 24;
+			x = 20;
 			y++;
 		}
 	}

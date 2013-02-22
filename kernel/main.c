@@ -6,59 +6,28 @@
 */
 #include <sys/types.h>
 #include <sys/helpers.h>
-#include <kdefs.h>
 #include <sys/multiboot.h>
-#include <printk.h>
 #include <sys/serial.h>
-#include <sys/cmos.h>
-#include <berp.h>
-#include <strops.h>
-#include <demos.h>
+#include <sys/desc_tables.h>
+#include <sys/timer.h>
 #include <fs/ramdisk.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 #include <vga/mode3h.h>
-#include <sys/desc_tables.h>
-#include <sys/timer.h>
+#include <kdefs.h>
+#include <printk.h>
+#include <berp.h>
+#include <strops.h>
 #include <kmem.h>
+#include <demos.h>
 
+/* initial stack pointer */
 Uint32 *initial_esp;
 /* location of certain parts of the kernel */
 extern Uint32 code;
 extern Uint32 data;
 extern Uint32 bss;
 extern Uint32 end;
-
-static void init_serial( void )
-{
-	serial_on(SERIAL_A);
-	printk("\n\033[1;36m%s %s %s.%s.%s%s %s %s %s %s\033[0m\n\n",
-		_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,
-		_kbuild_date,_kbuild_time,_karch,_kosname);
-}
-
-static void init_console( void )
-{
-	/* initialize some vga settings */
-	mode_3h.setmode();
-	initfont();
-	mode_3h.setpal(&alicepal[0]);
-	/* pretty screen fill */
-	mode_3h.clear();
-	mode_3h.fbcursorvis(1);
-	mode_3h.fbsetcursor(0,0);
-	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
-}
-
-static void draw_info( void )
-{
-	mode_3h.fbsetattr(APAL_CYAN,APAL_BLACK,0);
-	/* some kind of uname */
-	mode_3h.fbprintf("%s %s %s.%s.%s%s %s %s %s %s\n\n",
-			_kname,_kver_code,_kver_maj,_kver_min,_kver_low,
-			_kver_suf,_kbuild_date,_kbuild_time,_karch,_kosname);
-	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
-}
 
 /* C entry point for the kernel starts here. */
 int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
@@ -86,17 +55,18 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 
 	/* for pretty-printing */
 	char *left = " \033[1;37m>\033[1;36m>\033[0;36m>\033[0m ";
-	
-	/* calculate placement address for the memory allocator */
-	Uint32 p_addr = end;
-	/* skip ramdisk if loaded */
-	if ( rdisk )
-		p_addr = rdisk->mod_end;
 
 	/* kernel signature is located right at the very beginning */
 	char *ksig = (char*)&code;
-	/* start stuff */
-	init_serial();
+	
+	/* serial logging */
+	serial_on(SERIAL_A);
+	/* pseudo-uname over serial */
+	printk("\n\033[1;36m%s %s %s.%s.%s%s %s %s %s %s\033[0m\n\n",
+		_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,
+		_kbuild_date,_kbuild_time,_karch,_kosname);
+	
+	/* kernel and ramdisk identification */
 	printk("Kernel: %s loaded at %#08x\n",kfname,&code);
 	printk(" 2-part signature:\n");
 	printk("  \033[1;32m%s\033[0m\n",ksig);
@@ -105,18 +75,64 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 		printk(" Kernel arguments: %s\n",kargs);
 	if ( rdisk )
 		printk("Ramdisk: %s loaded at %#08x\n",kramdisk,rdisk->mod_start);
+	
+	/* loading "modules" */
 	printk("Starting up...\n");
+	
+	/* memory */
 	printk("%sMemory manager\n",left);
-	init_kmem(p_addr);
+	init_kmem();
+	/* extra gap for the for the memory allocator */
+	Uint32 gap_st = 0;
+	Uint32 gap_en = (Uint32)&end;
+	/* skip ramdisk if loaded */
+	if ( rdisk )
+		gap_en = rdisk->mod_end;
+	kmem_addgap(gap_st,gap_en);
+	/* add mmap entries too */
+	mmap_entry_t *mmapent = (mmap_entry_t*)mboot->mmap_addr;
+	Uint32 off = 0;
+	Uint32 offmax = mboot->mmap_length;
+	while ( off < offmax )
+	{
+		gap_st = mmapent->addr_l;
+		gap_en = mmapent->addr_l+mmapent->len_l;
+		if ( mmapent->type != 1 )
+			kmem_addgap(gap_st,gap_en);
+		off += mmapent->size+4;
+		mmapent = (mmap_entry_t*)(mboot->mmap_addr+off);
+	}
+	
+	/* mode 3h console */
 	printk("%sConsole output\n",left);
-	init_console();
+	/* initialize some vga settings */
+	mode_3h.setmode();
+	initfont();
+	mode_3h.setpal(&alicepal[0]);
+	/* pretty screen fill */
+	mode_3h.clear();
+	mode_3h.fbcursorvis(1);
+	mode_3h.fbsetcursor(0,0);
+	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
+	
+	/* descriptor tables and interrupts */
 	printk("%sDescriptor tables\n",left);
 	init_descriptor_tables();
+	
+	/* internal timer */
 	printk("%sInternal timer\n",left);
 	init_timer(TIMER_HZ);
-	draw_info();
+	
+	/* set up ramdisk access */
 	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
 		BERP("Ramdisk initialization failed");
+
+	/* print some kind of uname */
+	mode_3h.fbsetattr(APAL_CYAN,APAL_BLACK,0);
+	mode_3h.fbprintf("%s %s %s.%s.%s%s %s %s %s %s\n\n",
+			_kname,_kver_code,_kver_maj,_kver_min,_kver_low,
+			_kver_suf,_kbuild_date,_kbuild_time,_karch,_kosname);
+	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 
 	/* insert demo code or whatever here */
 	if ( !kargs[0] )

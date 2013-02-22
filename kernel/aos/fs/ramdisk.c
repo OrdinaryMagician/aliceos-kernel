@@ -10,8 +10,8 @@
 #include <printk.h>
 #include <berp.h>
 
-Uint8 aosrd_hdmagic[4] = {0xFE,0xED,0xCA,0xFE};
-Uint8 aosrd_trmagic[4] = {0xAD,0xEA,0xDB,0xED};
+Uint32 aosrd_hdmagic = 0xFEEDCAFE;
+Uint32 aosrd_trmagic = 0xADEADBED;
 char aosrd_trsig[28] = "The Doll Maker of Bucuresti";
 
 Uint32 rdpos = 0;
@@ -83,32 +83,30 @@ Uint8 init_ramdisk( Uint32 start, Uint32 end )
 	printk("Setting up ramdisk at %#08x (%u bytes)... ",rdpos,rdsiz);
 	/* verify disk */
 	/* header */
-	Uint8 mag[4];
-	memcpy(&mag[0],(Uint8*)rdpos,4);
-	if ( memcmp(&mag[0],&aosrd_hdmagic[0],4) )
+	Uint32 mag = *(Uint32*)rdpos;
+	if ( mag != aosrd_hdmagic )
 	{
 		printk("\033[1;31mfailed\n Header invalid\n");
-		printk("  expected 0x%02x%02x%02x%02x\n",aosrd_hdmagic[0],aosrd_hdmagic[1],aosrd_hdmagic[2],aosrd_hdmagic[3]);
-		printk("  got 0x%02x%02x%02x%02x\033[0m\n",mag[0],mag[1],mag[2],mag[3]);
+		printk("  expected 0x%08x\n",aosrd_hdmagic);
+		printk("  got 0x%08x\033[0m\n",mag);
 		rdpos = 0;
 		rdsiz = 0;
 		return 1;
 	}
 	/* footer (trailer) */
-	Uint8 fmg[4];
-	memcpy(&fmg[0],(Uint8*)(rdpos+rdsiz-32),4);
-	Uint8 fsig[28];
-	memcpy(&fsig[0],(Uint8*)(rdpos+rdsiz-28),27);
-	if ( memcmp(&fmg[0],&aosrd_trmagic[0],4) )
+	Uint32 fmg = *(Uint32*)(rdpos+rdsiz-32);
+	char fsig[28];
+	strncpy(fsig,(char*)(rdpos+rdsiz-28),27);
+	if ( fmg != aosrd_trmagic )
 	{
 		printk("\033[1;31mfailed\n Trailer magic invalid\n");
-		printk("  expected 0x%02x%02x%02x%02x\n",aosrd_trmagic[0],aosrd_trmagic[1],aosrd_trmagic[2],aosrd_trmagic[3]);
-		printk("  got 0x%02x%02x%02x%02x\033[0m\n",fmg[0],fmg[1],fmg[2],fmg[3]);
+		printk("  expected 0x%08x\n",aosrd_trmagic);
+		printk("  got 0x%08x[0m\n",fmg);
 		rdpos = 0;
 		rdsiz = 0;
 		return 1;
 	}
-	if ( memcmp((Uint8*)&fsig[0],(Uint8*)&aosrd_trsig[0],28) )
+	if ( strncmp(fsig,aosrd_trsig,28) )
 	{
 		printk("\033[1;31mfailed\n Trailer signature invalid\n");
 		printk("  expected \"%s\"\n",aosrd_trsig);

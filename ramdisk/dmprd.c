@@ -42,11 +42,11 @@ int main( int argc, char **argv )
 	long int pos = 0;
 	rd_header_t head;
 	pos += read(fdes,&head,sizeof(rd_header_t));
-	if ( memcmp(&(head.magic[0]),&aosrd_hdmagic[0],4) )
+	if ( memcmp(&head.magic,&aosrd_hdmagic,4) )
 	{
 		fprintf(stderr,"\"%s\" is not a valid AOS ramdisk\n",argv[1]);
-		fprintf(stderr,"file magic:     0x%02X%02X%02X%02X\n",head.magic[0],head.magic[1],head.magic[2],head.magic[3]);
-		fprintf(stderr,"expected magic: 0x%02X%02X%02X%02X\n",aosrd_hdmagic[0],aosrd_hdmagic[1],aosrd_hdmagic[2],aosrd_hdmagic[3]);
+		fprintf(stderr,"file magic:     %#08X\n",head.magic);
+		fprintf(stderr,"expected magic: %#08X\n",aosrd_hdmagic);
 		close(fdes);
 		return 1;
 	}

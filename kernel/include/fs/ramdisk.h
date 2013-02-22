@@ -47,7 +47,7 @@ As a safeguard, at the end of the whole thing there's a trailer composed of:
 #define RDHEAD_SIZ 8
 typedef struct
 {
-	Uint8 magic[4];
+	Uint32 magic;
 	Uint32 numents;
 } rd_header_t;
 

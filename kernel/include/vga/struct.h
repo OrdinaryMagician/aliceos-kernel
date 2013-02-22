@@ -37,7 +37,7 @@ typedef struct
 	Uint16 w, h;	/* resolution */
 	Uint8 layout;	/* memory access layout (linear or planar) */
 	Uint8 depth;	/* number of colors */
-	Uint8 *mem;	/* pointer to framebuffer memory */
+	Uint8 *mem;	/* pointer to buffer memory */
 	/* mode setting */
 	void (*setmode)( void );
 	/* palette setting */

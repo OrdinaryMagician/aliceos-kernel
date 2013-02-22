@@ -7,6 +7,7 @@
 #ifndef VIDTYPES_H
 #define VIDTYPES_H
 #include <sys/types.h>
+#include <sys/helpers.h>
 typedef struct
 {
 	Uint8 a, r, g, b;

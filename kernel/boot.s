@@ -21,7 +21,7 @@ MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 ; don't mind me, I got bored
 [GLOBAL signature]
 signature:
-	; 64-byte Kernel signature
+	; 64-byte 2-part kernel signature
 	; UTF-8 string, should be located 4096 bytes into the file
 	; an easy way to read it: strings -eS vmaliceos | head -n 2
 	db 0x41,0x4C,0x49,0x43,0x45,0x4F,0x53,0xE3

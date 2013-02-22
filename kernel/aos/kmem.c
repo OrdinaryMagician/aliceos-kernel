@@ -11,6 +11,14 @@ static Uint32 p_addr_init;
 static Uint32 p_addr;
 static Uint32 alloc_count;
 
+/* gaps to skip (start, end) */
+typedef struct
+{
+	Uint32 start, end;
+} memgap_t;
+memgap_t a_skip[32];
+Uint8 n_skip;
+
 /* global allocation function */
 static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 {
@@ -20,6 +28,19 @@ static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 	{
 		p_addr &= 0xFFFFF000;
 		p_addr += 0x1000;
+	}
+	/* skip any gaps */
+	Uint8 i;
+	for ( i=0; i<n_skip; i++ )
+	{
+		if ( (p_addr >= a_skip[i].start) && (p_addr <= a_skip[i].end) )
+			p_addr = a_skip[i].end+1;
+		/* check if we need to realign */
+		if ( algn && p_addr&(0xFFFFF000) )
+		{
+			p_addr &= 0xFFFFF000;
+			p_addr += 0x1000;
+		}
 	}
 	if ( phys )
 		*phys = p_addr;
@@ -53,10 +74,20 @@ Uint32 kmalloc( Uint32 sz )
 }
 
 /* initialize the memory manager */
-void init_kmem( Uint32 p )
+void init_kmem( void )
 {
-	p_addr = p_addr_init = p;
+	extern Uint32 end;
+	p_addr = end;
 	alloc_count = 0;
+	n_skip = 0;
+}
+
+/* add a memory gap to skip */
+void kmem_addgap( Uint32 start, Uint32 end )
+{
+	a_skip[n_skip].start = start;
+	a_skip[n_skip].end = end;
+	n_skip++;
 }
 
 /* memory statistics: start, end and number of allocations */

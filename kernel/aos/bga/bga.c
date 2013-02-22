@@ -14,9 +14,10 @@
 #include <video/vidtypes.h>
 #include <memops.h>
 #include <sys/helpers.h>
+#include <kmem.h>
 
 /* bga variables */
-static Uint8 *bga_mem = (Uint8*)0; /* memory area */
+static Uint8 *bga_mem = (Uint8*)0; /* buffer memory area */
 static fnt_t bga_fnt; /* font (currently empty) */
 static Sint32 bga_cx = 0, bga_cy = 0; /* cursor position for text */
 static Uint8 bga_cv = 1; /* cursor visibility for text */
@@ -51,6 +52,7 @@ static void bga_getpal( color_t* pal );
 static void bga_setfont( fnt_t* fnt );
 static fnt_t* bga_getfont( void );
 static void bga_clear( void );
+static void bga_flip( void );
 static void bga_hscroll( Sint32 offset );
 static void bga_vscroll( Sint32 offset );
 static void bga_putpixel( Uint16 x, Uint16 y, color_t c );
@@ -144,9 +146,10 @@ static Uint8 bga_setmode( Uint16 w, Uint16 h )
 	bga_mem = (Uint8*)BGA_BANK_ADDR;
 	bga_drv.w = w;
 	bga_drv.h = h;
-	bga_drv.mem = (Uint8*)BGA_BANK_ADDR;
+	bga_drv.mem = bga_mem;
 	setbgareg(BGA_REG_BANK,0);
 	cbank = 0;
+	bga_clear();
 	return 0;
 }
 

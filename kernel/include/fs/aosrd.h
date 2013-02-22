@@ -42,13 +42,13 @@ As a safeguard, at the end of the whole thing there's a trailer composed of:
  - the null-terminated string "The Doll Maker of Bucuresti" (don't ask)
 */
 
-const Uint8 aosrd_hdmagic[4] = {0xFE,0xED,0xCA,0xFE};
-const Uint8 aosrd_trmagic[4] = {0xAD,0xEA,0xDB,0xED};
+const Uint32 aosrd_hdmagic = 0xFEEDCAFE;
+const Uint32 aosrd_trmagic = 0xADEADBED;
 const char aosrd_trsig[28] = "The Doll Maker of Bucuresti";
 
 typedef struct
 {
-	Uint8 magic[4];
+	Uint32 magic;
 	Uint32 numents;
 } rd_header_t;
 

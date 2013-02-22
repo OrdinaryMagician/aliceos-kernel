@@ -16,7 +16,9 @@ Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys );
 /* the lite version */
 Uint32 kmalloc( Uint32 sz );
 /* initialize the memory manager */
-void init_kmem( Uint32 p );
+void init_kmem( void );
+/* add a memory gap to skip */
+void kmem_addgap( Uint32 start, Uint32 end );
 /* memory statistics: start, end and number of allocations */
 void memstat( Uint32 *st, Uint32 *en, Uint32 *ct );
 #endif

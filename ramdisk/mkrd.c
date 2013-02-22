@@ -14,7 +14,7 @@ int main( int argc, char **argv )
 		return 1;
 	}
 	rd_header_t head;
-	memcpy(&(head.magic[0]),&aosrd_hdmagic[0],4);
+	memcpy(&head.magic,&aosrd_hdmagic,4);
 	rd_entry_t *ents = NULL;
 	int fdes;
 	if ( (fdes = open(argv[1],O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1 )
@@ -79,8 +79,8 @@ int main( int argc, char **argv )
 		while ( bsiz > 0 );
 		close(fdesr);
 	}
-	write(fdes,&aosrd_trmagic[0],4);
-	write(fdes,&aosrd_trsig[0],28);
+	write(fdes,&aosrd_trmagic,4);
+	write(fdes,aosrd_trsig,28);
 	close(fdes);
 	return 0;
 }
