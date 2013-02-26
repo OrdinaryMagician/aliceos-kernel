@@ -6,6 +6,7 @@
 */
 #ifndef HELPERS_H
 #define HELPERS_H
+#include <sys/types.h>
 
 #define max(a,b) ((a>b)?a:b)
 #define min(a,b) ((a<b)?a:b)

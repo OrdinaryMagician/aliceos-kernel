@@ -51,6 +51,7 @@ char *strcat( char *dest, char *src )
 	dest--;
 	while ( *src )
 		*(dest++) = *(src++);
+	*dest = 0;	/* obligatory null termination */
 	return ret;
 }
 
@@ -142,6 +143,7 @@ char *strcpy( char *dest, char *src )
 	char *ret = dest;
 	while ( *src )
 		*(dest++) = *(src++);
+	*dest = 0;	/* obligatory null termination */
 	return ret;
 }
 

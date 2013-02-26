@@ -10,10 +10,6 @@
 #include <printk.h>
 #include <berp.h>
 
-Uint32 aosrd_hdmagic = 0xFEEDCAFE;
-Uint32 aosrd_trmagic = 0xADEADBED;
-char aosrd_trsig[28] = "The Doll Maker of Bucuresti";
-
 Uint32 rdpos = 0;
 Uint32 rdsiz = 0;
 
@@ -84,10 +80,10 @@ Uint8 init_ramdisk( Uint32 start, Uint32 end )
 	/* verify disk */
 	/* header */
 	Uint32 mag = *(Uint32*)rdpos;
-	if ( mag != aosrd_hdmagic )
+	if ( mag != AOSRD_HDMAGIC )
 	{
 		printk("\033[1;31mfailed\n Header invalid\n");
-		printk("  expected 0x%08x\n",aosrd_hdmagic);
+		printk("  expected 0x%08x\n",AOSRD_HDMAGIC);
 		printk("  got 0x%08x\033[0m\n",mag);
 		rdpos = 0;
 		rdsiz = 0;
@@ -97,19 +93,19 @@ Uint8 init_ramdisk( Uint32 start, Uint32 end )
 	Uint32 fmg = *(Uint32*)(rdpos+rdsiz-32);
 	char fsig[28];
 	strncpy(fsig,(char*)(rdpos+rdsiz-28),27);
-	if ( fmg != aosrd_trmagic )
+	if ( fmg != AOSRD_TRMAGIC )
 	{
 		printk("\033[1;31mfailed\n Trailer magic invalid\n");
-		printk("  expected 0x%08x\n",aosrd_trmagic);
-		printk("  got 0x%08x[0m\n",fmg);
+		printk("  expected 0x%08x\n",AOSRD_TRMAGIC);
+		printk("  got 0x%08x\033[0m\n",fmg);
 		rdpos = 0;
 		rdsiz = 0;
 		return 1;
 	}
-	if ( strncmp(fsig,aosrd_trsig,28) )
+	if ( strncmp(fsig,AOSRD_TRSIG,28) )
 	{
 		printk("\033[1;31mfailed\n Trailer signature invalid\n");
-		printk("  expected \"%s\"\n",aosrd_trsig);
+		printk("  expected \"%s\"\n",AOSRD_TRSIG);
 		printk("  got \"%s\"\033[0m\n",fsig);
 		rdpos = 0;
 		rdsiz = 0;

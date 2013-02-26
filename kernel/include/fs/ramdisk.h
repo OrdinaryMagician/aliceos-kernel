@@ -44,6 +44,10 @@ As a safeguard, at the end of the whole thing there's a trailer composed of:
  - the null-terminated string "The Doll Maker of Bucuresti" (don't ask)
 */
 
+#define AOSRD_HDMAGIC 0xFEEDCAFE
+#define AOSRD_TRMAGIC 0xADEADBED
+#define AOSRD_TRSIG "The Doll Maker of Bucuresti"
+
 #define RDHEAD_SIZ 8
 typedef struct
 {

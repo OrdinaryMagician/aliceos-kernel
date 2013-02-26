@@ -10,6 +10,7 @@
 #include <sys/serial.h>
 #include <sys/desc_tables.h>
 #include <sys/timer.h>
+#include <sys/paging.h>
 #include <fs/ramdisk.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
@@ -81,28 +82,22 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	
 	/* memory */
 	printk("%sMemory manager\n",left);
-	init_kmem();
-	/* extra gap for the for the memory allocator */
-	Uint32 gap_st = 0;
-	Uint32 gap_en = (Uint32)&end;
-	/* skip ramdisk if loaded */
-	if ( rdisk )
-		gap_en = rdisk->mod_end;
-	kmem_addgap(gap_st,gap_en);
-	/* add mmap entries too */
+	/* find placement address and memory end */
+	Uint32 paddr = (rdisk)?rdisk->mod_end:(Uint32)&end;
+	Uint32 eaddr = 0x1000000;	/* 16MiB by default */
+	/* end address of last mmap entry *should* be max memory */
 	mmap_entry_t *mmapent = (mmap_entry_t*)mboot->mmap_addr;
 	Uint32 off = 0;
 	Uint32 offmax = mboot->mmap_length;
 	while ( off < offmax )
 	{
-		gap_st = mmapent->addr_l;
-		gap_en = mmapent->addr_l+mmapent->len_l;
 		if ( mmapent->type != 1 )
-			kmem_addgap(gap_st,gap_en);
+			eaddr = mmapent->addr_l+mmapent->len_l;
 		off += mmapent->size+4;
 		mmapent = (mmap_entry_t*)(mboot->mmap_addr+off);
 	}
-	
+	/* finally, initialize the manager */
+	init_kmem(paddr,eaddr);
 	/* mode 3h console */
 	printk("%sConsole output\n",left);
 	/* initialize some vga settings */
@@ -118,6 +113,10 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	/* descriptor tables and interrupts */
 	printk("%sDescriptor tables\n",left);
 	init_descriptor_tables();
+	
+	/* paging */
+	printk("%sPaging\n",left);
+	init_paging();
 	
 	/* internal timer */
 	printk("%sInternal timer\n",left);
