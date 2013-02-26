@@ -25,7 +25,7 @@ Shanghai phase:
   X GDT, IDT...
   X IRQs
   X PIT
-  - Fix generic VGA drivers to work on real hardware (very hard)
+  P Fix generic VGA drivers to work on real hardware (very hard)
   - Keyboard input
   P Dynamic memory (kalloc/krealloc/kfree)
   X Paging
