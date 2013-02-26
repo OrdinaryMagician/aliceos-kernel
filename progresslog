@@ -6,6 +6,7 @@ Tasks aren't exactly ordered.
 Legend:
 - To do
 X Done
+P Partial
 F Failed
 
 Shanghai phase:
@@ -26,8 +27,8 @@ Shanghai phase:
   X PIT
   - Fix generic VGA drivers to work on real hardware (very hard)
   - Keyboard input
-  - Dynamic memory (kalloc/krealloc/kfree)
-  - Paging
+  P Dynamic memory (kalloc/krealloc/kfree)
+  X Paging
   - Basic PCI/PCI-e support (required for more drivers)
   - VMWare graphics driver
   - BGA linear framebuffer
