@@ -171,6 +171,8 @@ void demo_cmap( void )
 /* 80x50 graphics demo */
 void demo_blockgfx( void )
 {
+	Uint32 delay = get_ticks();
+
 	/* no startup code, we already assume we're in mode 3h since boot */
 	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
 	printk("Running Block GFX demo\n");
@@ -217,11 +219,16 @@ void demo_blockgfx( void )
 	mode_3h.drawhline(0,49,80,7);
 	mode_3h.drawvline(0,0,50,7);
 	mode_3h.drawvline(79,0,50,7);
+
+	delay = (get_ticks()-delay);
+	printk("Drawing took %u ticks\n",delay);
 }
 
 /* Bochs/QEMU BGA demo */
 void demo_bochsgfx( void )
 {
+	Uint32 delay = get_ticks();
+
 	Uint16 rx = 1280;
 	Uint16 ry = 800;
 	printk("Running BGA GFX demo\n");
@@ -475,11 +482,16 @@ void demo_bochsgfx( void )
 	bga_drv.drawvline(rx-3,2,ry-4,COLOR_GRAY(128));
 	bga_drv.drawvline(rx-4,3,ry-6,COLOR_GRAY(96));
 	bga_drv.drawvline(rx-5,4,ry-8,COLOR_GRAY(64));
+
+	delay = (get_ticks()-delay);
+	printk("Drawing took %u ticks\n",delay);
 }
 
 /* mode 12h graphics demo */
 void demo_crapgfx( void )
 {
+	Uint32 delay = get_ticks();
+
 	printk("Running Mode 12h GFX demo\n");
 	mode_12h.setmode();
 	mode_12h.setpal(&alicepal[0]);
@@ -621,11 +633,16 @@ void demo_crapgfx( void )
 	mode_12h.drawvline(637,2,476,15);
 	mode_12h.drawvline(636,3,474,7);
 	mode_12h.drawvline(635,4,472,8);
+
+	delay = (get_ticks()-delay);
+	printk("Drawing took %u ticks\n",delay);
 }
 
 /* mode 13h graphics demo */
 void demo_realgfx( void )
 {
+	Uint32 delay = get_ticks();
+	
 	printk("Running Mode 13h GFX demo\n");
 	mode_13h.setmode();
 	/* needed for special "masking" */
@@ -824,4 +841,7 @@ void demo_realgfx( void )
 	mode_13h.drawvline(317,2,196,15);
 	mode_13h.drawvline(316,3,194,7);
 	mode_13h.drawvline(315,4,192,8);
+
+	delay = (get_ticks()-delay);
+	printk("Drawing took %u ticks\n",delay);
 }
