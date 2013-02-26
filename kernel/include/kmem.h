@@ -15,12 +15,16 @@ Uint32 kmalloc_p( Uint32 sz, Uint32 *phys );
 Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys );
 /* the lite version */
 Uint32 kmalloc( Uint32 sz );
-/* free allocated memory (does nothing if there's no heap) */
+/* free allocated memory (does nothing at the moment) */
 void kfree( Uint32 addr );
 /* initialize the memory manager */
 void init_kmem( Uint32 iaddr, Uint32 eaddr );
+/* add a memory gap to skip */
+void kmem_addgap( Uint32 start, Uint32 end );
 /* current addr variables values */
 void kmem_addrs( Uint32 *pai, Uint32 *pa, Uint32 *ma );
-/* memory usage: free, used and total */
-void kmem_use( Uint32 *fmem, Uint32 *umem, Uint32 *tmem );
+/* return total, used and free memory */
+Uint32 kmem_total( void );
+Uint32 kmem_used( void );
+Uint32 kmem_free( void );
 #endif

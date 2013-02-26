@@ -10,28 +10,49 @@
 #include <berp.h>
 
 /* placement address */
-static Uint32 p_addr_init;
-static Uint32 p_addr;
+static Uint32 p_addr_init = 0;
+static Uint32 p_addr = 0;
 /* max address */
-static Uint32 m_addr;
+static Uint32 m_addr = 0;
 
 /* allocation stats */
-static Uint32 alloc_count;
-static Uint32 alloc_mem;
+static Uint32 alloc_count = 0;
+static Uint32 alloc_mem = 0;
+
+/* gaps to skip (start, end) */
+typedef struct
+{
+	Uint32 start, end;
+} memgap_t;
+memgap_t a_skip[32];
+Uint8 n_skip = 0;
 
 /* global allocation function */
 static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 {
-	if ( p_addr+sz >= m_addr )
-	{
-		printk("Could not allocate %u bytes\n",sz);
-		BERP("Out of memory");
-	}
 	/* page-align address in case it's not already */
 	if ( algn && p_addr&(0xFFFFF000) )
 	{
 		p_addr &= 0xFFFFF000;
 		p_addr += 0x1000;
+	}
+	/* skip any gaps */
+	Uint8 i;
+	for ( i=0; i<n_skip; i++ )
+	{
+		if ( (p_addr >= a_skip[i].start) && (p_addr <= a_skip[i].end) )
+			p_addr = a_skip[i].end+1;
+		/* check if we need to realign */
+		if ( algn && p_addr&(0xFFFFF000) )
+		{
+			p_addr &= 0xFFFFF000;
+			p_addr += 0x1000;
+		}
+	}
+	if ( p_addr+sz >= m_addr )
+	{
+		printk("Could not allocate %u bytes\n",sz);
+		BERP("Out of memory");
 	}
 	if ( phys )
 		*phys = p_addr;
@@ -66,7 +87,7 @@ Uint32 kmalloc( Uint32 sz )
 	return kmalloc_global(sz,0,0);
 }
 
-/* free allocated memory (does nothing if there's no heap) */
+/* free allocated memory (does nothing at the moment) */
 void kfree( Uint32 addr )
 {
 }
@@ -74,11 +95,25 @@ void kfree( Uint32 addr )
 /* initialize the memory manager */
 void init_kmem( Uint32 iaddr, Uint32 eaddr )
 {
+	/* skip any gaps */
+	Uint8 i;
+	for ( i=0; i<n_skip; i++ )
+		if ( (iaddr >= a_skip[i].start) && (iaddr <= a_skip[i].end) )
+			iaddr = a_skip[i].end+1;
 	p_addr_init = iaddr;
 	p_addr = p_addr_init;
 	m_addr = eaddr;
-	alloc_count = 0;
-	alloc_mem = 0;
+}
+
+/* add a memory gap to skip */
+void kmem_addgap( Uint32 start, Uint32 end )
+{
+	if ( n_skip == 31 )
+		return;	/* TOO MANY ALREADY */
+	/* TODO handle overlapping areas */
+	a_skip[n_skip].start = start;
+	a_skip[n_skip].end = end;
+	n_skip++;
 }
 
 /* current addr variables values */
@@ -90,4 +125,24 @@ void kmem_addrs( Uint32 *pai, Uint32 *pa, Uint32 *ma )
 		*pa = p_addr;
 	if ( ma )
 		*ma = m_addr;
+}
+
+/* return total, used and free memory */
+Uint32 kmem_total( void )
+{
+	Uint32 mm = m_addr;
+	Uint8 i;
+	for ( i=0; i<n_skip; i++ )
+		mm -= a_skip[i].end-a_skip[i].start;
+	return mm;
+}
+
+Uint32 kmem_used( void )
+{
+	return alloc_mem;
+}
+
+Uint32 kmem_free( void )
+{
+	return kmem_total()-alloc_mem;
 }
