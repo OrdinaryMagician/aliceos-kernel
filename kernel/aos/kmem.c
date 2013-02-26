@@ -30,6 +30,7 @@ Uint8 n_skip = 0;
 /* global allocation function */
 static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 {
+	Uint32 p_addr_veryold = p_addr;
 	/* page-align address in case it's not already */
 	if ( algn && p_addr&(0xFFFFF000) )
 	{
@@ -59,7 +60,7 @@ static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 	Uint32 p_addr_old = p_addr;
 	p_addr += sz;
 	alloc_count++;
-	alloc_mem += p_addr-p_addr_old;
+	alloc_mem += p_addr-p_addr_veryold;
 	return p_addr_old;
 }
 
@@ -125,6 +126,12 @@ void kmem_addrs( Uint32 *pai, Uint32 *pa, Uint32 *ma )
 		*pa = p_addr;
 	if ( ma )
 		*ma = m_addr;
+}
+
+/* return number of allocations performed */
+Uint32 kmem_nalloc( void )
+{
+	return alloc_count;
 }
 
 /* return total, used and free memory */

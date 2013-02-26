@@ -142,6 +142,20 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 			_kver_suf,_kbuild_date,_kbuild_time,_karch,_kosname);
 	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 
+	/* RAM amount */
+	Uint8 mult = 0;
+	char suf[7][3] = {"","Ki","Mi","Gi","Ti","Pi","Ei"};
+	Uint32 cmem = eaddr;
+	while ( mult<7 )
+	{
+		cmem = eaddr;
+		eaddr >>= 10;
+		if ( !eaddr )
+			break;
+		mult++;
+	}
+	printk("Total RAM: %u %sB\n",cmem,suf[mult]);
+
 	/* insert demo code or whatever here */
 	if ( !kargs[0] )
 	{

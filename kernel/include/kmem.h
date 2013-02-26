@@ -23,6 +23,8 @@ void init_kmem( Uint32 iaddr, Uint32 eaddr );
 void kmem_addgap( Uint32 start, Uint32 end );
 /* current addr variables values */
 void kmem_addrs( Uint32 *pai, Uint32 *pa, Uint32 *ma );
+/* return number of allocations performed */
+Uint32 kmem_nalloc( void );
 /* return total, used and free memory */
 Uint32 kmem_total( void );
 Uint32 kmem_used( void );
