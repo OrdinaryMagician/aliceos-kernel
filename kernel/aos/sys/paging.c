@@ -102,8 +102,8 @@ void init_paging( void )
 	Uint32 endpage = 0x1000000;
 	extern Uint32 end;
 	Uint32 paddr = (Uint32)&end;
-	/* get addresses */
-	kmem_addrs(NULL,&paddr,&endpage);
+	/* get end address */
+	kmem_addrs(NULL,NULL,&endpage);
 
 	nframes = endpage/0x1000;
 	frames = (Uint32*)kmalloc(nframes/0x20);
@@ -114,6 +114,8 @@ void init_paging( void )
 	memset((Uint8*)kernel_directory,0,sizeof(page_directory_t));
 	current_directory = kernel_directory;
 
+	/* get placement address */
+	kmem_addrs(NULL,&paddr,NULL);
 	Uint32 i;
 	/* identity map frames~ */
 	for ( i=0; i<paddr+0x1000; i+=0x1000 )

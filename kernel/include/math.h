@@ -13,6 +13,8 @@
 #define M_NAN (0.f/0.f)
 #define M_INF 1e40f
 
+extern void fpu_enable( void );
+
 double sin( double ang );
 double cos( double ang );
 double tan( double ang );
@@ -25,7 +27,6 @@ double square( double val );
 double exp( double val );
 double root( double val, double rdx );
 double pow( double val, double exp );
-double fact( double val );
 double floor( double val );
 double trunc( double val );
 double ceil( double val );

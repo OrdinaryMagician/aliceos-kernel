@@ -19,3 +19,7 @@ enablepaging:
 getfaultaddr:
 	mov eax, cr2
 	ret
+[GLOBAL pagingenabled]
+pagingenabled:
+	mov eax, cr0
+	ret

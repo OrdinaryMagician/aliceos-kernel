@@ -26,7 +26,7 @@ SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/desc/*.c))
 .PHONY: clean veryclean
 aliceos-kernel: $(SOURCES) link
 veryclean: clean
-	rm -f  vmaliceos
+	rm -f vmaliceos initramfs-aliceos.img
 clean:
 	rm -f $(SOURCES)
 link:

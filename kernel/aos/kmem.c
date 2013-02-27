@@ -1,5 +1,5 @@
 /*
-	kmem.c : Memory allocation.
+	kmem.c : Static memory allocation.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
@@ -28,7 +28,7 @@ memgap_t a_skip[32];
 Uint8 n_skip = 0;
 
 /* global allocation function */
-static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
+static Uint32 kmalloc_global( Uint32 sz, Uint8 algn )
 {
 	Uint32 p_addr_veryold = p_addr;
 	/* page-align address in case it's not already */
@@ -55,8 +55,6 @@ static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 		printk("Could not allocate %u bytes\n",sz);
 		BERP("Out of memory");
 	}
-	if ( phys )
-		*phys = p_addr;
 	Uint32 p_addr_old = p_addr;
 	p_addr += sz;
 	alloc_count++;
@@ -70,27 +68,10 @@ Uint32 kmalloc_a( Uint32 sz )
 	return kmalloc_global(sz,1,0);
 }
 
-/* kmalloc returning a physical address */
-Uint32 kmalloc_p( Uint32 sz, Uint32 *phys )
-{
-	return kmalloc_global(sz,0,phys);
-}
-
-/* page-aligned kmalloc returning a physical address */
-Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys )
-{
-	return kmalloc_global(sz,1,phys);
-}
-
 /* the lite version */
 Uint32 kmalloc( Uint32 sz )
 {
 	return kmalloc_global(sz,0,0);
-}
-
-/* free allocated memory (does nothing at the moment) */
-void kfree( Uint32 addr )
-{
 }
 
 /* initialize the memory manager */

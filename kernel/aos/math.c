@@ -7,57 +7,54 @@
 #include <math.h>
 #include <berp.h>
 
-/*
-   at the moment, pretty much everything is undefined and will result in
-   a berp (panic) or whatever when called
-*/
+/* undefined functions will result in a berp (panic) or whatever when called */
 
 double sin( double ang )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_sin(double);
+	return fpu_sin(arg);
 }
 
 double cos( double ang )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_cos(double);
+	return fpu_cos(arg);
 }
 
 double tan( double ang )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_tan(double);
+	return fpu_tan(arg);
 }
 
 double asin( double ang )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_asin(double);
+	return fpu_asin(arg);
 }
 
 double acos( double ang )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_acos(double);
+	return fpu_acos(arg);
 }
 
 double atan( double ang )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_atan(double);
+	return fpu_atan(arg);
 }
 
 double log( double val )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_log(double);
+	return fpu_log(val);
 }
 
 double sqrt( double val )
 {
-	BERP("not implemented");
-	return 0.0;
+	extern double fpu_sqrt(double);
+	return fpu_sqrt(val);
 }
 
 double square( double val )
@@ -93,40 +90,21 @@ double pow( double val, double exp )
 	return val;
 }
 
-double fact( double val )
-{
-	if ( val <= 1.0 )
-		return 1.0;
-	/* just trim decimals, I don't think anyone would mind */
-	val = floor(val);
-	return val*fact(val-1.0);
-}
-
 double floor( double val )
 {
-	/* really silly guesswork-based method */
-	double test = val;
-	while ( test >= 1.0 )
-		test -= 1.0;
-	while ( test < 0.0 )
-		test += 1.0;
-	return val-test;
+	extern double fpu_floor(double);
+	return fpu_floor(val);
 }
 
 double trunc( double val )
 {
-	return (decp(val)<0.5)?floor(val):ceil(val);
+	extern double fpu_trunc(double);
+	return fpu_trunc(val);
 }
-
 double ceil( double val )
 {
-	/* really silly guesswork-based method */
-	double test = val;
-	while ( test > 1.0 )
-		test -= 1.0;
-	while ( test <= 0.0 )
-		test += 1.0;
-	return val-test;
+	extern double fpu_ceil(double);
+	return fpu_ceil(val);
 }
 
 double decp( double val )

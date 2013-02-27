@@ -1,5 +1,5 @@
 /*
-	kmem.h : Memory allocation.
+	kmem.h : Static memory allocation.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
@@ -9,14 +9,8 @@
 #include <sys/types.h>
 /* page-aligned kmalloc */
 Uint32 kmalloc_a( Uint32 sz );
-/* kmalloc returning a physical address */
-Uint32 kmalloc_p( Uint32 sz, Uint32 *phys );
-/* page-aligned kmalloc returning a physical address */
-Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys );
 /* the lite version */
 Uint32 kmalloc( Uint32 sz );
-/* free allocated memory (does nothing at the moment) */
-void kfree( Uint32 addr );
 /* initialize the memory manager */
 void init_kmem( Uint32 iaddr, Uint32 eaddr );
 /* add a memory gap to skip */
