@@ -8,6 +8,12 @@
 #include <sys/helpers.h>
 #include <printk.h>
 #include <berp.h>
+#include <sys/paging.h>
+
+/* in sys/paging.c */
+extern page_directory_t *kernel_directory;
+/* in sys/pagingasm.s */
+extern Uint32 pagingenabled( void );
 
 /* placement address */
 static Uint32 p_addr_init = 0;
@@ -28,7 +34,7 @@ memgap_t a_skip[32];
 Uint8 n_skip = 0;
 
 /* global allocation function */
-static Uint32 kmalloc_global( Uint32 sz, Uint8 algn )
+static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 {
 	Uint32 p_addr_veryold = p_addr;
 	/* page-align address in case it's not already */
@@ -55,6 +61,16 @@ static Uint32 kmalloc_global( Uint32 sz, Uint8 algn )
 		printk("Could not allocate %u bytes\n",sz);
 		BERP("Out of memory");
 	}
+	if ( phys )
+	{
+		if ( pagingenabled() )
+		{
+			page_t *pg = get_page(p_addr,0,kernel_directory);
+			*phys = pg->frame*0x1000+p_addr&0xFFF;
+		}
+		else
+			*phys = p_addr;
+	}
 	Uint32 p_addr_old = p_addr;
 	p_addr += sz;
 	alloc_count++;
@@ -66,6 +82,18 @@ static Uint32 kmalloc_global( Uint32 sz, Uint8 algn )
 Uint32 kmalloc_a( Uint32 sz )
 {
 	return kmalloc_global(sz,1,0);
+}
+
+/* page-aligned physical kmalloc */
+Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys )
+{
+	return kmalloc_global(sz,1,phys);
+}
+
+/* physical kmalloc */
+Uint32 kmalloc_p( Uint32 sz, Uint32 *phys )
+{
+	return kmalloc_global(sz,0,phys);
 }
 
 /* the lite version */

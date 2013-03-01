@@ -11,6 +11,7 @@
 #include <hcf.h>
 #include <berp.h>
 #include <kmem.h>
+#include <kdmem.h>
 #include <strops.h>
 #include <memops.h>
 #include <printk.h>
@@ -117,17 +118,26 @@ void init_paging( void )
 	/* get placement address */
 	kmem_addrs(NULL,&paddr,NULL);
 	Uint32 i;
+	/* make pages for the dynamic allocator */
+	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
+		get_page(i,1,kernel_directory);
 	/* identity map frames~ */
-	for ( i=0; i<paddr+0x1000; i+=0x1000 )
+	for ( i=0; i<paddr; i+=0x1000 )
 		alloc_frame(get_page(i,1,kernel_directory),0,0);
+	/* map the dynamic allocator pages */
+	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
+		alloc_frame(get_page(i,1,kernel_directory),0,1);
 
 	/* register our custom page fault handler */
 	register_isr_handler(14,page_fault);
 	/* finally enable paging */
 	switch_pdir(kernel_directory);
+	
+	/* initialize the dynamic allocator */
+	kdmem_init(KDMEM_ST,KDMEM_ST+KDMEM_SIZ,KDMEM_RESV);
 }
 
-/* these two functions are in pagingasm.s */
+/* these functions are in pagingasm.s */
 extern void loadcr3( Uint32 phys );
 extern void enablepaging( void );
 extern Uint32 getfaultaddr( void );

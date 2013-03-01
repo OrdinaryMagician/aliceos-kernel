@@ -124,7 +124,7 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	init_descriptor_tables();
 	
 	/* paging */
-	printk("%sPaging\n",left);
+	printk("%sPaging and dynamic memory allocation\n",left);
 	init_paging();
 	
 	/* internal timer */

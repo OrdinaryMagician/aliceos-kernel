@@ -8,6 +8,12 @@
 #define KDMEM_H
 #include <sys/types.h>
 
+/* reserved pile size */
+/* NOTE: 131072 allocations are possible per MiB */
+#define KDMEM_RESV 0x100000 /* 1MiB */
+#define KDMEM_ST 0xC0000000 /* virtual start address */
+#define KDMEM_SIZ 0x4000000 /* 64MiB */
+
 /* memory block structure */
 typedef struct
 {
@@ -20,6 +26,11 @@ Uint32 kdalloc( Uint32 sz ); /* vanilla */
 Uint32 kdalloc_a( Uint32 sz ); /* page-aligned */
 Uint32 kdalloc_p( Uint32 sz, Uint32 *phys ); /* return physical address */
 Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys ); /* page-aligned and return physical address */
+/* reallocate (resize) a memory area */
+Uint32 kdrealloc( Uint32 prev, Uint32 newsz ); /* vanilla */
+Uint32 kdrealloc_a( Uint32 prev, Uint32 newsz ); /* page-aligned */
+Uint32 kdrealloc_p( Uint32 prev, Uint32 newsz, Uint32 *phys ); /* return physical address */
+Uint32 kdrealloc_ap( Uint32 prev, Uint32 newsz, Uint32 *phys ); /* page-aligned and return physical address */
 /* free a memory area */
 void kdfree( Uint32 a );
 /* retrieve used blocks */

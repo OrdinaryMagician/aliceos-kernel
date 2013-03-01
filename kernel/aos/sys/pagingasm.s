@@ -22,4 +22,5 @@ getfaultaddr:
 [GLOBAL pagingenabled]
 pagingenabled:
 	mov eax, cr0
+	and eax, 0x80000000
 	ret
