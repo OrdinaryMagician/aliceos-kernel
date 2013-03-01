@@ -47,6 +47,9 @@ France:
   - Filesystem modules
      - AOSRD
      - AOSRD2
+     - procfs
+     - devfs
+     - sysfs
      - tmpfs
      - FAT32
      - ext2
@@ -87,6 +90,7 @@ Russia:
   - x86_64 port
   - ARM port (Raspberry Pi)
   - Nokinan Low Level Virtual Machine
+  - Nokinan-styled devfs/sysfs
 Orleans:
   - Fix bugs
 Bucuresti:
