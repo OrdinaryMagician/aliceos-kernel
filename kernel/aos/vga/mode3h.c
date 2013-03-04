@@ -331,7 +331,7 @@ static void m3h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 	Uint16 lx;
 	px = x;
 	lx = x+l;
-	Uint16 *pair; 
+	Uint16 *pair;
 	while ( px < lx )
 	{
 		pair = m3h_mem+px+(y/2)*80;

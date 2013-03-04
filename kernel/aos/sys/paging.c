@@ -107,12 +107,10 @@ void init_paging( void )
 	nframes = m_addr/0x1000;
 	frames = (Uint32*)kmalloc(nframes/0x20);
 	memset((Uint8*)frames,0,nframes/0x20);
-
 	/* a page directory for the kernel */
 	kernel_directory = (page_directory_t*)kmalloc_a(sizeof(page_directory_t));
 	memset((Uint8*)kernel_directory,0,sizeof(page_directory_t));
 	current_directory = kernel_directory;
-
 	Uint32 i;
 	/* dynamic allocator frames, pass 1 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
@@ -123,12 +121,10 @@ void init_paging( void )
 	/* dynamic allocator frames, pass 2 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		alloc_frame(get_page(i,0,kernel_directory),0,0);
-
 	/* register our custom page fault handler */
 	register_isr_handler(14,page_fault);
 	/* finally enable paging */
 	switch_pdir(kernel_directory);
-	
 	/* initialize the dynamic allocator */
 	kdmem_init(KDMEM_ST,KDMEM_SIZ,KDMEM_RESV);
 }

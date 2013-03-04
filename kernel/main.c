@@ -40,7 +40,7 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	char kfname[32];
 	char kargs[KCMDLINE_MAX];
 	char kramdisk[32];
-	
+
 	/* ramdisk module */
 	mbootmod_t *rdisk = NULL;
 
@@ -59,14 +59,14 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 
 	/* kernel signature is located right at the very beginning */
 	char *ksig = (char*)&code;
-	
+
 	/* serial logging */
 	serial_on(SERIAL_A);
 	/* pseudo-uname over serial */
 	printk("\n\033[1;36m%s %s %s.%s.%s%s %s %s %s %s\033[0m\n\n",
 		_kname,_kver_code,_kver_maj,_kver_min,_kver_low,_kver_suf,
 		_kbuild_date,_kbuild_time,_karch,_kosname);
-	
+
 	/* kernel and ramdisk identification */
 	printk("Kernel: %s loaded at %#08x\n",kfname,&code);
 	printk(" 2-part signature:\n");
@@ -76,10 +76,10 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 		printk(" Kernel arguments: %s\n",kargs);
 	if ( rdisk )
 		printk("Ramdisk: %s loaded at %#08x\n",kramdisk,rdisk->mod_start);
-	
+
 	/* loading "modules" */
 	printk("Starting up...\n");
-	
+
 	/* memory */
 	printk("%sMemory manager\n",left);
 	/* extra gap for the for the memory allocator */
@@ -118,19 +118,19 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	mode_3h.fbcursorvis(1);
 	mode_3h.fbsetcursor(0,0);
 	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
-	
+
 	/* descriptor tables and interrupts */
 	printk("%sDescriptor tables\n",left);
 	init_descriptor_tables();
-	
+
 	/* paging */
 	printk("%sPaging and dynamic memory allocation\n",left);
 	init_paging();
-	
+
 	/* internal timer */
 	printk("%sInternal timer\n",left);
 	init_timer(TIMER_HZ);
-	
+
 	/* set up ramdisk access */
 	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
 		BERP("Ramdisk initialization failed");

@@ -688,7 +688,7 @@ void demo_crapgfx( void )
 void demo_realgfx( void )
 {
 	Uint32 delay = get_ticks();
-	
+
 	printk("Running Mode 13h GFX demo\n");
 	mode_13h.setmode();
 	/* needed for special "masking" */

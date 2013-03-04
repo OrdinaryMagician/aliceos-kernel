@@ -30,10 +30,10 @@ extern Uint32 pagingenabled( void );
 
 	Every time a memory block is freed, said block is deleted
 	and any blocks above it are pushed down.
-	
+
 	This is probably not every efficient. It slows down a lot after
 	thousands of allocations (exponentially, even).
-	
+
 	Expanding and shrinking of the memory area not implemented yet.
 */
 

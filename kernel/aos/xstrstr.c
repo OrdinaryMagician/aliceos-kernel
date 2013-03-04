@@ -3,7 +3,7 @@
 	(C)2010-2012 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
-	
+
 	(This is a modified version that can be integrated into AOS)
 */
 #include <xstrstr.h>
