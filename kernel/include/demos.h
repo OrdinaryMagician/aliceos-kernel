@@ -7,7 +7,7 @@
 #ifndef DEMOS_H
 #define DEMOS_H
 
-#define DEMO_COUNT 6
+#define DEMO_COUNT 7
 
 typedef void (*demo_func_t)( void );
 typedef struct
@@ -16,6 +16,9 @@ typedef struct
 	char *desc;
 	demo_func_t func;
 } demo_t;
+
+/* Dynamic memory demo */
+void demo_kdmem( void );
 
 /* Character map */
 void demo_cmap( void );

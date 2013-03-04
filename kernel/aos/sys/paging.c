@@ -16,6 +16,10 @@
 #include <memops.h>
 #include <printk.h>
 
+/* from kmem.c */
+extern Uint32 p_addr;
+extern Uint32 m_addr;
+
 /* directories */
 page_directory_t *current_directory = NULL;
 page_directory_t *kernel_directory = NULL;
@@ -100,13 +104,7 @@ void free_frame( page_t *page )
 /* initialize paging */
 void init_paging( void )
 {
-	Uint32 endpage = 0x1000000;
-	extern Uint32 end;
-	Uint32 paddr = (Uint32)&end;
-	/* get end address */
-	kmem_addrs(NULL,NULL,&endpage);
-
-	nframes = endpage/0x1000;
+	nframes = m_addr/0x1000;
 	frames = (Uint32*)kmalloc(nframes/0x20);
 	memset((Uint8*)frames,0,nframes/0x20);
 
@@ -115,18 +113,16 @@ void init_paging( void )
 	memset((Uint8*)kernel_directory,0,sizeof(page_directory_t));
 	current_directory = kernel_directory;
 
-	/* get placement address */
-	kmem_addrs(NULL,&paddr,NULL);
 	Uint32 i;
-	/* make pages for the dynamic allocator */
+	/* dynamic allocator frames, pass 1 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		get_page(i,1,kernel_directory);
-	/* identity map frames~ */
-	for ( i=0; i<paddr; i+=0x1000 )
+	/* kernel frames */
+	for ( i=0; i<p_addr; i+=0x1000 )
 		alloc_frame(get_page(i,1,kernel_directory),0,0);
-	/* map the dynamic allocator pages */
+	/* dynamic allocator frames, pass 2 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
-		alloc_frame(get_page(i,1,kernel_directory),0,1);
+		alloc_frame(get_page(i,0,kernel_directory),0,0);
 
 	/* register our custom page fault handler */
 	register_isr_handler(14,page_fault);
@@ -134,7 +130,7 @@ void init_paging( void )
 	switch_pdir(kernel_directory);
 	
 	/* initialize the dynamic allocator */
-	kdmem_init(KDMEM_ST,KDMEM_ST+KDMEM_SIZ,KDMEM_RESV);
+	kdmem_init(KDMEM_ST,KDMEM_SIZ,KDMEM_RESV);
 }
 
 /* these functions are in pagingasm.s */

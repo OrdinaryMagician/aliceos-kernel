@@ -8,7 +8,7 @@
 #define KDMEM_H
 #include <sys/types.h>
 
-/* reserved pile size */
+/* reserved list size */
 /* NOTE: 131072 allocations are possible per MiB */
 #define KDMEM_RESV 0x100000 /* 1MiB */
 #define KDMEM_ST 0xC0000000 /* virtual start address */
@@ -17,8 +17,8 @@
 /* memory block structure */
 typedef struct
 {
-	Uint32 start; /* start address */
-	Uint32 end;   /* end address */
+	Uint32 start;
+	Uint32 end;
 } memblk_t;
 
 /* reserve a memory area */
@@ -37,9 +37,7 @@ void kdfree( Uint32 a );
 Uint32 kdmem_count( void );
 /* retrieve total memory used */
 Uint32 kdmem_amount( void );
-/* issue a reorder of the memory block pile */
-void kdmem_tidy( void );
 /* initialize dynamic memory allocator */
-void kdmem_init( Uint32 start, Uint32 end, Uint32 psize );
+void kdmem_init( Uint32 start, Uint32 size, Uint32 psize );
 
 #endif

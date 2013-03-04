@@ -25,6 +25,7 @@
 #include <bga/bga.h>
 #include <sys/timer.h>
 #include <sys/cmos.h>
+#include <kdmem.h>
 
 demo_t demos[DEMO_COUNT] =
 {
@@ -34,6 +35,7 @@ demo_t demos[DEMO_COUNT] =
 	{"cmap", "text mode character map", demo_cmap},
 	{"bochsgfx", "Bochs/QEMU BGA demo", demo_bochsgfx},
 	{"timers", "timers demo", demo_timers},
+	{"kdmem", "dynamic memory demo", demo_kdmem},
 };
 
 /* list available demos */
@@ -43,6 +45,50 @@ void listdemos( void )
 	mode_3h.fbputs("Available demos:\n");
 	for ( i=0; i<DEMO_COUNT; i++ )
 		mode_3h.fbprintf(" - %s : %s\n",demos[i].name,demos[i].desc);
+}
+
+/* Dynamic memory demo */
+void demo_kdmem( void )
+{
+	char *test1;
+	char *test2;
+	char *test3;
+	char *test4;
+	Uint32 delay;
+	Uint32 addrs[1024];
+	Uint32 i;
+	printk("Running dynamic allocator demo\n");
+	/* we already assume we're in mode 3h since boot */
+	mode_3h.fbprintf("%[-FAllocation, deallocation and reallocation basic test\n\n");
+	mode_3h.fbprintf("%[-7 allocate test1 (4)\n");
+	test1 = (char*)kdalloc(4);
+	mode_3h.fbprintf("%[-8  test1 %#08x\n",(Uint32)test1);
+	mode_3h.fbprintf("%[-7 allocate test2 (8)\n");
+	test2 = (char*)kdalloc(8);
+	mode_3h.fbprintf("%[-8  test2 %#08x\n",(Uint32)test2);
+	mode_3h.fbprintf("%[-7 allocate test3 (16)\n");
+	test3 = (char*)kdalloc(16);
+	mode_3h.fbprintf("%[-8  test3 %#08x\n",(Uint32)test3);
+	mode_3h.fbprintf("%[-7 free test2\n");
+	kdfree((Uint32)test2);
+	mode_3h.fbprintf("%[-7 reallocate test1 (32)\n");
+	test1 = (char*)kdrealloc((Uint32)test1,32);
+	mode_3h.fbprintf("%[-8  test1 %#08x\n",(Uint32)test1);
+	mode_3h.fbprintf("%[-7 allocate test4 (12)\n");
+	test4 = (char*)kdalloc(12);
+	mode_3h.fbprintf("%[-8  test4 %#08x\n",(Uint32)test4);
+	kdfree((Uint32)test1);
+	mode_3h.fbprintf("%[-F\nAllocation and deallocation speed test\n\n");
+	delay = get_ticks();
+	for ( i=0; i<1024; i++ )
+		addrs[i] = kdalloc(1);
+	delay = get_ticks()-delay;
+	mode_3h.fbprintf("%[-7 1024 allocations took %u ticks\n",delay);
+	delay = get_ticks();
+	for ( i=1024; i>0; i-- )
+		kdfree(addrs[i-1]);
+	delay = get_ticks()-delay;
+	mode_3h.fbprintf("%[-7 1024 deallocations took %u ticks\n",delay);
 }
 
 /* update the header clock every second */

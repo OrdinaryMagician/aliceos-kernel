@@ -18,190 +18,102 @@ extern Uint32 pagingenabled( void );
 /*
 	How this memory model works:
 
-	The used memory is managed in a pile of blocks.
+	The used memory is managed in a list of blocks.
 
 	Every time there's an allocation, the manager checks
 	if there's any unused gaps inside kdmem_range where the
 	requested amount of space can fit. The new block is
-	stacked onto the pile and becomes used memory. If there's
-	no space available the allocation function returns 0.
+	inserted into the list and becomes used memory. If the
+	new block is going to be inserted between already existing
+	entries, everything above its new index is pushed forward.
+	If there's no space available the allocation function returns 0.
 
 	Every time a memory block is freed, said block is deleted
 	and any blocks above it are pushed down.
 	
-	After some time, the pile will end up with blocks that aren't
-	in order. When this happens, the allocator might work slowly (or not).
-	It's recommended to schedule a task to call kdmem_tidy() every
-	once in a while, to rearrange the pile.
+	This is probably not every efficient. It slows down a lot after
+	thousands of allocations (exponentially, even).
 	
-	This model is ridiculously inefficient, but hell, at least it's
-	easy to implement.
-	
-	It slows down considerably after a thousand allocations or more,
-	but I plan to fix that. I just need to optimize the code for the
-	block finders (firstblk,prevblk,nextblk,lastblk).
+	Expanding and shrinking of the memory area not implemented yet.
 */
 
-/* memory block pile */
-static memblk_t *kdmem_pile = NULL;
+
+/* memory block list */
+static memblk_t *kdmem_list = NULL;
 /* total (virtual) memory range available for allocation */
-static memblk_t kdmem_range = {0x00000000,0xFFFFFFFF};
+static Uint32 kdmem_range[2] = {0x00000000,0xFFFFFFFF};
 /* pile sizes */
 static Uint32 kdmem_psize = 0;
 static Uint32 kdmem_psize_max = 0;
 
-/* compare blocks */
-/* 0: equal, 1: below, 2: above, 4: overlap */
-static Uint8 blkcmp( memblk_t *a, memblk_t *b )
-{
-	if ( (a->start == b->start) && (a->end == b->end) )
-		return 0;
-	if ( (a->start < b->start) && (a->end < b->start) )
-		return 1;
-	if ( (a->start > b->start) && (a->start > b->end) )
-		return 2;
-	return 4;
-}
-
-/* calculate distance between blocks (must not overlap) */
-static Uint32 blkdist( memblk_t *a, memblk_t *b )
-{
-	Uint8 compared = blkcmp(a,b);
-	if ( compared&1 )
-		return (b->start-a->end);
-	if ( compared&2 )
-		return (a->start-b->end);
-	return 0; /* equal or overlapping */
-}
-
-/* find closest block above current in a possibly unordered array */
-/* return NULL if not found */
-static memblk_t* nextblk( memblk_t *cur )
-{
-	memblk_t *last = NULL;
-	Uint32 lastdist = UINT32_MAX;
-	Uint32 dist;
-	Uint32 i;
-	for ( i=0; i<kdmem_psize; i++ )
-	{
-		dist = blkdist(cur,&kdmem_pile[i]);
-		if ( (blkcmp(cur,&kdmem_pile[i])&2) && (dist<lastdist) )
-		{
-			last = &kdmem_pile[i];
-			lastdist = dist;
-		}
-	}
-	return last;
-}
-
-/* find closest block below current in a possibly unordered array */
-/* return NULL if not found */
-static memblk_t* prevblk( memblk_t *cur )
-{
-	memblk_t *last = NULL;
-	Uint32 lastdist = UINT32_MAX;
-	Uint32 dist;
-	Uint32 i;
-	for ( i=0; i<kdmem_psize; i++ )
-	{
-		dist = blkdist(cur,&kdmem_pile[i]);
-		if ( (blkcmp(cur,&kdmem_pile[i])&1) && (dist<lastdist) )
-		{
-			last = &kdmem_pile[i];
-			lastdist = dist;
-		}
-	}
-	return last;
-}
-
-/* find the lowest block in a possibly unordered array */
-/* return NULL if not found (shouldn't happen) */
-static memblk_t* firstblk( void )
-{
-	memblk_t *last = NULL;
-	Uint32 lastdist = UINT32_MAX;
-	Uint32 dist;
-	Uint32 i;
-	for ( i=0; i<kdmem_psize; i++ )
-	{
-		dist = kdmem_pile[i].start-kdmem_range.start;
-		if ( dist<lastdist )
-		{
-			last = &kdmem_pile[i];
-			lastdist = dist;
-		}
-	}
-	return last;
-}
-
-/* find the highest block in a possibly unordered array */
-/* return NULL if not found (shouldn't happen) */
-static memblk_t* lastblk( void )
-{
-	memblk_t *last = NULL;
-	Uint32 lastdist = UINT32_MAX;
-	Uint32 dist;
-	Uint32 i;
-	for ( i=0; i<kdmem_psize; i++ )
-	{
-		dist = kdmem_range.end-kdmem_pile[i].end;
-		if ( dist<lastdist )
-		{
-			last = &kdmem_pile[i];
-			lastdist = dist;
-		}
-	}
-	return last;
-}
-
 /* find the first gap where we can fit a specific block */
-static Uint32 mblk_findgap( Uint32 sz, Uint8 algn )
+static Uint32 mblk_findgap( Uint32 sz, Uint8 algn, Uint32 *idx )
 {
-	/* start from first block, check the space in the next block */
-	/* if it fits, return address, if not, return 0 */
-	memblk_t *blk_a = firstblk();
-	if ( !blk_a ) /* no blocks allocated */
+	Uint32 i;
+	Uint32 pa = kdmem_range[0], pb = kdmem_range[1];
+	if ( algn )
+		pa = (pa&0xFFFFF000)+0x1000;
+	/* nothing in the list */
+	if ( !kdmem_psize )
 	{
-		if ( sz < (kdmem_range.end-kdmem_range.start) ) /* it fits */
-			return kdmem_range.start;
-		return 0; /* too big */
+		if ( idx )
+			*idx = 0;
+		if ( sz < (pb-pa) )
+			return pa;
 	}
-	memblk_t *blk_b = nextblk(blk_a);
-	if ( !blk_b ) /* only one block allocated */
+	/* first check: gaps between memory range and first block */
+	pb = kdmem_list[0].start;
+	if ( pa < pb )
 	{
-		if ( sz < (kdmem_range.end-(blk_a->end+1)) ) /* it fits */
-			return blk_a->end+1;
-		return 0; /* too big */
+		if ( idx )
+			*idx = 0;
+		if ( sz < (pb-pa) )
+			return pa;
 	}
-	Uint32 dist;
-	while ( blk_b )
+	/* second check: recursive check gaps between blocks */
+	pa = kdmem_list[0].end+1;
+	if ( algn )
+		pa = (pa&0xFFFFF000)+0x1000;
+	for ( i=1; i<kdmem_psize; i++ )
 	{
-		dist = blkdist(blk_a,blk_b);
-		if ( dist > sz ) /* t-this hole... it was made for me! */
-			return blk_a->end+1;
-		blk_a = blk_b;
-		blk_b = nextblk(blk_a);
+		if ( idx )
+			*idx = i;
+		pb = kdmem_list[i].start;
+		if ( sz < (pb-pa) )
+			return pa;
+		pa = kdmem_list[i].end+1;
+		if ( algn )
+			pa = (pa&0xFFFFF000)+0x1000;
 	}
-	return 0; /* nope, no match */
+	/* third check: free space after last block */
+	if ( i == kdmem_psize )
+	{
+		if ( idx )
+			*idx = i;
+		pa = (kdmem_list[i-1].end+1);
+		if ( algn )
+			pa = (pa&0xFFFFF000)+0x1000;
+		pb = kdmem_range[1];
+		if ( sz < (pb-pa) )
+			return pa;
+	}
+	return 0; /* i-it doesn't fit... */
 }
 
 /* add a memory block to the pile */
-static Uint8 mblk_add( Uint32 start, Uint32 end )
+static Uint8 mblk_add( Uint32 idx, Uint32 start, Uint32 end )
 {
-	/*
-	   no need to check for overlaps, we assume the allocator function
-	   called findgap first and it succeeded in giving a non-overlapping
-	   area
-	*/
-	if ( kdmem_psize < kdmem_psize_max )
-	{
-		/* put it on the pile */
-		kdmem_pile[kdmem_psize].start = start;
-		kdmem_pile[kdmem_psize].end = end;
-		kdmem_psize++;
-		return 1;
-	}
-	return 0;
+	/* list full */
+	if ( kdmem_psize >= kdmem_psize_max )
+		return 0;
+	if ( idx < kdmem_psize ) /* push everything above */
+		memmove((Uint8*)(kdmem_list+idx+1),(Uint8*)(kdmem_list+idx),
+			sizeof(memblk_t)*(kdmem_psize-idx));
+	/* put it on the list */
+	kdmem_list[idx].start = start;
+	kdmem_list[idx].end = end;
+	kdmem_psize++;
+	return 1;
 }
 
 /* remove a memory block from the pile */
@@ -214,10 +126,10 @@ static Uint8 mblk_rm( Uint32 idx )
 	if ( idx >= kdmem_psize )
 		return 0;
 	/* zero out this block entry */
-	memset((Uint8*)(kdmem_pile+idx),0,sizeof(memblk_t));
+	memset((Uint8*)(kdmem_list+idx),0,sizeof(memblk_t));
 	kdmem_psize--;
 	if ( idx < kdmem_psize ) /* push back anything on top if needed */
-		memmove((Uint8*)(kdmem_pile+idx+1),(Uint8*)(kdmem_pile+idx),
+		memmove((Uint8*)(kdmem_list+idx),(Uint8*)(kdmem_list+idx+1),
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	return 1;
 }
@@ -227,7 +139,7 @@ static Uint32 mblk_find( Uint32 addr )
 {
 	Uint32 i;
 	for ( i=0; i<kdmem_psize; i++ )
-		if ( kdmem_pile[i].start == addr )
+		if ( kdmem_list[i].start == addr )
 			return i;
 	return UINT32_MAX;
 }
@@ -235,10 +147,11 @@ static Uint32 mblk_find( Uint32 addr )
 /* reserve a memory area */
 Uint32 kdalloc_int( Uint32 sz, Uint8 algn, Uint32 *phys ) /* internal */
 {
-	Uint32 addr = mblk_findgap(sz,algn);
+	Uint32 idx = 0;
+	Uint32 addr = mblk_findgap(sz,algn,&idx);
 	if ( !addr )
 		return 0; /* no space available */
-	if ( !mblk_add(addr,addr+sz) )
+	if ( !mblk_add(idx,addr,addr+sz) )
 		return 0; /* couldn't add block */
 	if ( phys )
 	{
@@ -280,9 +193,17 @@ Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys )
 /* reallocate (resize) a memory area */
 Uint32 kdrealloc_int( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys )
 {
-	/* TODO */
-	BERP("Not implemented");
-	return 0;
+	Uint32 blk = mblk_find(prev);
+	if ( blk == UINT32_MAX )
+		return 0; /* no block at this address */
+	Uint32 osz = kdmem_list[blk].end-kdmem_list[blk].start;
+	if ( !mblk_rm(blk) )
+		return 0;
+	Uint32 naddr = kdalloc_int(newsz,algn,phys);
+	if ( !naddr )
+		return 0;
+	memmove((Uint8*)naddr,(Uint8*)prev,osz);
+	return naddr;
 }
 
 /* vanilla */
@@ -330,31 +251,25 @@ Uint32 kdmem_amount( void )
 	Uint32 i;
 	Uint32 mem = 0;
 	for ( i=0; i<kdmem_psize; i++ )
-		mem += kdmem_pile[i].end-kdmem_pile[i].start;
+		mem += kdmem_list[i].end-kdmem_list[i].start;
 	return mem;
 }
 
-/* issue a reorder of the memory block pile */
-void kdmem_tidy( void )
-{
-	/* TODO */
-}
-
 /* initialize dynamic memory allocator */
-void kdmem_init( Uint32 start, Uint32 end, Uint32 psize )
+void kdmem_init( Uint32 start, Uint32 size, Uint32 psize )
 {
 	/* sanity checks */
-	if ( end <= start )
-		BERP("Zero or negative allication area");
+	if ( !size )
+		BERP("Zero allication area");
 	if ( psize < sizeof(memblk_t) )
 		BERP("Pile size is too small");
-	kdmem_range.start = start;
-	kdmem_range.end = end;
-	/* pile */
+	kdmem_range[0] = start+psize;
+	kdmem_range[1] = start+psize+size;
+	/* list */
 	kdmem_psize_max = psize/sizeof(memblk_t);
-	/* pile is located right at the end */
-	kdmem_pile = (memblk_t*)end;
+	/* list is located at the start, followed by the memory area */
+	kdmem_list = (memblk_t*)start;
 	/* will not check if there is enough space available for it */
-	memset((Uint8*)kdmem_pile,0,kdmem_psize_max*sizeof(memblk_t));
+	memset((Uint8*)kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
 	kdmem_psize = 0;
 }

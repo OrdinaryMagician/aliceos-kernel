@@ -16,14 +16,14 @@ extern page_directory_t *kernel_directory;
 extern Uint32 pagingenabled( void );
 
 /* placement address */
-static Uint32 p_addr_init = 0;
-static Uint32 p_addr = 0;
+Uint32 p_addr_init = 0;
+Uint32 p_addr = 0;
 /* max address */
-static Uint32 m_addr = 0;
+Uint32 m_addr = 0;
 
 /* allocation stats */
-static Uint32 alloc_count = 0;
-static Uint32 alloc_mem = 0;
+Uint32 alloc_count = 0;
+Uint32 alloc_mem = 0;
 
 /* gaps to skip (start, end) */
 typedef struct
@@ -124,41 +124,4 @@ void kmem_addgap( Uint32 start, Uint32 end )
 	a_skip[n_skip].start = start;
 	a_skip[n_skip].end = end;
 	n_skip++;
-}
-
-/* current addr variables values */
-void kmem_addrs( Uint32 *pai, Uint32 *pa, Uint32 *ma )
-{
-	if ( pai )
-		*pai = p_addr_init;
-	if ( pa )
-		*pa = p_addr;
-	if ( ma )
-		*ma = m_addr;
-}
-
-/* return number of allocations performed */
-Uint32 kmem_nalloc( void )
-{
-	return alloc_count;
-}
-
-/* return total, used and free memory */
-Uint32 kmem_total( void )
-{
-	Uint32 mm = m_addr;
-	Uint8 i;
-	for ( i=0; i<n_skip; i++ )
-		mm -= a_skip[i].end-a_skip[i].start;
-	return mm;
-}
-
-Uint32 kmem_used( void )
-{
-	return alloc_mem;
-}
-
-Uint32 kmem_free( void )
-{
-	return kmem_total()-alloc_mem;
 }
