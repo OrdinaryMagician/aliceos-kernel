@@ -47,7 +47,6 @@ static void init_gdt( void )
 {
 	gdt_ptr.limit = (sizeof(gdt_entry_t)*5)-1;
 	gdt_ptr.base = (Uint32)&gdt_ents;
-	
 	/* segments (null, code, data, user mode code, user mode data) */
 	gdt_setgate(0,0,0x00000000,0x00,0x00);
 	gdt_setgate(1,0,0xFFFFFFFF,0x9A,0xCF);

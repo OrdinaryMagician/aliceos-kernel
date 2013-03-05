@@ -12,37 +12,37 @@
 double sin( double ang )
 {
 	extern double fpu_sin(double);
-	return fpu_sin(arg);
+	return fpu_sin(ang);
 }
 
 double cos( double ang )
 {
 	extern double fpu_cos(double);
-	return fpu_cos(arg);
+	return fpu_cos(ang);
 }
 
 double tan( double ang )
 {
 	extern double fpu_tan(double);
-	return fpu_tan(arg);
+	return fpu_tan(ang);
 }
 
 double asin( double ang )
 {
 	extern double fpu_asin(double);
-	return fpu_asin(arg);
+	return fpu_asin(ang);
 }
 
 double acos( double ang )
 {
 	extern double fpu_acos(double);
-	return fpu_acos(arg);
+	return fpu_acos(ang);
 }
 
 double atan( double ang )
 {
 	extern double fpu_atan(double);
-	return fpu_atan(arg);
+	return fpu_atan(ang);
 }
 
 double log( double val )

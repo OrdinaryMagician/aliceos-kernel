@@ -26,16 +26,16 @@ void irq_handler( regs_t *regs )
 {
 	int_disable();
 	Uint8 irq = regs->intno-32;
-	/* send end-of-interrupt to PIC */
-	if ( irq >= 12 )
-		outport_b(0xA0,0x20);
-	outport_b(0x20,0x20);
 	/* call a specific handler if available */
 	if ( irq_handlers[irq] )
 	{
 		irq_handler_t hnd = irq_handlers[irq];
 		hnd(regs);
 	}
+	/* send end-of-interrupt to PIC */
+	if ( irq >= 12 )
+		outport_b(0xA0,0x20);
+	outport_b(0x20,0x20);
 	int_enable();
 }
 

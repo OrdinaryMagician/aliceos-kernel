@@ -26,7 +26,8 @@ Shanghai phase:
   X IRQs
   X PIT
   P Fix generic VGA drivers to work on real hardware (very hard)
-  - Keyboard input
+  X PS/2 Keyboard input
+  - PS/2 Mouse input
   P Dynamic memory (kalloc/krealloc/kfree)
   X Paging
   - Basic PCI/PCI-e support (required for more drivers)
@@ -47,6 +48,9 @@ France:
   - Filesystem modules
      - AOSRD
      - AOSRD2
+     - procfs
+     - devfs
+     - sysfs
      - tmpfs
      - FAT32
      - ext2
@@ -87,6 +91,7 @@ Russia:
   - x86_64 port
   - ARM port (Raspberry Pi)
   - Nokinan Low Level Virtual Machine
+  - Nokinan-styled devfs/sysfs
 Orleans:
   - Fix bugs
 Bucuresti:

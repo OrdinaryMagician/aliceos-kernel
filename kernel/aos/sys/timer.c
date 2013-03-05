@@ -59,11 +59,22 @@ Uint32 timer_usec( Uint32 u )
 /* calls a timer task if specific conditions are met */
 static void timer_calltask( ttasklist_t tl )
 {
-	if ( !tl.interval )		/* zero interval */
+	if ( !(Uint32)tl.task ) /* no task function set */
 		return;
-	if ( !(Uint32)tl.task )		/* no task function set */
+	if ( tl.oneshot ) /* one-shot tasks are handled differently */
+	{
+		if ( !tl.interval )
+		{
+			tl.task();
+			timer_rmtask(tl.task);
+			return;
+		}
+		tl.interval--;
 		return;
-	if ( ticker%tl.interval )	/* not the right time */
+	}
+	if ( !tl.interval ) /* zero interval */
+		return;
+	if ( ticker%tl.interval ) /* not the right time */
 		return;
 	/* if all is ok, call the task */
 	tl.task();
@@ -87,7 +98,7 @@ void init_timer( Uint32 hz )
 	Uint32 divisor = 1193180/hz;
 	thz = hz;
 	tscale = 1000000/hz;
-	outport_b(0x43,0x36);	/* repeating mode */
+	outport_b(0x43,0x36); /* repeating mode */
 	Uint8 l = (Uint8)(divisor&0xFF);
 	Uint8 h = (Uint8)((divisor>>8)&0xFF);
 	outport_b(0x40,l);
@@ -95,12 +106,13 @@ void init_timer( Uint32 hz )
 }
 
 /* register a timer task, return 1 on error, 0 otherwise */
-Uint8 timer_addtask( ttask_t task, Uint32 interval )
+Uint8 timer_addtask( ttask_t task, Uint32 interval, Uint8 oneshot )
 {
-	if ( timer_tasks == TTASKLIST_SZ )	/* tasklist full */
+	if ( timer_tasks == TTASKLIST_SZ ) /* tasklist full */
 		return 1;
 	timer_tasklist[timer_tasks].task = task;
 	timer_tasklist[timer_tasks].interval = interval;
+	timer_tasklist[timer_tasks].oneshot = oneshot;
 	timer_tasks++;
 	return 0;
 }
@@ -108,7 +120,7 @@ Uint8 timer_addtask( ttask_t task, Uint32 interval )
 /* rearrange the task array, removing a specific task in the process */
 static void timer_rmtaskid( Uint8 id )
 {
-	memmove((Uint8*)&timer_tasklist[id+1],(Uint8*)&timer_tasklist[id],sizeof(ttasklist_t)*(timer_tasks-id));
+	memmove((Uint8*)&timer_tasklist[id],(Uint8*)&timer_tasklist[id+1],sizeof(ttasklist_t)*(timer_tasks-id));
 	timer_tasks--;
 }
 

@@ -9,7 +9,7 @@
 #include <memops.h>
 
 /* anm file magic (OS magic  file format magic) */
-static Uint8 anm_magic[24] = 
+static Uint8 anm_magic[24] =
 {
 	'A', 'L', 'I', 'C', 'E', 'O', 'S',
 	0xE3, 0x81, 0xA7, 0xE3, 0x82, 0x8C, /* Hiragana "dere", UTF-8 */

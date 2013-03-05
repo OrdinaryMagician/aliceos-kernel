@@ -262,7 +262,6 @@ static void bga_vscroll( Sint32 offset )
 	/* better grab some popcorn */
 	for ( y=0; y<bga_drv.h; y++ )
 		bga_linescrv(y,offset);
-	
 }
 
 static void bga_putpixel( Uint16 x, Uint16 y, color_t c )
