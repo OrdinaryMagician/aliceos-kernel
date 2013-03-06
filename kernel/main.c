@@ -11,17 +11,18 @@
 #include <sys/desc_tables.h>
 #include <sys/timer.h>
 #include <sys/paging.h>
-#include <fs/ramdisk.h>
+#include <sys/kbd.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
+#include <vga/vgamisc.h>
 #include <vga/mode3h.h>
+#include <fs/ramdisk.h>
+#include <sh/shell.h>
 #include <kdefs.h>
 #include <printk.h>
 #include <berp.h>
 #include <strops.h>
 #include <kmem.h>
-#include <demos.h>
-#include <sys/kbd.h>
 
 /* initial stack pointer */
 Uint32 *initial_esp;
@@ -112,6 +113,7 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	printk("%sConsole output\n",left);
 	/* initialize some vga settings */
 	mode_3h.setmode();
+	disableblink();
 	initfont();
 	mode_3h.setpal(&alicepal[0]);
 	/* pretty screen fill */
@@ -129,8 +131,10 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	init_paging();
 
 	/* internal timer */
-	printk("%sInternal timer\n",left);
+	printk("%sInternal timer at %uhz",left,TIMER_HZ);
 	init_timer(TIMER_HZ);
+	Sint32 error = TIMER_HZ-get_hz();
+	printk(" (~%uhz error)\n",abs(error));
 
 	/* keyboard input */
 	printk("%sPS/2 keyboard input driver\n",left);
@@ -160,25 +164,10 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 		mult++;
 	}
 	printk("Total RAM: %u %sB\n",cmem,suf[mult]);
-
-	/* insert demo code or whatever here */
-	if ( !kargs[0] )
-	{
-		mode_3h.fbputs("No argument specified\n\n");
-		listdemos();
-		return EXIT_SUCCESS;
-	}
-	unsigned int i = 0;
-	for ( i=0; i<DEMO_COUNT; i++ )
-	{
-		if ( !strcmp(kargs,demos[i].name) )
-		{
-			demos[i].func();
-			return EXIT_SUCCESS;
-		}
-	}
-	mode_3h.fbprintf("Unrecognized argument \"%s\"\n\n",kargs);
-	listdemos();
+	
+	/* call internal shell */
+	shell.init();
+	shell.enable();
 
 	return EXIT_SUCCESS;
 }

@@ -532,8 +532,8 @@ static void bga_fbmovecursor( Sint32 cols, Sint32 rows )
 		py -= bga_fbh;
 	while ( py < 0 )
 		py += bga_fbh;
-	bga_cx += px;
-	bga_cy += py;
+	bga_cx = px;
+	bga_cy = py;
 }
 
 static void bga_fbcursorvis( Uint8 on )

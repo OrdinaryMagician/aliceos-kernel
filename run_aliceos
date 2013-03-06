@@ -2,6 +2,9 @@
 
 if [[ ! -e vmaliceos ]]; then
   echo -n "building aliceos kernel... "
+  if ( which clang >/dev/null ); then
+    export CC=clang
+  fi
   make >/dev/null
   if [ $? != 0 ]; then
     echo "error"

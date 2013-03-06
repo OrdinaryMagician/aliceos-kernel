@@ -23,6 +23,8 @@ SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/bga/*.s))
 SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/bga/*.c))
 SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/desc/*.s))
 SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/desc/*.c))
+SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/sh/*.s))
+SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/sh/*.c))
 .PHONY: clean veryclean
 aliceos-kernel: $(SOURCES) link
 veryclean: clean

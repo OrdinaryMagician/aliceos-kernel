@@ -22,11 +22,13 @@ typedef struct
 } memblk_t;
 
 /* reserve a memory area */
+Uint32 kdalloc_global( Uint32 sz, Uint8 alg, Uint32 *phys ); /* generic */
 Uint32 kdalloc( Uint32 sz ); /* vanilla */
 Uint32 kdalloc_a( Uint32 sz ); /* page-aligned */
 Uint32 kdalloc_p( Uint32 sz, Uint32 *phys ); /* return physical address */
 Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys ); /* page-aligned and return physical address */
 /* reallocate (resize) a memory area */
+Uint32 kdrealloc_global( Uint32 prev, Uint32 sz, Uint8 alg, Uint32 *phys ); /* generic */
 Uint32 kdrealloc( Uint32 prev, Uint32 newsz ); /* vanilla */
 Uint32 kdrealloc_a( Uint32 prev, Uint32 newsz ); /* page-aligned */
 Uint32 kdrealloc_p( Uint32 prev, Uint32 newsz, Uint32 *phys ); /* return physical address */

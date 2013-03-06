@@ -28,6 +28,7 @@ Shanghai phase:
   P Fix generic VGA drivers to work on real hardware (very hard)
   X PS/2 Keyboard input
   - PS/2 Mouse input
+  P Internal shell
   P Dynamic memory (kalloc/krealloc/kfree)
   X Paging
   - Basic PCI/PCI-e support (required for more drivers)

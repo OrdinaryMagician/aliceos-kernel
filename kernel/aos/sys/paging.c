@@ -116,7 +116,7 @@ void init_paging( void )
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		get_page(i,1,kernel_directory);
 	/* kernel frames */
-	for ( i=0; i<p_addr; i+=0x1000 )
+	for ( i=0; i<p_addr+0x3000; i+=0x1000 )
 		alloc_frame(get_page(i,1,kernel_directory),0,0);
 	/* dynamic allocator frames, pass 2 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )

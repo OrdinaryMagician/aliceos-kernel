@@ -11,6 +11,8 @@
 
 /* just a harmless typedef */
 typedef void (*irq_handler_t)( regs_t *regs );
+/* send end-of-interrupt to PIC */
+void irq_eoi( Uint8 irq );
 /* register an IRQ handler function */
 void register_irq_handler( Uint8 n, irq_handler_t handler );
 /* clear IRQ handlers */

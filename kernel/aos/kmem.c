@@ -9,11 +9,14 @@
 #include <printk.h>
 #include <berp.h>
 #include <sys/paging.h>
+#include <kdmem.h>
 
 /* in sys/paging.c */
 extern page_directory_t *kernel_directory;
 /* in sys/pagingasm.s */
 extern Uint32 pagingenabled( void );
+/* in kdmem.c */
+extern Uint8 kdmem_enabled;
 
 /* placement address */
 Uint32 p_addr_init = 0;
@@ -34,8 +37,11 @@ memgap_t a_skip[32];
 Uint8 n_skip = 0;
 
 /* global allocation function */
-static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
+Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 {
+	if ( kdmem_enabled )
+		return kdalloc_global(sz,algn,phys);
+
 	Uint32 p_addr_veryold = p_addr;
 	/* page-align address in case it's not already */
 	if ( algn && p_addr&(0xFFFFF000) )
@@ -66,7 +72,7 @@ static Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 		if ( pagingenabled() )
 		{
 			page_t *pg = get_page(p_addr,0,kernel_directory);
-			*phys = pg->frame*0x1000+p_addr&0xFFF;
+			*phys = pg->frame*0x1000+(p_addr&0xFFF);
 		}
 		else
 			*phys = p_addr;
@@ -100,6 +106,45 @@ Uint32 kmalloc_p( Uint32 sz, Uint32 *phys )
 Uint32 kmalloc( Uint32 sz )
 {
 	return kmalloc_global(sz,0,0);
+}
+
+/* global reallocation function */
+Uint32 krealloc_global( Uint32 prev, Uint32 sz, Uint8 algn, Uint32 *phys )
+{
+	if ( kdmem_enabled )
+		return kdrealloc_global(prev,sz,algn,phys);
+	return kmalloc_global(sz,algn,phys);
+}
+
+/* page-aligned krealloc */
+Uint32 krealloc_a( Uint32 prev, Uint32 sz )
+{
+	return krealloc_global(prev,sz,1,0);
+}
+
+/* page-aligned physical krealloc */
+Uint32 krealloc_ap( Uint32 prev, Uint32 sz, Uint32 *phys )
+{
+	return krealloc_global(prev,sz,1,phys);
+}
+
+/* physical krealloc */
+Uint32 krealloc_p( Uint32 prev, Uint32 sz, Uint32 *phys )
+{
+	return krealloc_global(prev,sz,0,phys);
+}
+
+/* the lite version */
+Uint32 krealloc( Uint32 prev, Uint32 sz )
+{
+	return krealloc_global(prev,sz,0,0);
+}
+
+/* does nothing unless dynamic allocator is initiated */
+void kfree( Uint32 a )
+{
+	if ( kdmem_enabled )
+		kdfree(a);
 }
 
 /* initialize the memory manager */

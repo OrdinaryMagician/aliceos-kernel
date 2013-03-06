@@ -45,6 +45,8 @@ static Uint32 kdmem_range[2] = {0x00000000,0xFFFFFFFF};
 /* pile sizes */
 static Uint32 kdmem_psize = 0;
 static Uint32 kdmem_psize_max = 0;
+/* we're enabled? */
+Uint8 kdmem_enabled = 0;
 
 /* find the first gap where we can fit a specific block */
 static Uint32 mblk_findgap( Uint32 sz, Uint8 algn, Uint32 *idx )
@@ -145,7 +147,7 @@ static Uint32 mblk_find( Uint32 addr )
 }
 
 /* reserve a memory area */
-Uint32 kdalloc_int( Uint32 sz, Uint8 algn, Uint32 *phys ) /* internal */
+Uint32 kdalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys ) /* global */
 {
 	Uint32 idx = 0;
 	Uint32 addr = mblk_findgap(sz,algn,&idx);
@@ -158,7 +160,7 @@ Uint32 kdalloc_int( Uint32 sz, Uint8 algn, Uint32 *phys ) /* internal */
 		if ( pagingenabled() )
 		{
 			page_t *pg = get_page(addr,0,kernel_directory);
-			*phys = pg->frame*0x1000+addr&0xFFF;
+			*phys = pg->frame*0x1000+(addr&0xFFF);
 		}
 		else
 			*phys = addr;
@@ -169,29 +171,29 @@ Uint32 kdalloc_int( Uint32 sz, Uint8 algn, Uint32 *phys ) /* internal */
 /* vanilla */
 Uint32 kdalloc( Uint32 sz )
 {
-	return kdalloc_int(sz,0,NULL);
+	return kdalloc_global(sz,0,NULL);
 }
 
 /* page-aligned */
 Uint32 kdalloc_a( Uint32 sz )
 {
-	return kdalloc_int(sz,1,NULL);
+	return kdalloc_global(sz,1,NULL);
 }
 
 /* return physical address */
 Uint32 kdalloc_p( Uint32 sz, Uint32 *phys )
 {
-	return kdalloc_int(sz,0,phys);
+	return kdalloc_global(sz,0,phys);
 }
 
 /* page-aligned and return physical address */
 Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys )
 {
-	return kdalloc_int(sz,1,phys);
+	return kdalloc_global(sz,1,phys);
 }
 
 /* reallocate (resize) a memory area */
-Uint32 kdrealloc_int( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys )
+Uint32 kdrealloc_global( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys ) /* generic */
 {
 	Uint32 blk = mblk_find(prev);
 	if ( blk == UINT32_MAX )
@@ -199,7 +201,7 @@ Uint32 kdrealloc_int( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys )
 	Uint32 osz = kdmem_list[blk].end-kdmem_list[blk].start;
 	if ( !mblk_rm(blk) )
 		return 0;
-	Uint32 naddr = kdalloc_int(newsz,algn,phys);
+	Uint32 naddr = kdalloc_global(newsz,algn,phys);
 	if ( !naddr )
 		return 0;
 	memmove((Uint8*)naddr,(Uint8*)prev,osz);
@@ -209,25 +211,25 @@ Uint32 kdrealloc_int( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys )
 /* vanilla */
 Uint32 kdrealloc( Uint32 prev, Uint32 newsz )
 {
-	return kdrealloc_int(prev,newsz,0,NULL);
+	return kdrealloc_global(prev,newsz,0,NULL);
 }
 
 /* page-aligned */
 Uint32 kdrealloc_a( Uint32 prev, Uint32 newsz )
 {
-	return kdrealloc_int(prev,newsz,1,NULL);
+	return kdrealloc_global(prev,newsz,1,NULL);
 }
 
 /* return physical address */
 Uint32 kdrealloc_p( Uint32 prev, Uint32 newsz, Uint32 *phys )
 {
-	return kdrealloc_int(prev,newsz,0,phys);
+	return kdrealloc_global(prev,newsz,0,phys);
 }
 
 /* page-aligned and return physical address */
 Uint32 kdrealloc_ap( Uint32 prev, Uint32 newsz, Uint32 *phys )
 {
-	return kdrealloc_int(prev,newsz,1,phys);
+	return kdrealloc_global(prev,newsz,1,phys);
 }
 
 /* free a memory area */
@@ -272,4 +274,5 @@ void kdmem_init( Uint32 start, Uint32 size, Uint32 psize )
 	/* will not check if there is enough space available for it */
 	memset((Uint8*)kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
 	kdmem_psize = 0;
+	kdmem_enabled = 1;
 }

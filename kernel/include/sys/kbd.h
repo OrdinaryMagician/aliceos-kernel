@@ -170,4 +170,7 @@ Uint8 kbd_addhandler( kbd_handler_t hnd );
 /* remove an input handler */
 Uint8 kbd_rmhandler( kbd_handler_t hnd );
 
+/* get a key */
+void kbd_getkey( key_t *key );
+
 #endif

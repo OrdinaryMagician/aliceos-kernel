@@ -466,8 +466,8 @@ static void m13h_fbmovecursor( Sint32 cols, Sint32 rows )
 		py -= m13h_fbh;
 	while ( py < 0 )
 		py += m13h_fbh;
-	m13h_cx += px;
-	m13h_cy += py;
+	m13h_cx = px;
+	m13h_cy = py;
 }
 
 static void m13h_fbcursorvis( Uint8 on )

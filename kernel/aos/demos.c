@@ -23,9 +23,11 @@
 #include <video/vidtypes.h>
 #include <video/fcpalette.h>
 #include <bga/bga.h>
+#include <bga/bochsvbe.h>
 #include <sys/timer.h>
 #include <sys/cmos.h>
 #include <kdmem.h>
+#include <sys/kbd.h>
 
 demo_t demos[DEMO_COUNT] =
 {
@@ -37,6 +39,27 @@ demo_t demos[DEMO_COUNT] =
 	{"timers", "timers demo", demo_timers},
 	{"kdmem", "dynamic memory demo", demo_kdmem},
 };
+
+static void demo_wait( void )
+{
+	for ( ; ; )
+	{
+		key_t ki;
+		kbd_getkey(&ki);
+		if ( !ki.pressed )
+			continue;
+		if ( ki.code == KB_ENTER )
+			break;
+	}
+	mode_3h.setmode();
+	disableblink();
+	setfont(&biosfnt[0]);
+	mode_3h.setpal(&alicepal[0]);
+	mode_3h.clear();
+	mode_3h.fbcursorvis(1);
+	mode_3h.fbsetcursor(0,0);
+	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
+}
 
 /* list available demos */
 void listdemos( void )
@@ -57,38 +80,37 @@ void demo_kdmem( void )
 	Uint32 delay;
 	Uint32 addrs[1024];
 	Uint32 i;
-	printk("Running dynamic allocator demo\n");
 	/* we already assume we're in mode 3h since boot */
-	mode_3h.fbprintf("%[-FAllocation, deallocation and reallocation basic test\n\n");
-	mode_3h.fbprintf("%[-7 allocate test1 (4)\n");
+	mode_3h.fbprintf("%[0FAllocation, deallocation and reallocation basic test\n\n");
+	mode_3h.fbprintf("%[07 allocate test1 (4)\n");
 	test1 = (char*)kdalloc(4);
-	mode_3h.fbprintf("%[-8  test1 %#08x\n",(Uint32)test1);
-	mode_3h.fbprintf("%[-7 allocate test2 (8)\n");
+	mode_3h.fbprintf("%[08  test1 %#08x\n",(Uint32)test1);
+	mode_3h.fbprintf("%[07 allocate test2 (8)\n");
 	test2 = (char*)kdalloc(8);
-	mode_3h.fbprintf("%[-8  test2 %#08x\n",(Uint32)test2);
-	mode_3h.fbprintf("%[-7 allocate test3 (16)\n");
+	mode_3h.fbprintf("%[08  test2 %#08x\n",(Uint32)test2);
+	mode_3h.fbprintf("%[07 allocate test3 (16)\n");
 	test3 = (char*)kdalloc(16);
-	mode_3h.fbprintf("%[-8  test3 %#08x\n",(Uint32)test3);
-	mode_3h.fbprintf("%[-7 free test2\n");
+	mode_3h.fbprintf("%[08  test3 %#08x\n",(Uint32)test3);
+	mode_3h.fbprintf("%[07 free test2\n");
 	kdfree((Uint32)test2);
-	mode_3h.fbprintf("%[-7 reallocate test1 (32)\n");
+	mode_3h.fbprintf("%[07 reallocate test1 (32)\n");
 	test1 = (char*)kdrealloc((Uint32)test1,32);
-	mode_3h.fbprintf("%[-8  test1 %#08x\n",(Uint32)test1);
-	mode_3h.fbprintf("%[-7 allocate test4 (12)\n");
+	mode_3h.fbprintf("%[08  test1 %#08x\n",(Uint32)test1);
+	mode_3h.fbprintf("%[07 allocate test4 (12)\n");
 	test4 = (char*)kdalloc(12);
-	mode_3h.fbprintf("%[-8  test4 %#08x\n",(Uint32)test4);
+	mode_3h.fbprintf("%[08  test4 %#08x\n",(Uint32)test4);
 	kdfree((Uint32)test1);
-	mode_3h.fbprintf("%[-F\nAllocation and deallocation speed test\n\n");
+	mode_3h.fbprintf("%[0F\nAllocation and deallocation speed test\n\n");
 	delay = get_ticks();
 	for ( i=0; i<1024; i++ )
 		addrs[i] = kdalloc(1);
 	delay = get_ticks()-delay;
-	mode_3h.fbprintf("%[-7 1024 allocations took %u ticks\n",delay);
+	mode_3h.fbprintf("%[07 1024 allocations took %u ticks\n",delay);
 	delay = get_ticks();
 	for ( i=1024; i>0; i-- )
 		kdfree(addrs[i-1]);
 	delay = get_ticks()-delay;
-	mode_3h.fbprintf("%[-7 1024 deallocations took %u ticks\n",delay);
+	mode_3h.fbprintf("%[07 1024 deallocations took %u ticks\n",delay);
 }
 
 /* update the header clock every second */
@@ -154,12 +176,10 @@ void dt_bounce( void )
 void demo_timers( void )
 {
 	/* we already assume we're in mode 3h since boot */
-	disableblink();
 	mode_3h.fbcursorvis(0);
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
 	mode_3h.drawrect(0,3,80,44,APAL_DARKGRAY);
 	mode_3h.drawrect(0,4,80,42,APAL_LIGHTGRAY);
-	printk("Running Timers demo\n");
 	ball_x = 12;
 	ball_y = 8;
 	vel_x = 1;
@@ -178,40 +198,39 @@ void demo_timers( void )
 		BERP("Couldn't add task");
 	if ( timer_addtask(dt_bounce,timer_msec(50),0) )
 		BERP("Couldn't add task");
+	demo_wait();
+	timer_rmtask(dt_bounce);
+	timer_rmtask(dt_wave);
+	timer_rmtask(dt_updateheader);
 }
 
 /* Character map */
 void demo_cmap( void )
 {
 	/* no startup code, we already assume we're in mode 3h since boot */
-	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
-	printk("Running Character Map demo\n");
+	mode_3h.fbsetattr(15,0,0);
 	Uint16 i;
-	Uint16 x,y;
-	x = 2;
-	y = 2;
-	for ( i=0; i<128; i++ )
+	Sint32 cx, cy;
+	Uint16 rx, ry;
+	mode_3h.fbgetcursor(&cx,&cy);
+	mode_3h.fbgetres(&rx,&ry);
+	Uint16 x = 0;
+	Uint16 y = cy;
+	for ( i=0; i<256; i++ )
 	{
 		mode_3h.drawchar(x,y,i);
-		x++;
-		if ( x >= 18 )
+		if ( ++x >= 32 )
 		{
-			x = 2;
+			x = 0;
 			y++;
+			if ( y >= ry )
+			{
+				mode_3h.vscroll(-1);
+				y--;
+			}
 		}
 	}
-	x = 20;
-	y = 2;
-	for ( i=128; i<256; i++ )
-	{
-		mode_3h.drawchar(x,y,i);
-		x++;
-		if ( x >= 36 )
-		{
-			x = 20;
-			y++;
-		}
-	}
+	mode_3h.fbsetcursor(0,y);
 }
 
 /* 80x50 graphics demo */
@@ -220,8 +239,8 @@ void demo_blockgfx( void )
 	Uint32 delay = get_ticks();
 
 	/* no startup code, we already assume we're in mode 3h since boot */
+	mode_3h.fbcursorvis(0);
 	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
-	printk("Running Block GFX demo\n");
 	img_t aliceimg;
 	if ( loadimg(&aliceimg,"alice3h.img") )
 		BERP("error loading alice3h.img");
@@ -267,7 +286,8 @@ void demo_blockgfx( void )
 	mode_3h.drawvline(79,0,50,7);
 
 	delay = (get_ticks()-delay);
-	printk("Drawing took %u ticks\n",delay);
+	demo_wait();
+	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }
 
 /* Bochs/QEMU BGA demo */
@@ -277,7 +297,6 @@ void demo_bochsgfx( void )
 
 	Uint16 rx = 1280;
 	Uint16 ry = 800;
-	printk("Running BGA GFX demo\n");
 	if ( bga_drv.setmode(rx,ry) )
 		BERP("could not set video mode");
 	fnt_t font8;
@@ -530,7 +549,9 @@ void demo_bochsgfx( void )
 	bga_drv.drawvline(rx-5,4,ry-8,COLOR_GRAY(64));
 
 	delay = (get_ticks()-delay);
-	printk("Drawing took %u ticks\n",delay);
+	demo_wait();
+	setbgareg(BGA_REG_ENABLE,BGA_DISABLED);
+	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }
 
 /* mode 12h graphics demo */
@@ -538,7 +559,6 @@ void demo_crapgfx( void )
 {
 	Uint32 delay = get_ticks();
 
-	printk("Running Mode 12h GFX demo\n");
 	mode_12h.setmode();
 	mode_12h.setpal(&alicepal[0]);
 	fnt_t font8;
@@ -681,7 +701,8 @@ void demo_crapgfx( void )
 	mode_12h.drawvline(635,4,472,8);
 
 	delay = (get_ticks()-delay);
-	printk("Drawing took %u ticks\n",delay);
+	demo_wait();
+	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }
 
 /* mode 13h graphics demo */
@@ -689,7 +710,6 @@ void demo_realgfx( void )
 {
 	Uint32 delay = get_ticks();
 
-	printk("Running Mode 13h GFX demo\n");
 	mode_13h.setmode();
 	/* needed for special "masking" */
 	alicepal256[765] = 0;
@@ -889,5 +909,6 @@ void demo_realgfx( void )
 	mode_13h.drawvline(315,4,192,8);
 
 	delay = (get_ticks()-delay);
-	printk("Drawing took %u ticks\n",delay);
+	demo_wait();
+	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }

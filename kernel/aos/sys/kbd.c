@@ -9,6 +9,7 @@
 #include <sys/helpers.h>
 #include <sys/irq_handlers.h>
 #include <memops.h>
+#include <printk.h>
 
 /* internal: current mode keys */
 static Uint8 kbd_cmod  = 0;
@@ -257,9 +258,11 @@ static char kbd_getch( void )
 	return inport_b(KBD_PORT);
 }
 
-static void kbd_basehandler( regs_t *regs )
+/* get a key */
+void kbd_getkey( key_t *key )
 {
-
+	if ( !key )
+		return;
 	char got[6] = {0,0,0,0,0,0};
 	got[0] = kbd_getch();
 	if ( got[0] == 0xE0 )
@@ -272,8 +275,15 @@ static void kbd_basehandler( regs_t *regs )
 		got[4] = kbd_getch();
 		got[5] = kbd_getch();
 	}
-	key_t parsed = {0,0,0,0,0};
-	kbd_parsekey(got,&parsed);
+	memset((Uint8*)key,0,sizeof(key_t));
+	kbd_parsekey(got,key);
+}
+
+static void kbd_basehandler( regs_t *regs )
+{
+	int_enable();
+	key_t parsed;
+	kbd_getkey(&parsed);
 	Uint8 i;
 	for ( i=0; i<kbd_handlers; i++ )
 	{
@@ -281,6 +291,7 @@ static void kbd_basehandler( regs_t *regs )
 		if ( hnd )
 			hnd(&parsed);
 	}
+	irq_eoi(KBD_IRQ);
 }
 
 /* turn on keyboard driver */

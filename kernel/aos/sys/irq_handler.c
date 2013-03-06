@@ -21,6 +21,14 @@ void register_irq_handler( Uint8 n, irq_handler_t handler )
 	irq_handlers[n] = handler;
 }
 
+/* send end-of-interrupt to PIC */
+void irq_eoi( Uint8 irq )
+{
+	if ( irq >= 12 )
+		outport_b(0xA0,0x20);
+	outport_b(0x20,0x20);
+}
+
 /* the common handler (which will call any registered handlers) */
 void irq_handler( regs_t *regs )
 {
@@ -31,12 +39,10 @@ void irq_handler( regs_t *regs )
 	{
 		irq_handler_t hnd = irq_handlers[irq];
 		hnd(regs);
+		return;
 	}
-	/* send end-of-interrupt to PIC */
-	if ( irq >= 12 )
-		outport_b(0xA0,0x20);
-	outport_b(0x20,0x20);
 	int_enable();
+	irq_eoi(irq);
 }
 
 /* clear IRQ handlers */

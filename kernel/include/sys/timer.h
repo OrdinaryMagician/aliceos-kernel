@@ -19,7 +19,7 @@ typedef struct
 
 /* get current ticks passed */
 Uint32 get_ticks( void );
-/* get current microseconds/tick */
+/* get current nanoseconds/tick */
 Uint32 get_timescale( void );
 /* get current timer frequency */
 Uint32 get_hz( void );

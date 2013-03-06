@@ -6,13 +6,14 @@
 */
 #include <sys/timer.h>
 #include <sys/irq_handlers.h>
+#include <sys/helpers.h>
 #include <sys/port.h>
 #include <memops.h>
 
 /* internal counter */
 static Uint32 ticker = 0;
 
-/* length of each tick in microseconds */
+/* length of each tick in nanoseconds */
 static Uint32 tscale = 0;
 
 /* system time frequency */
@@ -28,7 +29,7 @@ Uint32 get_ticks( void )
 	return ticker;
 }
 
-/* get current microseconds/tick */
+/* get current nanoseconds/tick */
 Uint32 get_timescale( void )
 {
 	return tscale;
@@ -43,17 +44,17 @@ Uint32 get_hz( void )
 /* return the equivalent in ticks for some time units */
 Uint32 timer_sec( Uint32 s )
 {
-	return (s*1000000)/thz;
+	return (s*1000000000)/tscale;
 }
 
 Uint32 timer_msec( Uint32 m )
 {
-	return (m*1000)/thz;
+	return (m*1000000)/tscale;
 }
 
 Uint32 timer_usec( Uint32 u )
 {
-	return u/thz;
+	return (u*1000)/tscale;
 }
 
 /* calls a timer task if specific conditions are met */
@@ -87,6 +88,8 @@ static void timer_callback( regs_t *regs )
 	Uint8 i;
 	for ( i=0; i<timer_tasks; i++ )
 		timer_calltask(timer_tasklist[i]);
+	int_enable();
+	irq_eoi(0);
 }
 
 /* initialize the timer */
@@ -96,8 +99,8 @@ void init_timer( Uint32 hz )
 	memset((Uint8*)&timer_tasklist[0],0,sizeof(ttasklist_t)*TTASKLIST_SZ);
 	register_irq_handler(0,&timer_callback);
 	Uint32 divisor = 1193180/hz;
-	thz = hz;
-	tscale = 1000000/hz;
+	thz = (divisor*hz*hz)/1193180;
+	tscale = 1000000000/thz;
 	outport_b(0x43,0x36); /* repeating mode */
 	Uint8 l = (Uint8)(divisor&0xFF);
 	Uint8 h = (Uint8)((divisor>>8)&0xFF);

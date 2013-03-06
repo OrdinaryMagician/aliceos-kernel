@@ -201,7 +201,7 @@ static fnt_t* m3h_getfont( void )
 
 static void m3h_clear( void )
 {
-	memsetw(m3h_mem,0,2000);
+	memsetw(m3h_mem,0x0F00,2000);
 }
 
 static void m3h_hscroll( Sint32 offset )
@@ -209,8 +209,8 @@ static void m3h_hscroll( Sint32 offset )
 	/* noscroll */
 	if ( !offset )
 		return;
-	/* scrolling 80 blocks? that's just like clearing the screen */
-	if ( abs(offset) >= 80 )
+	/* scrolling m3h_fbw blocks? that's just like clearing the screen */
+	if ( abs(offset) >= m3h_fbw )
 	{
 		memsetw(m3h_mem,0,2000);
 		return;
@@ -218,19 +218,19 @@ static void m3h_hscroll( Sint32 offset )
 	Uint16 ln;
 	if ( offset > 0 )
 	{
-		for ( ln=0; ln<25; ln++ )
+		for ( ln=0; ln<m3h_fbh; ln++ )
 		{
-			memmovew(m3h_mem+(ln*80)+offset,m3h_mem+(ln*80),80-offset);
-			memsetw(m3h_mem+(ln*80),0,offset);
+			memmovew(m3h_mem+(ln*m3h_fbw)+offset,m3h_mem+(ln*m3h_fbw),m3h_fbw-offset);
+			memsetw(m3h_mem+(ln*m3h_fbw),0x0F00,offset);
 		}
 	}
 	else
 	{
 		offset *= -1;
-		for ( ln=0; ln<25; ln++ )
+		for ( ln=0; ln<m3h_fbh; ln++ )
 		{
-			memmovew(m3h_mem+(ln*80),m3h_mem+(ln*80)+offset,80-offset);
-			memsetw(m3h_mem+(ln*80)+(80-offset),0,offset);
+			memmovew(m3h_mem+(ln*m3h_fbw),m3h_mem+(ln*m3h_fbw)+offset,m3h_fbw-offset);
+			memsetw(m3h_mem+(ln*m3h_fbw)+(m3h_fbw-offset),0x0F00,offset);
 		}
 	}
 }
@@ -240,8 +240,8 @@ static void m3h_vscroll( Sint32 offset )
 	/* noscroll */
 	if ( !offset )
 		return;
-	/* scrolling 25 blocks? that's just like clearing the screen */
-	if ( abs(offset) >= 25 )
+	/* scrolling m3h_fbh blocks? that's just like clearing the screen */
+	if ( abs(offset) >= m3h_fbh )
 	{
 		memsetw(m3h_mem,0,2000);
 		return;
@@ -249,25 +249,27 @@ static void m3h_vscroll( Sint32 offset )
 	/* vertical scrolling seems faster in theory */
 	if ( offset > 0 )
 	{
-		memmovew(m3h_mem+(offset*80),m3h_mem,80*(25-offset));
-		memsetw(m3h_mem,0,offset*80);
+		memmovew(m3h_mem+(offset*m3h_fbw),m3h_mem,m3h_fbw*(m3h_fbh-offset));
+		memsetw(m3h_mem,0x0F00,offset*m3h_fbw);
 	}
 	else
 	{
 		offset *= -1;
-		memmovew(m3h_mem,m3h_mem+(offset*80),80*(25-offset));
-		memsetw(m3h_mem+((25-offset)*80),0,offset*80);
+		memmovew(m3h_mem,m3h_mem+(offset*m3h_fbw),m3h_fbw*(m3h_fbh-offset));
+		memsetw(m3h_mem+((m3h_fbh-offset)*m3h_fbw),0x0F00,offset*m3h_fbw);
 	}
 }
 
 static void m3h_putpixel( Uint16 x, Uint16 y, Uint8 c )
 {
 	/* bloxel, actually */
-	x %= 80;
-	y %= 50;
+	x %= mode_3h.w;
+	y %= mode_3h.h;
+	Uint16 *pair = m3h_mem+x+(y/2)*mode_3h.w;
 	if ( c > 0x0F )
 		return;
-	Uint16 *pair = m3h_mem+x+(y/2)*80;
+	if ( ((*pair)&0x00FF) != 0x00DF )
+		*pair = 0x00DF;
 	if ( y%2 )
 	{
 		*pair &= 0x0F00;
@@ -284,9 +286,9 @@ static void m3h_putpixel( Uint16 x, Uint16 y, Uint8 c )
 static Uint8 m3h_getpixel( Uint16 x, Uint16 y )
 {
 	/* bloxel, actually */
-	x %= 80;
-	y %= 50;
-	Uint16 *pair = m3h_mem+x+(y/2)*80;
+	x %= mode_3h.w;
+	y %= mode_3h.h;
+	Uint16 *pair = m3h_mem+x+(y/2)*mode_3h.w;
 	if ( y%2 )
 		return ((*pair)&0xF000)>>12;
 	else
@@ -301,22 +303,9 @@ static void m3h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 	py = y;
 	lx = x+w;
 	ly = y+h;
-	Uint16 *pair; 
 	while ( (px < lx) && (py < ly) )
 	{
-		pair = m3h_mem+px+(py/2)*80;
-		if ( py%2 )
-		{
-			*pair &= 0x0F00;
-			*pair |= (Uint16)c<<12;
-		}
-		else
-		{
-			*pair &= 0xF000;
-			*pair |= (Uint16)c<<8;
-		}
-		*pair |= 0x00DF;
-		px++;
+		m3h_putpixel(px++,py,c);
 		if ( px >= lx )
 		{
 			px = x;
@@ -331,23 +320,8 @@ static void m3h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 	Uint16 lx;
 	px = x;
 	lx = x+l;
-	Uint16 *pair;
 	while ( px < lx )
-	{
-		pair = m3h_mem+px+(y/2)*80;
-		if ( y%2 )
-		{
-			*pair &= 0x0F00;
-			*pair |= (Uint16)c<<12;
-		}
-		else
-		{
-			*pair &= 0xF000;
-			*pair |= (Uint16)c<<8;
-		}
-		*pair |= 0x00DF;
-		px++;
-	}
+		m3h_putpixel(px++,y,c);
 }
 
 static void m3h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
@@ -356,23 +330,8 @@ static void m3h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
 	Uint16 ly;
 	py = y;
 	ly = y+l;
-	Uint16 *pair; 
 	while ( py < ly )
-	{
-		pair = m3h_mem+x+(py/2)*80;
-		if ( py%2 )
-		{
-			*pair &= 0x0F00;
-			*pair |= (Uint16)c<<12;
-		}
-		else
-		{
-			*pair &= 0xF000;
-			*pair |= (Uint16)c<<8;
-		}
-		*pair |= 0x00DF;
-		py++;
-	}
+		m3h_putpixel(x,py++,c);
 }
 
 static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
@@ -388,7 +347,6 @@ static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, U
 	Uint16 iw, ih;
 	Uint16 ix, iy;
 	Uint8 c;
-	Uint16 *pair;
 	iw = img->w;
 	ih = img->h;
 	px = x;
@@ -403,18 +361,7 @@ static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy, U
 		if ( c <= 15 )
 		{
 			c += palshift;
-			pair = m3h_mem+px+(py/2)*80;
-			if ( py%2 )
-			{
-				*pair &= 0x0F00;
-				*pair |= (Uint16)c<<12;
-			}
-			else
-			{
-				*pair &= 0xF000;
-				*pair |= (Uint16)c<<8;
-			}
-			*pair |= 0x00DF;
+			m3h_putpixel(px,py,c);
 		}
 		ix++;
 		if ( ix >= iw )
@@ -441,14 +388,14 @@ static void m3h_drawchar( Uint16 x, Uint16 y, char c )
 	att[0] = m3h_attrs[0];
 	att[1] = m3h_attrs[1];
 	if ( m3h_attrs[2]&EXATTR_REVBG )
-		att[1] = 15-((*(m3h_mem+px+(py*80))>>12)&0x0F);
+		att[1] = 15-((*(m3h_mem+px+(py*m3h_fbw))>>12)&0x0F);
 	else if ( m3h_attrs[2]&EXATTR_MASKED && !att[1] )
-		att[1] = ((*(m3h_mem+px+(py*80))>>12)&0x0F);
+		att[1] = ((*(m3h_mem+px+(py*m3h_fbw))>>12)&0x0F);
 	if ( m3h_attrs[2]&EXATTR_NODW )
-		c = m3h_mem[px+(py*80)]&0x00FF;
+		c = m3h_mem[px+(py*m3h_fbw)]&0x00FF;
 	att[0] &= 0x0F;
 	att[1] &= 0x0F;
-	m3h_mem[px+(py*80)] = (att[1]<<12)|(att[0]<<8)|c;
+	m3h_mem[px+(py*m3h_fbw)] = (att[1]<<12)|(att[0]<<8)|c;
 }
 
 static void m3h_drawwchar( Uint16 x, Uint16 y, wchar c )
@@ -491,7 +438,7 @@ static void m3h_fbsetcursor( Sint32 col, Sint32 row )
 		row += m3h_fbh;
 	m3h_cx = col;
 	m3h_cy = row;
-	Uint16 cpos = col+(row*80);
+	Uint16 cpos = col+(row*m3h_fbw);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCH,cpos>>8);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCL,cpos);
 }
@@ -509,9 +456,9 @@ static void m3h_fbmovecursor( Sint32 cols, Sint32 rows )
 		py -= m3h_fbh;
 	while ( py < 0 )
 		py += m3h_fbh;
-	m3h_cx += px;
-	m3h_cy += py;
-	Uint16 cpos = m3h_cx+(m3h_cy*80);
+	m3h_cx = px;
+	m3h_cy = py;
+	Uint16 cpos = m3h_cx+(m3h_cy*m3h_fbw);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCH,cpos>>8);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCL,cpos);
 }
@@ -562,7 +509,7 @@ static void m3h_fbputc( char c )
 		m3h_vscroll(-1);
 		m3h_cy--;
 	}
-	Uint16 cpos = m3h_cx+(m3h_cy*80);
+	Uint16 cpos = m3h_cx+(m3h_cy*m3h_fbw);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCH,cpos>>8);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCL,cpos);
 }
