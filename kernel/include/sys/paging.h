@@ -24,13 +24,15 @@
 */
 typedef struct
 {
-	/* I really don't know how bitfields work but oh well... */
+	/* Bitfields are phun~ */
 	Uint32 present  : 1;
 	Uint32 rw       : 1;
 	Uint32 user     : 1;
+	Uint32          : 2;
 	Uint32 accessed : 1;
 	Uint32 dirty    : 1;
-	Uint32 reserved : 7;
+	Uint32          : 2;
+	Uint32          : 3;
 	Uint32 frame    :20;
 } page_t;
 

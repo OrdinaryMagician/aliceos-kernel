@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [[ ! -e ramdisk/bin/mkrd ]]; then
   pushd ramdisk >/dev/null
   echo -n "building mkrd... "
@@ -15,7 +14,6 @@ if [[ ! -e ramdisk/bin/mkrd ]]; then
   fi
   popd >/dev/null
 fi
-
 mkdir -p rdtemp
 pushd rdtemp >/dev/null
 echo -n "extracting rdcontents... "
@@ -27,7 +25,6 @@ else
   echo "done"
 fi
 popd >/dev/null
-
 echo -n "creating ramdisk... "
 ramdisk/bin/mkrd initramfs-aliceos.img rdtemp/*
 if [ $? != 0 ]; then
@@ -36,5 +33,4 @@ if [ $? != 0 ]; then
 else
   echo "done"
 fi
-
 rm -rf rdtemp

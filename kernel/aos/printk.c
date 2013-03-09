@@ -7,7 +7,6 @@
 #include <printk.h>
 #include <sys/va_list.h>
 #include <sys/serial.h>
-
 /* behind-the-scenes function */
 static void vaprintk( Uint16 dev, char *s, va_list args )
 {
@@ -20,66 +19,66 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 		alt = 0;
 		zp = 0;
 		wide = 0;
-		if ( *s != '%' )	/* not an escape, so just print character and pass on to next */
+		if ( *s != '%' ) /* not an escape, just print character */
 		{
 			serial_chr(dev,*(s++));
 			continue;
 		}
 		s++;
-		if ( *s == '%' )	/* just a percent sign */
+		if ( *s == '%' ) /* just a percent sign */
 		{
 			serial_chr(dev,*(s++));
 			continue;
 		}
-		if ( *s == 's' )	/* string */
+		if ( *s == 's' ) /* string */
 		{
 			serial_str(dev,(char*)va_arg(args,char*));
 			s++;
 			continue;
 		}
-		if ( *s == 'c' )	/* a char */
+		if ( *s == 'c' ) /* a char */
 		{
 			serial_chr(dev,(char)va_arg(args,int));
 			s++;
 			continue;
 		}
-		if ( *s == '#' )	/* alternate form */
+		if ( *s == '#' ) /* alternate form */
 		{
 			alt = 1;
 			s++;
 		}
-		if ( *s == '0' )	/* zero padding */
+		if ( *s == '0' ) /* zero padding */
 		{
 			zp = 1;
 			s++;
 		}
-		while ( (*s >= '0') && (*s <= '9') )	/* field width */
+		while ( (*s >= '0') && (*s <= '9') ) /* field width */
 			wide = wide*10+(*(s++)-'0');
-		if ( *s == 'd' )	/* signed base 10 integer */
+		if ( *s == 'd' ) /* signed base 10 integer */
 		{
-			serial_dec(dev,(signed long)va_arg(args,signed long),wide,zp);
+			serial_dec(dev,(Sint32)va_arg(args,Sint32),wide,zp);
 			s++;
 			continue;
 		}
-		if ( *s == 'u' )	/* unsigned base 10 integer */
+		if ( *s == 'u' ) /* unsigned base 10 integer */
 		{
-			serial_uns(dev,(unsigned long)va_arg(args,unsigned long),wide,zp);
+			serial_uns(dev,(Uint32)va_arg(args,Uint32),wide,zp);
 			s++;
 			continue;
 		}
-		if ( *s == 'x' )	/* unsigned base 16 integer */
+		if ( *s == 'x' ) /* unsigned base 16 integer */
 		{
 			if ( alt )
 				serial_str(dev,"0x");
-			serial_hex(dev,(unsigned long)va_arg(args,unsigned long),wide,zp);
+			serial_hex(dev,(Uint32)va_arg(args,Uint32),wide,zp);
 			s++;
 			continue;
 		}
-		if ( *s == 'o' )	/* unsigned base 8 integer */
+		if ( *s == 'o' ) /* unsigned base 8 integer */
 		{
 			if ( alt )
 				serial_chr(dev,'0');
-			serial_oct(dev,(unsigned long)va_arg(args,unsigned long),wide,zp);
+			serial_oct(dev,(Uint32)va_arg(args,Uint32),wide,zp);
 			s++;
 			continue;
 		}
@@ -87,7 +86,6 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 		serial_chr(dev,*(s++));
 	}
 }
-
 /* printing to a serial device, for debug purposes */
 void printk_s( Uint16 dev, char *s, ... )
 {
@@ -96,7 +94,6 @@ void printk_s( Uint16 dev, char *s, ... )
 	vaprintk(dev,s,args);
 	va_end(args);
 }
-
 /* print to the first serial device */
 void printk( char *s, ... )
 {

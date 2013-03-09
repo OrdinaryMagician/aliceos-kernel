@@ -10,7 +10,6 @@
 #include <vga/mode3h.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
-
 /* for when you screwed up pretty bad */
 void OHSHI( char *mesg, regs_t *regs )
 {
@@ -33,7 +32,8 @@ void OHSHI( char *mesg, regs_t *regs )
 	mode_3h.fbprintf("%{1,-1CRITICAL ERROR");
 	mode_3h.fbprintf("%{-15,-1CRITICAL ERROR");
 	/* no shit sherlock */
-	mode_3h.fbprintf("%{1,2%[0FSomething broke! D:%{2,4%[9%s",(*mesg)?mesg:HCF_UNHANDLEDINT);
+	mode_3h.fbprintf("%{1,2%[0FSomething broke! D:%{2,4%[9%s",
+			(*mesg)?mesg:HCF_UNHANDLEDINT);
 	/* dump */
 	mode_3h.fbprintf("%[7%{2,6INTNO %#08x",regs->intno);
 	mode_3h.fbprintf("%[7%{19,6ERRNO %#08x",regs->errno);
@@ -58,6 +58,7 @@ void OHSHI( char *mesg, regs_t *regs )
 		mode_3h.fbprintf("%u",regs->eflags>>(31-i)&1);
 	mode_3h.fbprintf("]");
 	/* heh */
-	mode_3h.fbprintf("%[F%{1,-3Computer will now halt and catch fire, have a nice day! :)");
+	mode_3h.fbprintf("%[F%{1,-3Computer will now halt and catch fire, have"
+			" a nice day! :)");
 	khalt(EXIT_EXCEPTION);
 }

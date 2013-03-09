@@ -9,12 +9,10 @@
 #include <kmem.h>
 #include <berp.h>
 #include <memops.h>
-
 /* in sys/paging.c */
 extern page_directory_t *kernel_directory;
 /* in sys/pagingasm.s */
 extern Uint32 pagingenabled( void );
-
 /*
 	How this memory model works:
 
@@ -36,8 +34,6 @@ extern Uint32 pagingenabled( void );
 
 	Expanding and shrinking of the memory area not implemented yet.
 */
-
-
 /* memory block list */
 static memblk_t *kdmem_list = NULL;
 /* total (virtual) memory range available for allocation */
@@ -47,7 +43,6 @@ static Uint32 kdmem_psize = 0;
 static Uint32 kdmem_psize_max = 0;
 /* we're enabled? */
 Uint8 kdmem_enabled = 0;
-
 /* find the first gap where we can fit a specific block */
 static Uint32 mblk_findgap( Uint32 sz, Uint8 algn, Uint32 *idx )
 {
@@ -101,7 +96,6 @@ static Uint32 mblk_findgap( Uint32 sz, Uint8 algn, Uint32 *idx )
 	}
 	return 0; /* i-it doesn't fit... */
 }
-
 /* add a memory block to the pile */
 static Uint8 mblk_add( Uint32 idx, Uint32 start, Uint32 end )
 {
@@ -117,7 +111,6 @@ static Uint8 mblk_add( Uint32 idx, Uint32 start, Uint32 end )
 	kdmem_psize++;
 	return 1;
 }
-
 /* remove a memory block from the pile */
 static Uint8 mblk_rm( Uint32 idx )
 {
@@ -129,13 +122,11 @@ static Uint8 mblk_rm( Uint32 idx )
 		return 0;
 	/* zero out this block entry */
 	memset((Uint8*)(kdmem_list+idx),0,sizeof(memblk_t));
-	kdmem_psize--;
-	if ( idx < kdmem_psize ) /* push back anything on top if needed */
+	if ( idx < --kdmem_psize ) /* push back anything on top if needed */
 		memmove((Uint8*)(kdmem_list+idx),(Uint8*)(kdmem_list+idx+1),
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	return 1;
 }
-
 /* find the memory block that starts at a specific address */
 static Uint32 mblk_find( Uint32 addr )
 {
@@ -145,7 +136,6 @@ static Uint32 mblk_find( Uint32 addr )
 			return i;
 	return UINT32_MAX;
 }
-
 /* reserve a memory area */
 Uint32 kdalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys ) /* global */
 {
@@ -167,31 +157,26 @@ Uint32 kdalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys ) /* global */
 	}
 	return addr;
 }
-
 /* vanilla */
 Uint32 kdalloc( Uint32 sz )
 {
 	return kdalloc_global(sz,0,NULL);
 }
-
 /* page-aligned */
 Uint32 kdalloc_a( Uint32 sz )
 {
 	return kdalloc_global(sz,1,NULL);
 }
-
 /* return physical address */
 Uint32 kdalloc_p( Uint32 sz, Uint32 *phys )
 {
 	return kdalloc_global(sz,0,phys);
 }
-
 /* page-aligned and return physical address */
 Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys )
 {
 	return kdalloc_global(sz,1,phys);
 }
-
 /* reallocate (resize) a memory area */
 Uint32 kdrealloc_global( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys ) /* generic */
 {
@@ -207,31 +192,26 @@ Uint32 kdrealloc_global( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys ) /
 	memmove((Uint8*)naddr,(Uint8*)prev,osz);
 	return naddr;
 }
-
 /* vanilla */
 Uint32 kdrealloc( Uint32 prev, Uint32 newsz )
 {
 	return kdrealloc_global(prev,newsz,0,NULL);
 }
-
 /* page-aligned */
 Uint32 kdrealloc_a( Uint32 prev, Uint32 newsz )
 {
 	return kdrealloc_global(prev,newsz,1,NULL);
 }
-
 /* return physical address */
 Uint32 kdrealloc_p( Uint32 prev, Uint32 newsz, Uint32 *phys )
 {
 	return kdrealloc_global(prev,newsz,0,phys);
 }
-
 /* page-aligned and return physical address */
 Uint32 kdrealloc_ap( Uint32 prev, Uint32 newsz, Uint32 *phys )
 {
 	return kdrealloc_global(prev,newsz,1,phys);
 }
-
 /* free a memory area */
 void kdfree( Uint32 a )
 {
@@ -240,13 +220,11 @@ void kdfree( Uint32 a )
 		return; /* just ignore everything */
 	mblk_rm(blk);
 }
-
 /* retrieve used blocks */
 Uint32 kdmem_count( void )
 {
 	return kdmem_psize;
 }
-
 /* retrieve total memory used */
 Uint32 kdmem_amount( void )
 {
@@ -256,7 +234,6 @@ Uint32 kdmem_amount( void )
 		mem += kdmem_list[i].end-kdmem_list[i].start;
 	return mem;
 }
-
 /* initialize dynamic memory allocator */
 void kdmem_init( Uint32 start, Uint32 size, Uint32 psize )
 {

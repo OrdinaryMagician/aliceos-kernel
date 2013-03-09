@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [[ ! -e vmaliceos ]]; then
   echo -n "building aliceos kernel... "
   if ( which clang >/dev/null ); then
@@ -13,11 +12,9 @@ if [[ ! -e vmaliceos ]]; then
     echo "done"
   fi
 fi
-
 if [[ ! -e initramfs-aliceos.img ]]; then
   ./makerd
 fi
-
 if [[ ! -n $* ]]; then
   echo "running aliceos with no commandline"
   qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img

@@ -10,8 +10,7 @@
 #include <vga/mode3h.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
-
-/* a kernel panic in the style of a nokinan machine basic error response printer */
+/* panic in the style of a nokinan machine basic error response printer */
 void berp( const char *message, const char *file, Uint32 line )
 {
 	int_disable();
@@ -23,8 +22,9 @@ void berp( const char *message, const char *file, Uint32 line )
 	mode_3h.fbsetcursor(0,0);
 	/* PANIC HARD */
 	mode_3h.fbsetattr(APAL_LIGHTGREEN,APAL_BLACK,EXATTR_NOSCR);
-	mode_3h.fbputs("BERP");
-	printk("\033[0;5;31mERR INST %s,%u (%s) BERP\033[0m\n",file,line,message);
+	mode_3h.fbprintf("BERP\n\\%s [%s,%u]\n",message,file,line);
+	printk("\033[0;5;31mERR INST %s,%u (%s) BERP\033[0m\n",
+		file,line,message);
 	/* stahp */
 	khalt(EXIT_BERP);
 }
