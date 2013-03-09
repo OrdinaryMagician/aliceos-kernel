@@ -6,7 +6,6 @@
 */
 #include <sys/cmos.h>
 #include <sys/port.h>
-
 void cmos_dump( Uint8 *here )
 {
 	Uint8 i;

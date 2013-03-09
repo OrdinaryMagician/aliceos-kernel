@@ -8,8 +8,6 @@
 #define VGAMODE13H_H
 #include <sys/types.h>
 #include <vga/struct.h>
-
 /* mode 13h struct */
 vga_mode_t mode_13h;
-
 #endif

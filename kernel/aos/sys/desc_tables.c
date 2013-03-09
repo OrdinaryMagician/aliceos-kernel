@@ -11,26 +11,24 @@
 #include <memops.h>
 #include <sys/helpers.h>
 #include <sys/irq_handlers.h>
-
 /* Write the actual GDT pointer */
 extern void gdt_flush( Uint32 ptr );
 /* Write the actual IDT pointer */
 extern void idt_flush( Uint32 ptr );
-
 /* start up GDT */
 static void init_gdt( void );
 /* set the values of a GDT entry */
-static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn );
+static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc,
+			 Uint8 grn );
 /* start up IDT */
 static void init_idt( void );
 /* set the values of a IDT entry */
 static void idt_setgate( Uint8 num, Uint32 bas, Uint16 sel, Uint8 flg );
-
+/* table arrays */
 static gdt_entry_t gdt_ents[5];
 static gdt_ptr_t gdt_ptr;
 static idt_entry_t idt_ents[256];
 static idt_ptr_t idt_ptr;
-
 /* Initialize descriptor tables (duh) */
 void init_descriptor_tables( void )
 {
@@ -41,7 +39,6 @@ void init_descriptor_tables( void )
 	/* now we can start interrupts */
 	int_enable();
 }
-
 /* start up GDT */
 static void init_gdt( void )
 {
@@ -56,9 +53,9 @@ static void init_gdt( void )
 	/* flush~ */
 	gdt_flush((Uint32)&gdt_ptr);
 }
-
 /* set the values of a GDT entry */
-static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 grn )
+static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc,
+			 Uint8 grn )
 {
 	gdt_ents[num].base_l = (bas&0xFFFF);
 	gdt_ents[num].base_m = (bas>>16)&0xFF;
@@ -67,7 +64,6 @@ static void gdt_setgate( Sint32 num, Uint32 bas, Uint32 lim, Uint8 acc, Uint8 gr
 	gdt_ents[num].granularity = ((lim>>16)&0x0F)|(grn&0xF0);
 	gdt_ents[num].access = acc;
 }
-
 /* start up IDT */
 static void init_idt( void )
 {
@@ -142,7 +138,6 @@ static void init_idt( void )
 	/* flush~ */
 	idt_flush((Uint32)&idt_ptr);
 }
-
 /* set the values of a IDT entry */
 static void idt_setgate( Uint8 num, Uint32 bas, Uint16 sel, Uint8 flg )
 {

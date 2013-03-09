@@ -7,7 +7,6 @@
 #ifndef SH_FUNC_H
 #define SH_FUNC_H
 #include <sys/types.h>
-
 /* command struct */
 typedef struct
 {
@@ -15,7 +14,6 @@ typedef struct
 	char *help;
 	Uint32 (*run)( Uint32 argc, char **argv );
 } cmd_t;
-
 #define SH_NUMCMDS 4
 cmd_t* sh_cmds[SH_NUMCMDS];
 #endif

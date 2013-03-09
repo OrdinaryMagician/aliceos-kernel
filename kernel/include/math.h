@@ -7,14 +7,11 @@
 #ifndef MATH_H
 #define MATH_H
 #include <sys/types.h>
-
 #define M_PI 3.141592653589793
 #define M_E 2.718281828459045
 #define M_NAN (0.f/0.f)
 #define M_INF 1e40f
-
 extern void fpu_enable( void );
-
 double sin( double ang );
 double cos( double ang );
 double tan( double ang );
@@ -31,5 +28,4 @@ double floor( double val );
 double trunc( double val );
 double ceil( double val );
 double decp( double val );
-
 #endif

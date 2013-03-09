@@ -10,7 +10,7 @@
 #include <berp.h>
 #include <memops.h>
 /* in sys/paging.c */
-extern page_directory_t *kernel_directory;
+extern pdir_t *kernel_directory;
 /* in sys/pagingasm.s */
 extern Uint32 pagingenabled( void );
 /*

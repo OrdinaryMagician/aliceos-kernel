@@ -7,14 +7,13 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 #include <sys/types.h>
-
+/* serial ports */
 #define SERIAL_A 0x3F8
 #define SERIAL_B 0x2F8
 #define SERIAL_C 0x3E8
 #define SERIAL_D 0x2E8
-
+/* IRQ number for serial */
 #define SERIAL_IRQ 4
-
 void serial_on( Uint16 dev );
 Uint8 serial_recv_d( Uint16 dev );
 char serial_recv( Uint16 dev );
@@ -26,5 +25,4 @@ void serial_uns( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad );
 void serial_dec( Uint16 dev, Sint32 val, Uint16 width, Uint8 zeropad );
 void serial_hex( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad );
 void serial_oct( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad );
-
 #endif

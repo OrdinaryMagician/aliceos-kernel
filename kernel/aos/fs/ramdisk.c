@@ -9,10 +9,8 @@
 #include <strops.h>
 #include <printk.h>
 #include <berp.h>
-
 Uint32 rdpos = 0;
 Uint32 rdsiz = 0;
-
 /* try to find an entry in the ramdisk by filename */
 rd_entry_t *rd_find( char *fname )
 {
@@ -33,7 +31,6 @@ rd_entry_t *rd_find( char *fname )
 	/* not found */
 	return NULL;
 }
-
 /* try to find an entry in the ramdisk by filename, return its data address */
 Uint32 rd_find_data( char *fname )
 {
@@ -42,7 +39,6 @@ Uint32 rd_find_data( char *fname )
 		return 0;
 	return (found->start+rdpos);
 }
-
 /* retrieve an entry by its index number */
 rd_entry_t *rd_entry( Uint32 idx )
 {
@@ -53,12 +49,11 @@ rd_entry_t *rd_entry( Uint32 idx )
 	}
 	if ( idx >= rd_numents() )
 	{
-		printk("Warning: Attempting to access ramdisk entry out of bounds\n");
+		printk("Warning: Attempting to access entry out of bounds\n");
 		return NULL;
 	}
 	return (rd_entry_t*)(rdpos+RDHEAD_SIZ+(RDENT_SIZ*idx));
 }
-
 /* retrive the number of entries in the ramdisk */
 Uint32 rd_numents( void )
 {
@@ -70,7 +65,6 @@ Uint32 rd_numents( void )
 	rd_header_t *head = (rd_header_t*)rdpos;
 	return head->numents;
 }
-
 /* initialize ramdisk handler */
 Uint8 init_ramdisk( Uint32 start, Uint32 end )
 {

@@ -5,7 +5,6 @@
 	Released under the MIT License.
 */
 #include <video/fcpalette.h>
-
 color_t alicepalfc[16] =
 {
 	/* low brightness */

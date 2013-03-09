@@ -7,7 +7,6 @@
 #include <vga/vgafont.h>
 #include <vga/vgareg.h>
 #include <memops.h>
-
 /* apply patches to the BIOS font, save a local copy */
 void initfont( void )
 {
@@ -22,8 +21,7 @@ void initfont( void )
 	/* save font */
 	getfont(&biosfnt[0]);
 }
-
-/* change the font using a byte-per-pixel font as reference instead of a bit-per-pixel font */
+/* change the system font using a FBFONT formatted font as reference */
 void setfont_256( Uint8 *font )
 {
 	Uint8 chr[16];
@@ -47,7 +45,6 @@ void setfont_256( Uint8 *font )
 		memset(&chr[0],0,16);
 	}
 }
-
 /* get the current font converting from the BIOS format to FBFONT format */
 void getfont_256( Uint8 *font )
 {
@@ -71,7 +68,6 @@ void getfont_256( Uint8 *font )
 		}
 	}
 }
-
 /* change the font */
 void setfont( Uint8 *font )
 {
@@ -98,7 +94,6 @@ void setfont( Uint8 *font )
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
-
 /* get the current font */
 void getfont( Uint8 *font )
 {
@@ -125,7 +120,6 @@ void getfont( Uint8 *font )
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
-
 /* change a specific glyph in the character map */
 void setglyph( Uint8 val, Uint8 *data )
 {
@@ -150,7 +144,6 @@ void setglyph( Uint8 val, Uint8 *data )
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
-
 /* retrieve a specific glyph in the character map */
 void getglyph( Uint8 val, Uint8 *data )
 {

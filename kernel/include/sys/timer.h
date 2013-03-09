@@ -7,7 +7,6 @@
 #ifndef TIMER_H
 #define TIMER_H
 #include <sys/types.h>
-
 /* timer task */
 typedef void (*ttask_t)( void );
 typedef struct
@@ -16,7 +15,6 @@ typedef struct
 	Uint32 interval; /* call interval */
 	Uint8 oneshot;   /* disabled after first call */
 } ttasklist_t;
-
 /* get current ticks passed */
 Uint32 get_ticks( void );
 /* get current nanoseconds/tick */

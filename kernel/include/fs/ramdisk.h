@@ -7,7 +7,6 @@
 #ifndef RAMDISK_H
 #define RAMDISK_H
 #include <sys/types.h>
-
 /*
 
 Layout of an AOS simple ramdisk
@@ -43,18 +42,15 @@ As a safeguard, at the end of the whole thing there's a trailer composed of:
  - a magic number, 0xADEADBED (beds can die too)
  - the null-terminated string "The Doll Maker of Bucuresti" (don't ask)
 */
-
 #define AOSRD_HDMAGIC 0xFEEDCAFE
 #define AOSRD_TRMAGIC 0xADEADBED
 #define AOSRD_TRSIG "The Doll Maker of Bucuresti"
-
 #define RDHEAD_SIZ 8
 typedef struct
 {
 	Uint32 magic;
 	Uint32 numents;
 } rd_header_t;
-
 #define RDENT_SIZ 264
 typedef struct
 {
@@ -62,19 +58,14 @@ typedef struct
 	Uint32 start;
 	Uint32 size;
 } rd_entry_t;
-
 /* try to find an entry in the ramdisk by filename */
 rd_entry_t *rd_find( char *fname );
-
 /* try to find an entry in the ramdisk by filename, return its data address */
 Uint32 rd_find_data( char *fname );
-
 /* retrieve an entry by its index number */
 rd_entry_t *rd_entry( Uint32 idx );
-
 /* retrive the number of entries in the ramdisk */
 Uint32 rd_numents( void );
-
 /* initialize ramdisk handler */
 Uint8 init_ramdisk( Uint32 start, Uint32 end );
 #endif

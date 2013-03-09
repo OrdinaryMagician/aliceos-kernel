@@ -12,7 +12,6 @@
 #include <strops.h>
 #include <kmem.h>
 #include <printk.h>
-
 /* internal variables */
 static char *sh_cmdline;
 static char *sh_lcmdline;
@@ -20,16 +19,14 @@ static Uint32 sh_returned;
 static Uint8 sh_enabled;
 static Uint8 sh_executing;
 static Uint32 sh_gotch;
-
 /* prototypes */
 static void sh_init( void );
 static void sh_disable( void );
 static void sh_enable( void );
 static char* sh_lastcmd( void );
 static Uint32 sh_lastret( void );
-
 /* shell struct */
-shell_t shell = 
+shell_t shell =
 {
 	.init    = sh_init,
 	.disable = sh_disable,
@@ -37,37 +34,32 @@ shell_t shell =
 	.lastcmd = sh_lastcmd,
 	.lastret = sh_lastret,
 };
-
 static void printPS1( void )
 {
 	mode_3h.fbprintf("%[01root %[0C~ %[09#%[0F ");
 }
-
 /* command parser */
 static void sh_parsecmd( void )
 {
 	Uint32 i;
 	Uint32 argc;
 	char **argv;
-
 	sh_gotch = 0;
+	/* no command? */
 	if ( !sh_cmdline[0] )
 	{
 		printPS1();
 		return;
 	}
-
 	sh_executing = 1;
-
 	/* save command */
 	strncpy(sh_lcmdline,sh_cmdline,256);
-
 	/* separate arguments */
 	char *tk = sh_cmdline;
 	argc = 1;
 	while ( *(tk = strtok(tk," ")) )
 		argc++;
-	/* generate parameters for command */
+	/* generate parameter array for command */
 	argv = (char**)kmalloc((argc+1)*sizeof(char*));
 	memset((Uint8*)argv,0,(argc+1)*sizeof(char*));
 	tk = sh_cmdline;
@@ -89,14 +81,12 @@ static void sh_parsecmd( void )
 	}
 	if ( !found )
 		mode_3h.fbprintf("shell: command not found: %s\n",argv[0]);
-
 	/* free parameters */
 	kfree((Uint32)argv);
 	printPS1();
 	sh_executing = 0;
 	return;
 }
-
 /* keyboard hook */
 static void sh_getkey( key_t *key )
 {
@@ -107,19 +97,8 @@ static void sh_getkey( key_t *key )
 		return;
 	if ( key->code == KB_UP )
 	{
-		while ( sh_gotch )
-		{
-			sh_cmdline[--sh_gotch] = 0;
-			Sint32 cx, cy;
-			Uint16 rx, ry;
-			mode_3h.fbgetcursor(&cx,&cy);
-			mode_3h.fbgetres(&rx,&ry);
-			if ( !cx )
-				mode_3h.fbsetcursor(rx-1,cy-1);
-			else
-				mode_3h.fbsetcursor(cx-1,cy);
-			mode_3h.fbputs(" \b");
-		}
+		if ( sh_gotch )
+			return;
 		mode_3h.fbputs(sh_lcmdline);
 		sh_gotch = strlen(sh_lcmdline);
 		strncpy(sh_cmdline,sh_lcmdline,256);
@@ -162,7 +141,6 @@ static void sh_getkey( key_t *key )
 	}
 	sh_cmdline[sh_gotch++] = key->chr;
 }
-
 /* Initialize internal shell */
 static void sh_init( void )
 {
@@ -176,10 +154,9 @@ static void sh_init( void )
 	sh_gotch = 0;
 	mode_3h.fbprintf("%[0CAOS Internal Shell initiated\n");
 	mode_3h.fbprintf("%[0FType \"help\" for a list of commands\n");
-	mode_3h.fbprintf("Type \"help\" <command> for help on using a specific command\n\n");
+	mode_3h.fbprintf("Type \"help\" <command> for help on a command\n\n");
 	printPS1();
 }
-
 /* Disable shell (ignore keyboard input) */
 static void sh_disable( void )
 {
@@ -188,7 +165,6 @@ static void sh_disable( void )
 	kbd_rmhandler(sh_getkey);
 	sh_enabled = 0;
 }
-
 /* Enable shell (handle keyboard input) */
 static void sh_enable( void )
 {
@@ -197,7 +173,6 @@ static void sh_enable( void )
 	kbd_addhandler(sh_getkey);
 	sh_enabled = 1;
 }
-
 /* Retrieve the last command typed */
 static char* sh_lastcmd( void )
 {
@@ -205,7 +180,6 @@ static char* sh_lastcmd( void )
 	strncpy(toret,sh_lcmdline,256);
 	return toret;
 }
-
 /* Get the return code of last command */
 static Uint32 sh_lastret( void )
 {

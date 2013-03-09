@@ -7,10 +7,8 @@
 #ifndef PRINTK_H
 #define PRINTK_H
 #include <sys/types.h>
-
 /* printing to a serial device, for debug purposes */
 void printk_s( Uint16 dev, char *s, ... );
 /* print to the first serial device */
 void printk( char *s, ... );
-
 #endif

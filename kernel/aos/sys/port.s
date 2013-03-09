@@ -4,7 +4,6 @@
 ; Released under the MIT License.
 [BITS 32]
 [ALIGN 4]
-
 ; read/write bytes
 [GLOBAL inport_b]
 inport_b:
@@ -24,7 +23,6 @@ outport_b:
 	out dx, al
 	pop ebp
 	ret
-
 ; read/write words
 [GLOBAL inport_w]
 inport_w:
@@ -44,7 +42,6 @@ outport_w:
 	out dx, ax
 	pop ebp
 	ret
-
 ; read/write "longs"
 [GLOBAL inport_l]
 inport_l:

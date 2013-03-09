@@ -7,7 +7,6 @@
 #include <video/loadanim.h>
 #include <fs/ramdisk.h>
 #include <memops.h>
-
 /* anm file magic (OS magic  file format magic) */
 static Uint8 anm_magic[24] =
 {
@@ -27,7 +26,6 @@ typedef struct
 	Uint16 palsz;
 } anm_header_t;
 /* header is followed by the palette (if available), then first frame */
-
 /* load an animation from the ramdisk */
 Uint8 loadanm( anm_t *dest, char *fname )
 {

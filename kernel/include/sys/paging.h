@@ -35,38 +35,29 @@ typedef struct
 	Uint32          : 3;
 	Uint32 frame    :20;
 } page_t;
-
 /* 4KB page table */
 typedef struct
 {
 	page_t pages[1024];
-} page_table_t;
-
+} ptbl_t;
 /* page directory */
 typedef struct
 {
 	/* pointers to each table */
-	page_table_t *tables[1024];
+	ptbl_t *tables[1024];
 	/* physical addresses of each table */
 	Uint32 tablesPhysical[1024];
 	/* the physical address of the array above */
 	Uint32 physAddr;
-} page_directory_t;
-
-
+} pdir_t;
 /* allocate a frame */
 void alloc_frame( page_t *page, Uint8 iskernel, Uint8 iswriteable );
-
 /* free a frame */
 void free_frame( page_t *page );
-
 /* initialize paging */
 void init_paging( void );
-
 /* loads the specified page directory in CR3 */
-void switch_pdir( page_directory_t *newdir );
-
+void switch_pdir( pdir_t *newdir );
 /* get a specific page, if make isn't zero, create it if it doesn't exist */
-page_t *get_page( Uint32 addr, Uint8 make, page_directory_t *dir );
-
+page_t *get_page( Uint32 addr, Uint8 make, pdir_t *dir );
 #endif

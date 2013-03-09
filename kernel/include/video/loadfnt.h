@@ -13,7 +13,6 @@
 #define FNT_FMT_GRY8  2 /* 8bpp grayscale */
 #define FNT_FMT_RGB8  3 /* 24bpp RGB */
 #define FNT_FMT_RGBA8 3 /* 32bpp RGBA */
-
 /* flag definitions */
 #define FNT_FL_RESV1   1
 #define FNT_FL_RESV2   2
@@ -23,7 +22,6 @@
 #define FNT_FL_RESV6  32
 #define FNT_FL_RESV7  64
 #define FNT_FL_RESV8 128
-
 /* struct for a font */
 typedef struct
 {
@@ -34,7 +32,6 @@ typedef struct
 	Uint8 format;
 	Uint32 limit;
 } fnt_t;
-
 /* load a font from the ramdisk */
 Uint8 loadfnt( fnt_t *dest, char *fname );
 #endif

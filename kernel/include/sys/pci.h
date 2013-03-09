@@ -8,10 +8,9 @@
 #define PCI_H
 #include <sys/types.h>
 #include <sys/helpers.h>
-
+/* port I/O */
 #define PCI_CONF_ADDR 0xCF8
 #define PCI_CONF_DATA 0xCFC
-
 /* PCI config address */
 typedef struct
 {
@@ -23,14 +22,12 @@ typedef struct
 	Uint32        : 7; /* reserved */
 	Uint32 enable : 1; /* enable bit */
 } pci_addr_t;
-
 /* PCI header type */
 typedef struct
 {
 	Uint8 type : 7; /* device type */
 	Uint8 mf   : 1; /* is a multifunction device */
 } pci_hdtype_t;
-
 /* PCI built-in self test register */
 typedef struct
 {
@@ -39,7 +36,6 @@ typedef struct
 	Uint8 start   : 1; /* start test */
 	Uint8 capable : 1; /* BIST-capable */
 } pci_bist_t;
-
 /* PCI command register */
 typedef struct
 {
@@ -56,7 +52,6 @@ typedef struct
 	Uint16 intr      : 1; /* interrupt disable */
 	Uint16           : 5; /* reserved */
 } pci_cmd_t;
-
 /* PCI status register */
 typedef struct
 {
@@ -74,7 +69,6 @@ typedef struct
 	Uint16 ssyserr : 1; /* signaled system error */
 	Uint16 dperror : 1; /* detected parity error */
 } pci_stat_t;
-
 /* PCI Base Address Registers (BARs) */
 typedef struct
 {
@@ -83,19 +77,17 @@ typedef struct
 	Uint32 prefetchable : 1;  /* prefetchable */
 	Uint32 address      : 28; /* 16-byte aligned base address */
 } pci_mbar_t;
-
 /* Memory Space BAR types */
 #define PCI_MBAR_32BIT 0x00
 #define PCI_MBAR_64BIT 0x02
 #define PCI_MBAR_RESV  0x01
-
+/* I/O BAR */
 typedef struct
 {
 	Uint32 one     : 1;  /* always one */
 	Uint32         : 1;  /* reserved */
 	Uint32 address : 30; /* 4-byte aligned base address */
 } pci_iobar_t;
-
 /* Common section of PCI configuration table */
 typedef struct
 {
@@ -112,7 +104,6 @@ typedef struct
 	Uint8 header_type;   /* layout of the rest of the header */
 	Uint8 bist;          /* built-in self test stuff */
 } attribute((packed)) pci_dev_t;
-
 /* if header type is 00 (general device) */
 typedef struct
 {
@@ -139,7 +130,6 @@ typedef struct
 	Uint8 min_grant;     /* burst period length (1/4usec units) */
 	Uint8 max_latency;   /* access interval to PCI bus (1/4usec units) */
 } attribute((packed)) pci_dev00_t;
-
 /* if header type is 01 (PCI to PCI bridge) */
 typedef struct
 {
@@ -168,7 +158,6 @@ typedef struct
 	Uint8 int_pin;        /* Interrupt pin used (0x00 for none) */
 	Uint16 bridgectl;     /* bridge control */
 } attribute((packed)) pci_dev01_t;
-
 /* if header type is 02 (PCI to CardBus bridge) */
 typedef struct
 {
@@ -195,10 +184,8 @@ typedef struct
 	Uint16 ss_id;       /* subsystem ID */
 	Uint32 legacy_base; /* 16-bit PC Card legacy mode base address */
 } attribute((packed)) pci_dev02_t;
-
 /* pci configuration (read) */
 Uint16 pci_cfg_r( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off );
 /* pci configuration (write) */
 void pci_cfg_w( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off, Uint8 data );
-
 #endif

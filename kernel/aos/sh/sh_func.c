@@ -9,12 +9,12 @@
 #include <vga/mode3h.h>
 #include <strops.h>
 #include <sys/timer.h>
-
+/* prototypes */
 static cmd_t sh_help;
 static cmd_t sh_listdemos;
 static cmd_t sh_rundemo;
 static cmd_t sh_clear;
-
+/* the supported commands */
 cmd_t* sh_cmds[SH_NUMCMDS] =
 {
 	&sh_help,
@@ -22,7 +22,7 @@ cmd_t* sh_cmds[SH_NUMCMDS] =
 	&sh_rundemo,
 	&sh_clear,
 };
-
+/* functions and their cmd_t structs */
 static Uint32 cmd_help( Uint32 argc, char **argv )
 {
 	Uint32 i;
@@ -43,7 +43,6 @@ static Uint32 cmd_help( Uint32 argc, char **argv )
 	mode_3h.fbprintf("%s: command not found: %s\n",argv[0],argv[1]);
 	return 1;
 }
-
 static cmd_t sh_help =
 {
 	.name = "help",
@@ -52,13 +51,11 @@ static cmd_t sh_help =
 		"otherwise shows help for a specific command\n",
 	.run  = cmd_help,
 };
-
 static Uint32 cmd_listdemos( Uint32 argc, char **argv )
 {
 	listdemos();
 	return 0;
 }
-
 static cmd_t sh_listdemos =
 {
 	.name = "listdemos",
@@ -66,7 +63,6 @@ static cmd_t sh_listdemos =
 		"list the available demos\n",
 	.run  = cmd_listdemos,
 };
-
 static Uint32 cmd_rundemo( Uint32 argc, char **argv )
 {
 	if ( argc <= 1 )
@@ -86,7 +82,6 @@ static Uint32 cmd_rundemo( Uint32 argc, char **argv )
 	mode_3h.fbprintf("%s: demo not found: %s\n",argv[0],argv[1]);
 	return 1;
 }
-
 static cmd_t sh_rundemo =
 {
 	.name = "rundemo",
@@ -94,14 +89,12 @@ static cmd_t sh_rundemo =
 		"runs a specific demo\n",
 	.run  = cmd_rundemo,
 };
-
 static Uint32 cmd_clear( Uint32 argc, char **argv )
 {
 	mode_3h.clear();
 	mode_3h.fbsetcursor(0,0);
 	return 0;
 }
-
 static cmd_t sh_clear =
 {
 	.name = "clear",

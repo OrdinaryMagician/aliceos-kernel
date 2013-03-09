@@ -7,7 +7,6 @@
 #ifndef SHELL_H
 #define SHELL_H
 #include <sys/types.h>
-
 /* basic shell struct */
 typedef struct
 {
@@ -17,6 +16,5 @@ typedef struct
 	char* (*lastcmd)( void );  /* Retrieve the last command typed */
 	Uint32 (*lastret)( void ); /* Get the return code of last command */
 } shell_t;
-
 shell_t shell; /* the AOS internal shell */
 #endif

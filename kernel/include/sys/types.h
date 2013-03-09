@@ -6,10 +6,8 @@
 */
 #ifndef TYPES_H
 #define TYPES_H
-
 /* nul~ */
 #define NULL ((void*)0)
-
 /* more comfortable this way, I like how SDL does it */
 typedef unsigned char Uint8;
 typedef signed char Sint8;
@@ -17,10 +15,8 @@ typedef unsigned short int Uint16;
 typedef signed short int Sint16;
 typedef unsigned int Uint32;
 typedef signed int Sint32;
-
 /* unicode (wide) char */
 typedef unsigned int wchar;
-
 /* limits */
 #define SINT8_MAX 127
 #define SINT16_MAX 32767
@@ -31,7 +27,6 @@ typedef unsigned int wchar;
 #define UINT8_MAX 255U
 #define UINT16_MAX 65535U
 #define UINT32_MAX 4294967295U
-
 /* maximum number of characters needed for representing types */
 /* signs are included for signed types */
 #define UINT8LEN 3
@@ -40,11 +35,8 @@ typedef unsigned int wchar;
 #define SINT16LEN 6
 #define UINT32LEN 10
 #define SINT32LEN 11
-
 /* booleans, don't really use it but just in case */
-
 #define _Bool bool
 #define true 1
 #define false 0
-
 #endif

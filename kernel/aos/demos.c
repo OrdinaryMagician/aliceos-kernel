@@ -16,7 +16,6 @@
 #include <vga/vgafont.h>
 #include <vga/vgamisc.h>
 #include <vga/mode13h.h>
-#include <vga/mode12h.h>
 #include <vga/mode3h.h>
 #include <video/loadimg.h>
 #include <video/loadfnt.h>
@@ -31,7 +30,6 @@
 demo_t demos[DEMO_COUNT] =
 {
 	{"blockgfx", "80x50 16-color block graphics demo", demo_blockgfx},
-	{"crapgfx", "basic mode 12h demo", demo_crapgfx},
 	{"realgfx", "basic mode 13h demo", demo_realgfx},
 	{"cmap", "text mode character map", demo_cmap},
 	{"bochsgfx", "Bochs/QEMU BGA demo", demo_bochsgfx},
@@ -472,141 +470,6 @@ void demo_bochsgfx( void )
 	setbgareg(BGA_REG_ENABLE,BGA_DISABLED);
 	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }
-/* mode 12h graphics demo */
-void demo_crapgfx( void )
-{
-	Uint32 delay = get_ticks();
-	mode_12h.setmode();
-	mode_12h.setpal(&alicepal[0]);
-	fnt_t font8;
-	if ( loadfnt(&font8,"fbfont8.fnt") )
-		BERP("error loading fbfont8.fnt");
-	fnt_t font16;
-	if ( loadfnt(&font16,"fbfont16.fnt") )
-		BERP("error loading fbfont16.fnt");
-	mode_12h.setfont(&font16);
-	Uint16 x,y;
-	int i = 0;
-	/* 16 color set */
-	x = 8;
-	y = 8;
-	while ( i < 16 )
-	{
-		mode_12h.drawrect(x,y,32,32,i);
-		x+=32;
-		if ( ((++i)%8) )
-			continue;
-		x=8;
-		y+=32;
-	}
-	/* draw some colorful noise */
-	x = 272;
-	y = 8;
-	while ( (x < 528) && (y < 72) )
-	{
-		mode_12h.putpixel(x,y,krand()%16);
-		if ( ++x < 528 )
-			continue;
-		x=272;
-		y++;
-	}
-	/* there's enough space to draw this */
-	img_t aliceimg;
-	if ( loadimg(&aliceimg,"alice13h_16.img") )
-		BERP("error loading alice13h_16.img");
-	mode_12h.drawimg(&aliceimg,8,80,0,0,320,200,0);
-	img_t aliceimg2;
-	if ( loadimg(&aliceimg2,"alice3h.img") )
-		BERP("error loading alice3h.img");
-	mode_12h.drawimg(&aliceimg2,336,80,0,0,80,50,0);
-	/* drawing a character map would be fine too */
-	mode_12h.fbsetattr(15,0,EXATTR_MASKED);
-	/* 8x16 font */
-	mode_12h.setfont(&font16);
-	x = 8;
-	y = 288;
-	for ( i=0; i<128; i++ )
-	{
-		mode_12h.drawchar(x,y,i);
-		x+=8;
-		if ( x < 136 )
-			continue;
-		x=8;
-		y+=16;
-	}
-	x = 144;
-	y = 288;
-	for ( i=128; i<256; i++ )
-	{
-		mode_12h.drawchar(x,y,i);
-		x+=8;
-		if ( x < 272 )
-			continue;
-		x=144;
-		y+=16;
-	}
-	/* 8x8 font */
-	mode_12h.setfont(&font8);
-	x = 280;
-	y = 288;
-	for ( i=0; i<128; i++ )
-	{
-		mode_12h.drawchar(x,y,i);
-		x+=8;
-		if ( x < 408 )
-			continue;
-		x=280;
-		y+=8;
-	}
-	x = 416;
-	y = 288;
-	for ( i=128; i<256; i++ )
-	{
-		mode_12h.drawchar(x,y,i);
-		x+=8;
-		if ( x < 544 )
-			continue;
-		x=416;
-		y+=8;
-	}
-	/* draw test strings */
-	mode_12h.setfont(&font16);
-	mode_12h.fbsetattr(7,0,EXATTR_MASKED);
-	mode_12h.fbprintf("%[E%{2,-2%s %s %s.%s.%s%s",_kname,_kver_code,
-			_kver_maj,_kver_min,_kver_low,_kver_suf);
-	mode_12h.fbprintf("%[7%{-15,-2Mode 12h test");
-	mode_12h.setfont(&font8);
-	mode_12h.fbsetattr(7,0,EXATTR_MASKED|EXATTR_RCW90);
-	/* might write a better method for this later */
-	mode_12h.fbprintf("%[F%{-3,2R%{-3,3o%{-3,4t%{-3,5a%{-3,6t%{-3,7e%{-3,8"
-			"d%{-3,10t%{-3,11e%{-3,12x%{-3,13t");
-	/* draw some lines */
-	mode_12h.drawhline(0,0,640,8);
-	mode_12h.drawhline(1,1,638,7);
-	mode_12h.drawhline(2,2,636,15);
-	mode_12h.drawhline(3,3,634,7);
-	mode_12h.drawhline(4,4,632,8);
-	mode_12h.drawhline(0,479,640,8);
-	mode_12h.drawhline(1,478,638,7);
-	mode_12h.drawhline(2,477,636,15);
-	mode_12h.drawhline(3,476,634,7);
-	mode_12h.drawhline(4,475,632,8);
-	mode_12h.drawvline(0,0,480,8);
-	mode_12h.drawvline(1,1,478,7);
-	mode_12h.drawvline(2,2,476,15);
-	mode_12h.drawvline(3,3,474,7);
-	mode_12h.drawvline(4,4,472,8);
-	mode_12h.drawvline(639,0,480,8);
-	mode_12h.drawvline(638,1,478,7);
-	mode_12h.drawvline(637,2,476,15);
-	mode_12h.drawvline(636,3,474,7);
-	mode_12h.drawvline(635,4,472,8);
-	/* performance report */
-	delay = (get_ticks()-delay);
-	demo_wait();
-	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
-}
-
 /* mode 13h graphics demo */
 void demo_realgfx( void )
 {

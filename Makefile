@@ -1,8 +1,11 @@
-CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions -ffreestanding -funsigned-char -Wno-unused-function -Wno-unused-parameter -Ikernel/include
+CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -pedantic -nostdlib -nostdinc\
+	  -fno-stack-protector -finline-functions -ffreestanding\
+	  -funsigned-char -Wno-unused-function -Wno-unused-parameter\
+	  -Ikernel/include
 ifneq ($(CC),clang)
 CFLAGS := $(CFLAGS) -masm=intel
 else
-# have yet to figure out how the hell can I make Clang use Intel syntax for inline assembly
+# currently no way to make Clang use Intel syntax for inline assembly
 CFLAGS := $(CFLAGS) -DATT_SYNTAX
 endif
 ASFLAGS := -felf32

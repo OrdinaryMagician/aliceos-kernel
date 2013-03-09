@@ -15,22 +15,17 @@
 #include <strops.h>
 #include <memops.h>
 #include <printk.h>
-
 /* from kmem.c */
 extern Uint32 p_addr;
 extern Uint32 m_addr;
-
 /* directories */
-page_directory_t *current_directory = NULL;
-page_directory_t *kernel_directory = NULL;
-
+pdir_t *current_directory = NULL;
+pdir_t *kernel_directory = NULL;
 /* bitset of frames */
 Uint32 *frames;
 Uint32 nframes;
-
 /* prototypes */
 static void page_fault( regs_t *regs );
-
 /* set a bit in the bitset */
 static void set_frame( Uint32 addr )
 {
@@ -39,7 +34,6 @@ static void set_frame( Uint32 addr )
 	Uint32 off = faddr%0x20;
 	frames[idx] |= 1<<off;
 }
-
 /* clear a bit in the bitset */
 static void clr_frame( Uint32 addr )
 {
@@ -48,7 +42,6 @@ static void clr_frame( Uint32 addr )
 	Uint32 off = faddr%0x20;
 	frames[idx] &= ~(1<<off);
 }
-
 /* test the value of a bit in the bitset */
 static Uint32 chk_frame( Uint32 addr )
 {
@@ -57,9 +50,7 @@ static Uint32 chk_frame( Uint32 addr )
 	Uint32 off = faddr%0x20;
 	return frames[idx]&(1<<off);
 }
-
-/* find the first free frame */
-/* return UINT32_MAX if there are no free frames */
+/* find the first free frame, return UINT32_MAX if there are no free frames */
 static Uint32 ffree_frame( void )
 {
 	Uint32 i, j;
@@ -73,14 +64,13 @@ static Uint32 ffree_frame( void )
 	}
 	return UINT32_MAX;
 }
-
 /* allocate a frame */
 void alloc_frame( page_t *page, Uint8 iskernel, Uint8 iswriteable )
 {
 	if ( page->frame )
 		return;
 	Uint32 idx = ffree_frame();
-	if ( idx == UINT32_MAX )
+	if ( idx == UINT32_MAX ) /* we're screwed */
 		BERP("No more free frames");
 	/* take it */
 	set_frame(idx*0x1000);
@@ -89,7 +79,6 @@ void alloc_frame( page_t *page, Uint8 iskernel, Uint8 iswriteable )
 	page->user = iskernel?0:1;
 	page->frame = idx;
 }
-
 /* free a frame */
 void free_frame( page_t *page )
 {
@@ -100,7 +89,6 @@ void free_frame( page_t *page )
 	clr_frame(frm*0x1000);
 	page->frame = 0;
 }
-
 /* initialize paging */
 void init_paging( void )
 {
@@ -108,8 +96,8 @@ void init_paging( void )
 	frames = (Uint32*)kmalloc(nframes/0x20);
 	memset((Uint8*)frames,0,nframes/0x20);
 	/* a page directory for the kernel */
-	kernel_directory = (page_directory_t*)kmalloc_a(sizeof(page_directory_t));
-	memset((Uint8*)kernel_directory,0,sizeof(page_directory_t));
+	kernel_directory = (pdir_t*)kmalloc_a(sizeof(pdir_t));
+	memset((Uint8*)kernel_directory,0,sizeof(pdir_t));
 	current_directory = kernel_directory;
 	Uint32 i;
 	/* dynamic allocator frames, pass 1 */
@@ -128,22 +116,19 @@ void init_paging( void )
 	/* initialize the dynamic allocator */
 	kdmem_init(KDMEM_ST,KDMEM_SIZ,KDMEM_RESV);
 }
-
 /* these functions are in pagingasm.s */
 extern void loadcr3( Uint32 phys );
 extern void enablepaging( void );
 extern Uint32 getfaultaddr( void );
-
 /* loads the specified page directory in CR3 */
-void switch_pdir( page_directory_t *newdir )
+void switch_pdir( pdir_t *newdir )
 {
 	current_directory = newdir;
 	loadcr3((Uint32)&newdir->tablesPhysical);
 	enablepaging();
 }
-
 /* get a specific page, if make isn't zero, create it if it doesn't exist */
-page_t *get_page( Uint32 addr, Uint8 make, page_directory_t *dir )
+page_t *get_page( Uint32 addr, Uint8 make, pdir_t *dir )
 {
 	addr /= 0x1000;
 	Uint32 tidx = addr/0x400;
@@ -152,14 +137,13 @@ page_t *get_page( Uint32 addr, Uint8 make, page_directory_t *dir )
 	if ( make )
 	{
 		Uint32 tmp;
-		dir->tables[tidx] = (page_table_t*)kmalloc_ap(sizeof(page_table_t),&tmp);
-		memset((Uint8*)dir->tables[tidx],0,sizeof(page_table_t));
-		dir->tablesPhysical[tidx] = tmp|7;	/* present, rw, user */
+		dir->tables[tidx] = (ptbl_t*)kmalloc_ap(sizeof(ptbl_t),&tmp);
+		memset((Uint8*)dir->tables[tidx],0,sizeof(ptbl_t));
+		dir->tablesPhysical[tidx] = tmp|7; /* present, rw, user */
 		return &dir->tables[tidx]->pages[addr%0x400];
 	}
 	return 0;
 }
-
 /* slightly customized page fault handler */
 static void page_fault( regs_t *regs )
 {
@@ -186,7 +170,8 @@ static void page_fault( regs_t *regs )
 	Sint8 i = 0;
 	do
 	{
-		digs[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A):('0'+(val&0x0F));
+		digs[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A)
+				:('0'+(val&0x0F));
 		val >>= 4;
 	}
 	while ( (val != 0) && (i < 8) );

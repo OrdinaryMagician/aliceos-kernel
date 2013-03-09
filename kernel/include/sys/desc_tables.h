@@ -8,7 +8,6 @@
 #define DESC_TABLES_H
 #include <sys/types.h>
 #include <sys/helpers.h>
-
 /* GDT entry struct */
 typedef struct
 {
@@ -19,33 +18,28 @@ typedef struct
 	Uint8 granularity;
 	Uint8 base_h;
 } attribute((packed)) gdt_entry_t;
-
 /*
+	GDT access byte format:
 
-GDT access byte format:
+	0-3 Segment type
+	4 Descriptor type
+	5-6 Descriptor privilege level (Ring 0-3)
+	7 Present?
 
-0-3 Segment type
-4 Descriptor type
-5-6 Descriptor privilege level (Ring 0-3) (check your descriptor pri-*is shot*)
-7 Present?
+	GDT granularity byte format:
 
-GDT granularity byte format:
-
-0-3 Segment length
-4 Always zero (available for system use)
-5 Always zero
-6 Operand size (0 = 16bit, 1 = 32bit)
-7 Granularity (0 = 1B, 1 = 1KB)
-
+	0-3 Segment length
+	4 Always zero (available for system use)
+	5 Always zero
+	6 Operand size (0 = 16bit, 1 = 32bit)
+	7 Granularity (0 = 1B, 1 = 1KB)
 */
-
 /* GDT array pointer struct */
 typedef struct
 {
 	Uint16 limit;
 	Uint32 base;
 } attribute((packed)) gdt_ptr_t;
-
 /* IDT entry struct */
 typedef struct
 {
@@ -55,24 +49,19 @@ typedef struct
 	Uint8 flags;
 	Uint16 base_h;
 } attribute((packed)) idt_entry_t;
-
 /*
+	IDT flags byte format:
 
-IDT flags byte format:
-
-0-4 Always 00110
-5-6 Privilege level (no, I'm not making that joke again)
-7 Present?
-
+	0-4 Always 00110
+	5-6 Privilege level
+	7 Present?
 */
-
 /* IDT array pointer struct */
 typedef struct
 {
 	Uint16 limit;
 	Uint32 base;
 } attribute((packed)) idt_ptr_t;
-
 /* Initialize descriptor tables (duh) */
 void init_descriptor_tables( void );
 #endif

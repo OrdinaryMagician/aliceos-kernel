@@ -19,7 +19,6 @@ Uint32 krealloc_ap( Uint32 prev, Uint32 sz, Uint32 *phys );
 Uint32 krealloc_p( Uint32 prev, Uint32 sz, Uint32 *phys );
 Uint32 krealloc( Uint32 prev, Uint32 sz );
 void kfree( Uint32 a );
-
 /* initialize the memory manager */
 void init_kmem( Uint32 iaddr, Uint32 eaddr );
 /* add a memory gap to skip */

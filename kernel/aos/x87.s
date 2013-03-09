@@ -4,7 +4,6 @@
 ; Released under the MIT License.
 [BITS 32]
 [ALIGN 4]
-
 ; enable the x87 coprocessor (no checking for availability)
 [GLOBAL fpu_enable]
 fpu_enable:
@@ -12,7 +11,6 @@ fpu_enable:
 	or eax, 0x200
 	mov cr4, eax
 	ret
-
 ; common code
 rnd_common:
 	fstcw [esp+4]
@@ -23,7 +21,6 @@ rnd_common:
 	mov [esp+5], ah
 	fldcw [esp+4]
 	ret
-
 ; rest of functions
 [GLOBAL fpu_trunc]
 fpu_trunc:

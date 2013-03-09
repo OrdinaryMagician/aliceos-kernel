@@ -5,7 +5,6 @@
 	Released under the MIT License.
 */
 #include <vga/vgapal.h>
-
 /* Alice standard 16 color palette, reduced from 8-bit to DAC's 6-bit */
 Uint8 alicepal[48] =
 {
@@ -26,7 +25,6 @@ Uint8 alicepal[48] =
 	0x12,0x38,0x3F,	/* light cyan */
 	0x3F,0x3F,0x3F,	/* white */
 };
-
 /* Alice standard 256 color palette, reduced from 8-bit to DAC's 6-bit */
 Uint8 alicepal256[768] =
 {

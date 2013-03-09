@@ -6,13 +6,10 @@
 */
 #ifndef KDEFS_H
 #define KDEFS_H
-
 /* internal timer resolution */
 #define TIMER_HZ 1000
-
 /* some limits */
 #define KCMDLINE_MAX 256 /* max length of kernel command line */
-
 /* kernel stuff */
 const char *_kname;
 const char *_kver_fmt;
@@ -25,5 +22,4 @@ const char *_karch;
 const char *_kbuild_date;
 const char *_kbuild_time;
 const char *_kosname;
-
 #endif

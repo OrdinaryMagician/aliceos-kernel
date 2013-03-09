@@ -14,7 +14,6 @@
 #define IMG_DP_256COL 3 /* 8bpp 256 color */
 #define IMG_DP_RGB8   4 /* 24bpp RGB */
 #define IMG_DP_RGBA8  5 /* 32bpp RGBA */
-
 /* flag definitions */
 #define IMG_FL_NOPAL   1 /* no embedded palette */
 #define IMG_FL_RESV2   2
@@ -24,7 +23,6 @@
 #define IMG_FL_RESV6  32
 #define IMG_FL_RESV7  64
 #define IMG_FL_RESV8 128
-
 /* struct for an image */
 typedef struct
 {
@@ -35,7 +33,6 @@ typedef struct
 	Uint8 flags;
 	Uint8 depth;
 } img_t;
-
 /* load an image from the ramdisk */
 Uint8 loadimg( img_t *dest, char *fname );
 #endif

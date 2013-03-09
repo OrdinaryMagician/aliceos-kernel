@@ -7,7 +7,6 @@
 #include <video/loadimg.h>
 #include <fs/ramdisk.h>
 #include <memops.h>
-
 /* img file magic (OS magic + file format magic) */
 static Uint8 img_magic[24] =
 {
@@ -27,7 +26,6 @@ typedef struct
 	Uint16 palsz;
 } img_header_t;
 /* header is followed by palette data (if available), then image data */
-
 /* load an image from the ramdisk */
 Uint8 loadimg( img_t *dest, char *fname )
 {

@@ -6,7 +6,6 @@
 */
 #include <sys/pci.h>
 #include <sys/port.h>
-
 /* pci configuration (read) */
 Uint16 pci_cfg_r( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off )
 {
@@ -20,7 +19,6 @@ Uint16 pci_cfg_r( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off )
 	outport_l(PCI_CONF_ADDR,*(Uint32*)&addr);
 	return (inport_l(PCI_CONF_DATA)>>((off&2)*8))&0xFFFF;
 }
-
 /* pci configuration (write) */
 void pci_cfg_w( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off, Uint8 data )
 {

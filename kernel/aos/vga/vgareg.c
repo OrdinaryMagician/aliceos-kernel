@@ -6,7 +6,6 @@
 */
 #include <vga/vgareg.h>
 #include <sys/port.h>
-
 /* set the value of a VGA register, return previous value */
 Uint8 setvgareg( Uint16 port, Uint8 index, Uint8 value )
 {
@@ -17,7 +16,6 @@ Uint8 setvgareg( Uint16 port, Uint8 index, Uint8 value )
 	outport_b(port,save);
 	return data;
 }
-
 /* get the value of a VGA register */
 Uint8 getvgareg( Uint16 port, Uint8 index )
 {

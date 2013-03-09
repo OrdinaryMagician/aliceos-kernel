@@ -10,21 +10,18 @@
 #include <sys/helpers.h>
 #include <memops.h>
 #include <hcf.h>
-
+/* handler listing */
 static isr_handler_t isr_handlers[32];
-
 /* register an ISR handler function */
 void register_isr_handler( Uint8 n, isr_handler_t handler )
 {
 	isr_handlers[n] = handler;
 }
-
 /* clear ISR handlers */
 void isr_clearhandlers( void )
 {
 	memset((Uint8*)&isr_handlers[0],0,sizeof(isr_handler_t)*32);
 }
-
 /* the handler itself */
 void isr_handler( regs_t *regs )
 {
@@ -41,61 +38,61 @@ void isr_handler( regs_t *regs )
 	switch ( regs->intno )
 	{
 	case 0: /* Division by zero exception */
-		OHSHI(HCF_DIVZERO, regs);
+		OHSHI(HCF_DIVZERO,regs);
 		break;
 	case 1: /* Debug exception */
-		OHSHI(HCF_DEBUG, regs);
+		OHSHI(HCF_DEBUG,regs);
 		break;
 	case 2: /* Non maskable interrupt */
-		OHSHI(HCF_NMI, regs);
+		OHSHI(HCF_NMI,regs);
 		break;
 	case 3: /* Breakpoint exception */
-		OHSHI(HCF_BREAK, regs);
+		OHSHI(HCF_BREAK,regs);
 		break;
 	case 4: /* Overflow exception */
-		OHSHI(HCF_OVERFLOW, regs);
+		OHSHI(HCF_OVERFLOW,regs);
 		break;
 	case 5: /* Out of bounds exception */
-		OHSHI(HCF_OOB, regs);
+		OHSHI(HCF_OOB,regs);
 		break;
 	case 6: /* Invalid opcode exception */
-		OHSHI(HCF_INVOPCODE, regs);
+		OHSHI(HCF_INVOPCODE,regs);
 		break;
 	case 7: /* No coprocessor exception */
-		OHSHI(HCF_NOCPROC, regs);
+		OHSHI(HCF_NOCPROC,regs);
 		break;
 	case 8: /* Double fault */
-		OHSHI(HCF_DOUBLEF, regs);
+		OHSHI(HCF_DOUBLEF,regs);
 		break;
 	case 9: /* Coprocessor segment overrun */
-		OHSHI(HCF_CPROCSOVR, regs);
+		OHSHI(HCF_CPROCSOVR,regs);
 		break;
 	case 10: /* Bad TSS */
-		OHSHI(HCF_BADTSS, regs);
+		OHSHI(HCF_BADTSS,regs);
 		break;
 	case 11: /* Segment not present */
-		OHSHI(HCF_SGNOTP, regs);
+		OHSHI(HCF_SGNOTP,regs);
 		break;
 	case 12: /* Stack fault */
-		OHSHI(HCF_STACKF, regs);
+		OHSHI(HCF_STACKF,regs);
 		break;
 	case 13: /* General protection fault */
-		OHSHI(HCF_GPF, regs);
+		OHSHI(HCF_GPF,regs);
 		break;
 	case 14: /* Page fault */
-		OHSHI(HCF_PGF, regs);
+		OHSHI(HCF_PGF,regs);
 		break;
 	case 15: /* Unknown interrupt exception */
-		OHSHI(HCF_UNKNOWN, regs);
+		OHSHI(HCF_UNKNOWN,regs);
 		break;
 	case 16: /* Coprocessor fault */
-		OHSHI(HCF_CPROCF, regs);
+		OHSHI(HCF_CPROCF,regs);
 		break;
 	case 17: /* Alignment check exception */
-		OHSHI(HCF_ALGNEX, regs);
+		OHSHI(HCF_ALGNEX,regs);
 		break;
 	case 18: /* Machine check exception */
-		OHSHI(HCF_MCHKEX, regs);
+		OHSHI(HCF_MCHKEX,regs);
 		break;
 	/* Reserved */
 	case 19:
@@ -111,7 +108,7 @@ void isr_handler( regs_t *regs )
 	case 29:
 	case 30:
 	case 31:
-		OHSHI(HCF_RESV, regs);
+		OHSHI(HCF_RESV,regs);
 		break;
 	/* syscall handlers, not yet implemented */
 	/*
@@ -126,7 +123,7 @@ void isr_handler( regs_t *regs )
 		break;
 	*/
 	default: /* Unhandled */
-		OHSHI(HCF_UNHANDLEDINT, regs);
+		OHSHI(HCF_UNHANDLEDINT,regs);
 		break;
 	}
 	int_enable();

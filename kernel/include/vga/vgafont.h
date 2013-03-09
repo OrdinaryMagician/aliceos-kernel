@@ -11,7 +11,7 @@
 Uint8 biosfnt[4096];
 /* apply patches to the BIOS font, save a local copy */
 void initfont( void );
-/* change the font using a byte-per-pixel font as reference instead of a bit-per-pixel font */
+/* change the system font using a FBFONT formatted font as reference */
 void setfont_256( Uint8 *font );
 /* get the current font converting from the BIOS format to FBFONT format */
 void getfont_256( Uint8 *font );

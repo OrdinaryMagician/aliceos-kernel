@@ -8,7 +8,7 @@
 #define MULTIBOOT_H
 #include <sys/types.h>
 #include <sys/helpers.h>
-
+/* defines */
 #define MULTIBOOT_MAGIC        0x1BADB002
 #define MULTIBOOT_EAX_MAGIC    0x2BADB002
 #define MULTIBOOT_FLAG_MEM     0x001
@@ -22,7 +22,7 @@
 #define MULTIBOOT_FLAG_LOADER  0x100
 #define MULTIBOOT_FLAG_APM     0x200
 #define MULTIBOOT_FLAG_VBE     0x400
-
+/* structures */
 typedef struct
 {
 	Uint32 size;
@@ -32,7 +32,6 @@ typedef struct
 	Uint32 len_h;
 	Uint32 type;
 } attribute((packed)) mmap_entry_t;
-
 typedef struct
 {
 	Uint32 mod_start;
@@ -40,7 +39,6 @@ typedef struct
 	Uint32 cmdline;
 	Uint32 pad;
 } attribute((packed)) mbootmod_t;
-
 typedef struct
 {
 	Uint32 tabsize;
@@ -48,7 +46,6 @@ typedef struct
 	Uint32 addr;
 	Uint32 reserved;
 } attribute((packed)) aout_syms_t;
-
 typedef struct
 {
 	Uint32 num;
@@ -56,7 +53,6 @@ typedef struct
 	Uint32 addr;
 	Uint32 shndx;
 } attribute((packed)) elf_hdr_t;
-
 typedef struct
 {
 	Uint32 size;
@@ -67,7 +63,6 @@ typedef struct
 	Uint8 drive_sectors;
 	Uint8 *drive_ports;
 } attribute((packed)) drive_t;
-
 typedef struct
 {
 	Uint16 version;
@@ -80,7 +75,6 @@ typedef struct
 	Uint16 cseg_16_len;
 	Uint16 dseg_len;
 } attribute((packed)) apm_table_t;
-
 typedef struct
 {
 	Uint16 attributes;
@@ -103,7 +97,6 @@ typedef struct
 	Uint32 reserved1;
 	Uint16 reserved2;
 } attribute((packed)) vbe_info_t;
-
 typedef struct
 {
 	Uint32 flags;
@@ -132,5 +125,4 @@ typedef struct
 	Uint32 vbe_interface_off;
 	Uint32 vbe_interface_len;
 } attribute((packed)) multiboot_t;
-
 #endif

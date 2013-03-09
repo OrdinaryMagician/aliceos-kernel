@@ -8,7 +8,6 @@
 #define HCF_H
 #include <sys/types.h>
 #include <sys/regs.h>
-
 /* predefined messages */
 #define HCF_UNHANDLEDINT "Unhandled Interrupt"
 #define HCF_DIVZERO "Division by Zero"
@@ -31,7 +30,6 @@
 #define HCF_ALGNEX "Alignment Check"
 #define HCF_MCHKEX "Machine Check"
 #define HCF_RESV "Reserved Interrupt"
-
 /* for when you screwed up pretty bad */
 void OHSHI( char *mesg, regs_t *regs );
 #endif

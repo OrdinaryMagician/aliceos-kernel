@@ -7,7 +7,6 @@
 #include <video/loadfnt.h>
 #include <fs/ramdisk.h>
 #include <memops.h>
-
 /* fnt file magic (OS magic + file format magic) */
 static Uint8 fnt_magic[24] =
 {
@@ -24,10 +23,9 @@ typedef struct
 	Uint8 height;
 	Uint8 format;
 	Uint8 flags;
-	Uint32 limit; /* highest defined character (usually 255 for non-unicode fonts) */
+	Uint32 limit; /* highest defined character (usually 255) */
 } fnt_header_t;
 /* header is followed by the raw glyph bitmaps */
-
 /* load a font from the ramdisk */
 Uint8 loadfnt( fnt_t *dest, char *fname )
 {
