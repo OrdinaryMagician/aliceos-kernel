@@ -75,7 +75,7 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	printk("Starting up...\n");
 	/* memory */
 	printk("%sMemory manager\n",left);
-	/* extra gap for the for the memory allocator */
+	/* extra gap for the memory allocator */
 	Uint32 gap_st = 0;
 	Uint32 gap_en = (rdisk)?rdisk->mod_end:(Uint32)&end;
 	kmem_addgap(gap_st,gap_en);

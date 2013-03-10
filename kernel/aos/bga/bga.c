@@ -221,7 +221,8 @@ static void bga_linescrv( Uint16 y, Sint32 o )
 	{
 		o *= -1;
 		for ( x=0; x<bga_drv.w; x++ )
-			bga_putpixel(x,y,(y<(bga_drv.h-o))?bga_getpixel(x,y+o):color(0,0,0,0));
+			bga_putpixel(x,y,(y<(bga_drv.h-o))?bga_getpixel(x,y+o)
+					:color(0,0,0,0));
 		return;
 	}
 	for ( x=0; x<bga_drv.w; x++ )
