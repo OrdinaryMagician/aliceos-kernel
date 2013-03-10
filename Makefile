@@ -1,13 +1,7 @@
-CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -pedantic -nostdlib -nostdinc\
-	  -fno-stack-protector -finline-functions -ffreestanding\
+CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -Werror -pedantic -nostdlib\
+	  -nostdinc -fno-stack-protector -finline-functions -ffreestanding\
 	  -funsigned-char -Wno-unused-function -Wno-unused-parameter\
 	  -Ikernel/include
-ifneq ($(CC),clang)
-CFLAGS := $(CFLAGS) -masm=intel
-else
-# currently no way to make Clang use Intel syntax for inline assembly
-CFLAGS := $(CFLAGS) -DATT_SYNTAX
-endif
 ASFLAGS := -felf32
 LDFLAGS := -melf_i386 -Tkernel/link.ld
 SOURCES := $(patsubst %.s,%.o,$(wildcard kernel/*.s))
@@ -28,15 +22,29 @@ SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/desc/*.s))
 SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/desc/*.c))
 SOURCES := $(SOURCES) $(patsubst %.s,%.o,$(wildcard kernel/aos/sh/*.s))
 SOURCES := $(SOURCES) $(patsubst %.c,%.o,$(wildcard kernel/aos/sh/*.c))
+KERNEL := vmaliceos
+RDISK := initramfs-aliceos.img
+BINFILES := $(KERNEL) $(RDISK)
 .PHONY: clean veryclean
 aliceos-kernel: $(SOURCES) link
 veryclean: clean
-	rm -f vmaliceos initramfs-aliceos.img
+	@$(foreach F,$(BINFILES),\
+		if [[ -e $F ]]; then\
+		  echo -e "\e[1;32m[RM]\e[0m `basename ${F}`";\
+		  rm -f $F;\
+		fi;)
 clean:
-	rm -f $(SOURCES)
+	@$(foreach F,$(SOURCES),\
+		if [[ -e $F ]]; then\
+		  echo -e "\e[1;32m[RM]\e[0m `basename ${F}`";\
+		  rm -f $F;\
+		fi;)
 link:
-	ld $(LDFLAGS) -o vmaliceos $(SOURCES)
+	@echo -e "\e[1;32m[LD]\e[0m ${KERNEL}"
+	@ld $(LDFLAGS) -o $(KERNEL) $(SOURCES)
 .s.o:
-	yasm $(ASFLAGS) -o $@ $<
+	@echo -e "\e[1;32m[YASM]\e[0m `basename ${<}` -> `basename ${@}`"
+	@yasm $(ASFLAGS) -o $@ $<
 .c.o:
-	$(CC) $(CFLAGS) -c -o $@ $<
+	@echo -e "\e[1;32m[CLANG]\e[0m `basename ${<}` -> `basename ${@}`"
+	@clang $(CFLAGS) -c -o $@ $<

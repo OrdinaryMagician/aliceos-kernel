@@ -14,7 +14,7 @@ typedef struct
 	void (*disable)( void );   /* Disable shell (ignore keyboard input) */
 	void (*enable)( void );    /* Enable shell (handle keyboard input) */
 	char* (*lastcmd)( void );  /* Retrieve the last command typed */
-	Uint32 (*lastret)( void ); /* Get the return code of last command */
+	uint32_t (*lastret)( void ); /* Get the return code of last command */
 } shell_t;
 shell_t shell; /* the AOS internal shell */
 #endif

@@ -8,7 +8,7 @@
 #define KRAND_H
 #include <sys/types.h>
 /* get next random number */
-Uint32 krand();
+uint32_t krand();
 /* set a specific seed */
-void ksrand( Uint32 nseed );
+void ksrand( uint32_t nseed );
 #endif

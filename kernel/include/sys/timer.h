@@ -12,23 +12,23 @@ typedef void (*ttask_t)( void );
 typedef struct
 {
 	ttask_t task;    /* task function */
-	Uint32 interval; /* call interval */
-	Uint8 oneshot;   /* disabled after first call */
+	uint32_t interval; /* call interval */
+	uint8_t oneshot;   /* disabled after first call */
 } ttasklist_t;
 /* get current ticks passed */
-Uint32 get_ticks( void );
+uint32_t get_ticks( void );
 /* get current nanoseconds/tick */
-Uint32 get_timescale( void );
+uint32_t get_timescale( void );
 /* get current timer frequency */
-Uint32 get_hz( void );
+uint32_t get_hz( void );
 /* return the equivalent in ticks for some time units */
-Uint32 timer_sec( Uint32 s );
-Uint32 timer_msec( Uint32 m );
-Uint32 timer_usec( Uint32 u );
+uint32_t timer_sec( uint32_t s );
+uint32_t timer_msec( uint32_t m );
+uint32_t timer_usec( uint32_t u );
 /* initialize the timer */
-void init_timer( Uint32 hz );
+void init_timer( uint32_t hz );
 /* register a timer task, return 1 on error, 0 otherwise */
-Uint8 timer_addtask( ttask_t task, Uint32 interval, Uint8 oneshot );
+uint8_t timer_addtask( ttask_t task, uint32_t interval, uint8_t oneshot );
 /* unregister a timer task, return 1 on error, 0 otherwise */
-Uint8 timer_rmtask( ttask_t task );
+uint8_t timer_rmtask( ttask_t task );
 #endif

@@ -2,8 +2,9 @@
 if [[ ! -e ramdisk/bin/mkrd ]]; then
   pushd ramdisk >/dev/null
   echo -n "building mkrd... "
-  if ( which clang >/dev/null ); then
-    export CC=clang
+  if ( ! which clang >/dev/null ); then
+    echo "you don't have clang, install it or go away"
+    exit 1
   fi
   make >/dev/null
   if [ $? != 0 ]; then

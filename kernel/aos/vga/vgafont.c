@@ -10,7 +10,7 @@
 /* apply patches to the BIOS font, save a local copy */
 void initfont( void )
 {
-	Uint8 chr[16];
+	uint8_t chr[16];
 	/* correct misproportioned half block characters 0xDF and 0xDC */
 	getglyph(0xDF,&chr[0]);
 	chr[7] = 0xFF;
@@ -22,11 +22,11 @@ void initfont( void )
 	getfont(&biosfnt[0]);
 }
 /* change the system font using a FBFONT formatted font as reference */
-void setfont_256( Uint8 *font )
+void setfont_256( uint8_t *font )
 {
-	Uint8 chr[16];
+	uint8_t chr[16];
 	int i, j;
-	Uint8 *fch;
+	uint8_t *fch;
 	for ( i=0; i<256; i++ )
 	{
 		fch = font+(i*128);
@@ -46,11 +46,11 @@ void setfont_256( Uint8 *font )
 	}
 }
 /* get the current font converting from the BIOS format to FBFONT format */
-void getfont_256( Uint8 *font )
+void getfont_256( uint8_t *font )
 {
-	Uint8 chr[16];
+	uint8_t chr[16];
 	int i, j;
-	Uint8 *fch;
+	uint8_t *fch;
 	for ( i=0; i<256; i++ )
 	{
 		getglyph(i,&chr[0]);
@@ -69,19 +69,19 @@ void getfont_256( Uint8 *font )
 	}
 }
 /* change the font */
-void setfont( Uint8 *font )
+void setfont( uint8_t *font )
 {
 	/* need to change some stuff, like plane to write to and stuff */
 	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
 	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	Uint8 old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
 	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	Uint8 old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
 	int i, j;
 	/* copy character map, skip 16 bytes of padding for each glyph */
-	Uint8 *fntmem = (Uint8*)0xB8000;
+	uint8_t *fntmem = (uint8_t*)0xB8000;
 	for ( i=0; i<256; i++ )
 	{
 		for ( j=0; j<16; j++ )
@@ -95,19 +95,19 @@ void setfont( Uint8 *font )
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
 /* get the current font */
-void getfont( Uint8 *font )
+void getfont( uint8_t *font )
 {
 	/* need to change some stuff, like plane to write to and stuff */
 	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
 	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	Uint8 old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
 	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	Uint8 old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
 	int i, j;
 	/* copy character map, skip 16 bytes of padding for each glyph */
-	Uint8 *fntmem = (Uint8*)0xB8000;
+	uint8_t *fntmem = (uint8_t*)0xB8000;
 	for ( i=0; i<256; i++ )
 	{
 		for ( j=0; j<16; j++ )
@@ -121,18 +121,18 @@ void getfont( Uint8 *font )
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
 /* change a specific glyph in the character map */
-void setglyph( Uint8 val, Uint8 *data )
+void setglyph( uint8_t val, uint8_t *data )
 {
 	/* need to change some stuff, like plane to write to and stuff */
 	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
 	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	Uint8 old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
 	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	Uint8 old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
 	int i;
-	Uint8 *fntmem = (Uint8*)0xB8000;
+	uint8_t *fntmem = (uint8_t*)0xB8000;
 	/* skip characters */
 	for ( i=0; i<val; i++ )
 		fntmem += 32;
@@ -145,18 +145,18 @@ void setglyph( Uint8 val, Uint8 *data )
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
 }
 /* retrieve a specific glyph in the character map */
-void getglyph( Uint8 val, Uint8 *data )
+void getglyph( uint8_t val, uint8_t *data )
 {
 	/* need to change some stuff, like plane to write to and stuff */
 	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
 	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	Uint8 old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
 	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	Uint8 old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
 	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
 	int i;
-	Uint8 *fntmem = (Uint8*)0xB8000;
+	uint8_t *fntmem = (uint8_t*)0xB8000;
 	/* skip characters */
 	for ( i=0; i<val; i++ )
 		fntmem += 32;

@@ -24,14 +24,14 @@
 #include <strops.h>
 #include <kmem.h>
 /* initial stack pointer */
-Uint32 *initial_esp;
+uint32_t *initial_esp;
 /* location of certain parts of the kernel */
-extern Uint32 code;
-extern Uint32 data;
-extern Uint32 bss;
-extern Uint32 end;
+extern uint32_t code;
+extern uint32_t data;
+extern uint32_t bss;
+extern uint32_t end;
 /* C entry point for the kernel starts here. */
-int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
+int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 {
 	/* set the initial stack pointer */
 	initial_esp = esp;
@@ -76,16 +76,16 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	/* memory */
 	printk("%sMemory manager\n",left);
 	/* extra gap for the memory allocator */
-	Uint32 gap_st = 0;
-	Uint32 gap_en = (rdisk)?rdisk->mod_end:(Uint32)&end;
+	uint32_t gap_st = 0;
+	uint32_t gap_en = (rdisk)?rdisk->mod_end:(uint32_t)&end;
 	kmem_addgap(gap_st,gap_en);
 	/* placement address and memory end */
-	Uint32 paddr = gap_en;
-	Uint32 eaddr = 0x1000000;	/* 16MiB by default */
+	uint32_t paddr = gap_en;
+	uint32_t eaddr = 0x1000000;	/* 16MiB by default */
 	/* add mmap entries too */
 	mmap_entry_t *mmapent = (mmap_entry_t*)mboot->mmap_addr;
-	Uint32 off = 0;
-	Uint32 offmax = mboot->mmap_length;
+	uint32_t off = 0;
+	uint32_t offmax = mboot->mmap_length;
 	while ( off < offmax )
 	{
 		gap_st = mmapent->addr_l;
@@ -121,7 +121,7 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 	/* internal timer */
 	printk("%sInternal timer at %uhz",left,TIMER_HZ);
 	init_timer(TIMER_HZ);
-	Sint32 error = TIMER_HZ-get_hz();
+	int32_t error = TIMER_HZ-get_hz();
 	printk(" (~%uhz error)\n",abs(error));
 	/* keyboard input */
 	printk("%sPS/2 keyboard input driver\n",left);
@@ -136,9 +136,9 @@ int kmain( multiboot_t *mboot, Uint32 mboot_mag, Uint32 *esp )
 			_kver_suf,_kbuild_date,_kbuild_time,_karch,_kosname);
 	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 	/* RAM amount */
-	Uint8 mult = 0;
+	uint8_t mult = 0;
 	char suf[7][3] = {"","Ki","Mi","Gi","Ti","Pi","Ei"};
-	Uint32 cmem = eaddr;
+	uint32_t cmem = eaddr;
 	while ( mult<7 )
 	{
 		cmem = eaddr;

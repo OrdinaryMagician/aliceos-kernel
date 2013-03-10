@@ -15,12 +15,12 @@
 /* handler listing */
 static irq_handler_t irq_handlers[16];
 /* register an IRQ handler function */
-void register_irq_handler( Uint8 n, irq_handler_t handler )
+void register_irq_handler( uint8_t n, irq_handler_t handler )
 {
 	irq_handlers[n] = handler;
 }
 /* send end-of-interrupt to PIC */
-void irq_eoi( Uint8 irq )
+void irq_eoi( uint8_t irq )
 {
 	if ( irq >= 12 )
 		outport_b(0xA0,0x20);
@@ -30,7 +30,7 @@ void irq_eoi( Uint8 irq )
 void irq_handler( regs_t *regs )
 {
 	int_disable();
-	Uint8 irq = regs->intno-32;
+	uint8_t irq = regs->intno-32;
 	/* call a specific handler if available */
 	if ( irq_handlers[irq] )
 	{
@@ -44,5 +44,5 @@ void irq_handler( regs_t *regs )
 /* clear IRQ handlers */
 void irq_clearhandlers( void )
 {
-	memset((Uint8*)&irq_handlers[0],0,sizeof(irq_handler_t)*16);
+	memset((uint8_t*)&irq_handlers[0],0,sizeof(irq_handler_t)*16);
 }

@@ -10,7 +10,7 @@
 #include <sys/helpers.h>
 typedef struct
 {
-	Uint8 a, r, g, b;
+	uint8_t a, r, g, b;
 } color_t;
 /* color in RGB (alpha always 255) */
 #define color3(r,g,b) color(r,g,b,255)
@@ -26,5 +26,5 @@ typedef struct
 /* NULL color */
 #define COLOR_NULL       color(0,0,0,0)
 /* easy color_t creation */
-color_t color(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+color_t color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 #endif

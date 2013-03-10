@@ -6,7 +6,7 @@
 */
 #include <vga/vgapal.h>
 /* Alice standard 16 color palette, reduced from 8-bit to DAC's 6-bit */
-Uint8 alicepal[48] =
+uint8_t alicepal[48] =
 {
 	0x00,0x00,0x00,	/* black */
 	0x20,0x00,0x00,	/* red */
@@ -26,7 +26,7 @@ Uint8 alicepal[48] =
 	0x3F,0x3F,0x3F,	/* white */
 };
 /* Alice standard 256 color palette, reduced from 8-bit to DAC's 6-bit */
-Uint8 alicepal256[768] =
+uint8_t alicepal256[768] =
 {
 	/* Base (16 colors) */
 	0x00,0x00,0x00, 0x20,0x00,0x00, 0x08,0x20,0x00, 0x28,0x10,0x04,

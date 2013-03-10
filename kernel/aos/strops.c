@@ -89,7 +89,7 @@ char *strrcasechr( char *in, char c )
 	return last;
 }
 /* compare two strings */
-Uint8 strcmp( char *a, char *b )
+uint8_t strcmp( char *a, char *b )
 {
 	do
 	{
@@ -102,7 +102,7 @@ Uint8 strcmp( char *a, char *b )
 	return 0;
 }
 /* case insensitive version of strcmp */
-Uint8 strcasecmp( char *a, char *b )
+uint8_t strcasecmp( char *a, char *b )
 {
 	do
 	{
@@ -124,7 +124,7 @@ char *strcpy( char *dest, char *src )
 	return ret;
 }
 /* return if a string contains any of the characters in a set */
-Uint8 strcont( char *in, char *set )
+uint8_t strcont( char *in, char *set )
 {
 	while ( *in )
 	{
@@ -140,7 +140,7 @@ Uint8 strcont( char *in, char *set )
 	return 1;
 }
 /* case insensitive version of strcont */
-Uint8 strcasecont( char *in, char *set )
+uint8_t strcasecont( char *in, char *set )
 {
 	while ( *in )
 	{
@@ -156,9 +156,9 @@ Uint8 strcasecont( char *in, char *set )
 	return 1;
 }
 /* returns the length of a null-terminated string */
-Uint32 strlen( char *s )
+uint32_t strlen( char *s )
 {
-	Uint32 len = 0;
+	uint32_t len = 0;
 	while ( *(s++) )
 		len++;
 	return len;
@@ -166,7 +166,7 @@ Uint32 strlen( char *s )
 /* find the first occurence of a string inside another */
 char *strstr( char *in, char *s )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	while( *in )
 	{
 		if ( !strncmp(in,s,slen) )
@@ -178,7 +178,7 @@ char *strstr( char *in, char *s )
 /* case insensitive version of strstr */
 char *strcasestr( char *in, char *s )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	while( *in )
 	{
 		if ( !strncasecmp(in,s,slen) )
@@ -190,7 +190,7 @@ char *strcasestr( char *in, char *s )
 /* find the last occurence of a string inside another */
 char *strrstr( char *in, char *s )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	char *ret = in+strlen(in);
 	while ( *in )
 	{
@@ -203,7 +203,7 @@ char *strrstr( char *in, char *s )
 /* case insensitive version of strrstr */
 char *strrcasestr( char *in, char *s )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	char *ret = in+strlen(in);
 	while ( *in )
 	{
@@ -214,7 +214,7 @@ char *strrcasestr( char *in, char *s )
 	return ret;
 }
 /* append a number of characters from one string to the end of another */
-char *strncat( char *dest, char *src, Uint32 count )
+char *strncat( char *dest, char *src, uint32_t count )
 {
 	char *ret = dest;
 	while ( *(++dest) );
@@ -224,7 +224,7 @@ char *strncat( char *dest, char *src, Uint32 count )
 	return ret;
 }
 /* compare a number of characters at the start of a string with another */
-Uint8 strncmp( char *a, char *b, Uint32 count )
+uint8_t strncmp( char *a, char *b, uint32_t count )
 {
 	do
 	{
@@ -237,7 +237,7 @@ Uint8 strncmp( char *a, char *b, Uint32 count )
 	return 0;
 }
 /* case insensitive version of strncasecmp */
-Uint8 strncasecmp( char *a, char *b, Uint32 count )
+uint8_t strncasecmp( char *a, char *b, uint32_t count )
 {
 	do
 	{
@@ -250,7 +250,7 @@ Uint8 strncasecmp( char *a, char *b, Uint32 count )
 	return 0;
 }
 /* overwrite one string with a number of characters from another */
-char *strncpy( char *dest, char *src, Uint32 count )
+char *strncpy( char *dest, char *src, uint32_t count )
 {
 	char *ret = dest;
 	while ( *src && count-- )
@@ -260,7 +260,7 @@ char *strncpy( char *dest, char *src, Uint32 count )
 }
 /* check if a number of characters at the start of a string contains
    any of the characters in a set */
-Uint8 strncont( char *in, char *set, Uint32 count )
+uint8_t strncont( char *in, char *set, uint32_t count )
 {
 	while ( *in && count-- )
 	{
@@ -276,7 +276,7 @@ Uint8 strncont( char *in, char *set, Uint32 count )
 	return 0;
 }
 /* case-insensitive version of strncont */
-Uint8 strncasecont( char *in, char *set, Uint32 count )
+uint8_t strncasecont( char *in, char *set, uint32_t count )
 {
 	while ( *in && count-- )
 	{
@@ -293,9 +293,9 @@ Uint8 strncasecont( char *in, char *set, Uint32 count )
 }
 /* find the first occurence of a string inside a number of characters at the
    beginning of a string */
-char *strnstr( char *in, char *s, Uint32 count )
+char *strnstr( char *in, char *s, uint32_t count )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	while( *in && count-- )
 	{
 		if ( !strncmp(in,s,slen) )
@@ -305,9 +305,9 @@ char *strnstr( char *in, char *s, Uint32 count )
 	return in+strlen(in);
 }
 /* case insensitive version of strncasestr */
-char *strncasestr( char *in, char *s, Uint32 count )
+char *strncasestr( char *in, char *s, uint32_t count )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	while( *in && count-- )
 	{
 		if ( !strncasecmp(in,s,slen) )
@@ -318,9 +318,9 @@ char *strncasestr( char *in, char *s, Uint32 count )
 }
 /* find the last occurence of a string inside a number of characters at the
    beginning of a string */
-char *strrnstr( char *in, char *s, Uint32 count )
+char *strrnstr( char *in, char *s, uint32_t count )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	char *ret = in+strlen(in);
 	while ( *in && count-- )
 	{
@@ -331,9 +331,9 @@ char *strrnstr( char *in, char *s, Uint32 count )
 	return ret;
 }
 /* case insensitive version of strrncasestr */
-char *strrncasestr( char *in, char *s, Uint32 count )
+char *strrncasestr( char *in, char *s, uint32_t count )
 {
-	Uint32 slen = strlen(s);
+	uint32_t slen = strlen(s);
 	char *ret = in+strlen(in);
 	while ( *in && count-- )
 	{
@@ -345,7 +345,7 @@ char *strrncasestr( char *in, char *s, Uint32 count )
 }
 /* append one string to the end of another while keeping the length of the
    resulting string under a specific limit */
-char *strlcat( char *dest, char *src, Uint32 dmax )
+char *strlcat( char *dest, char *src, uint32_t dmax )
 {
 	char *ret = dest;
 	while ( *(++dest) && dmax-- );
@@ -356,7 +356,7 @@ char *strlcat( char *dest, char *src, Uint32 dmax )
 }
 /* append a number of characters from one string to the end of another while
    keeping the length of the resulting string under a specific limit */
-char *strnlcat( char *dest, char *src, Uint32 count, Uint32 dmax )
+char *strnlcat( char *dest, char *src, uint32_t count, uint32_t dmax )
 {
 	char *ret = dest;
 	while ( *(++dest) && dmax-- );
@@ -370,7 +370,7 @@ char *strnlcat( char *dest, char *src, Uint32 count, Uint32 dmax )
    have to pass the next token, not NULL */
 char *strtok(char *str, char *delim)
 {
-	Uint32 len = strlen(delim);
+	uint32_t len = strlen(delim);
 	char *found = strstr(str,delim);
 	if ( *found )
 		while ( len-- )

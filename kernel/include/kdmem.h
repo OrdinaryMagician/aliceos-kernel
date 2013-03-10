@@ -15,37 +15,37 @@
 /* memory block structure */
 typedef struct
 {
-	Uint32 start;
-	Uint32 end;
+	uint32_t start;
+	uint32_t end;
 } memblk_t;
 /* reserve a memory area */
 /* generic */
-Uint32 kdalloc_global( Uint32 sz, Uint8 alg, Uint32 *phys );
+void *kdalloc_global( uint32_t sz, uint8_t alg, uint32_t *phys );
 /* vanilla */
-Uint32 kdalloc( Uint32 sz );
+void *kdalloc( uint32_t sz );
 /* page-aligned */
-Uint32 kdalloc_a( Uint32 sz );
+void *kdalloc_a( uint32_t sz );
 /* return physical address */
-Uint32 kdalloc_p( Uint32 sz, Uint32 *phys );
+void *kdalloc_p( uint32_t sz, uint32_t *phys );
 /* page-aligned and return physical address */
-Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys );
+void *kdalloc_ap( uint32_t sz, uint32_t *phys );
 /* reallocate (resize) a memory area */
 /* generic */
-Uint32 kdrealloc_global( Uint32 prev, Uint32 sz, Uint8 alg, Uint32 *phys );
+void *kdrealloc_global( void *prev, uint32_t sz, uint8_t alg, uint32_t *phys );
 /* vanilla */
-Uint32 kdrealloc( Uint32 prev, Uint32 newsz );
+void *kdrealloc( void *prev, uint32_t newsz );
 /* page-aligned */
-Uint32 kdrealloc_a( Uint32 prev, Uint32 newsz );
+void *kdrealloc_a( void *prev, uint32_t newsz );
 /* return physical address */
-Uint32 kdrealloc_p( Uint32 prev, Uint32 newsz, Uint32 *phys );
+void *kdrealloc_p( void *prev, uint32_t newsz, uint32_t *phys );
 /* page-aligned and return physical address */
-Uint32 kdrealloc_ap( Uint32 prev, Uint32 newsz, Uint32 *phys );
+void *kdrealloc_ap( void *prev, uint32_t newsz, uint32_t *phys );
 /* free a memory area */
-void kdfree( Uint32 a );
+void kdfree( void *a );
 /* retrieve used blocks */
-Uint32 kdmem_count( void );
+uint32_t kdmem_count( void );
 /* retrieve total memory used */
-Uint32 kdmem_amount( void );
+uint32_t kdmem_amount( void );
 /* initialize dynamic memory allocator */
-void kdmem_init( Uint32 start, Uint32 size, Uint32 psize );
+void kdmem_init( uint32_t start, uint32_t size, uint32_t psize );
 #endif

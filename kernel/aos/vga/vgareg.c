@@ -7,21 +7,21 @@
 #include <vga/vgareg.h>
 #include <sys/port.h>
 /* set the value of a VGA register, return previous value */
-Uint8 setvgareg( Uint16 port, Uint8 index, Uint8 value )
+uint8_t setvgareg( uint16_t port, uint8_t index, uint8_t value )
 {
-	Uint8 save = inport_b(port);
+	uint8_t save = inport_b(port);
 	outport_b(port,index);
-	Uint8 data = inport_b(port+1);
+	uint8_t data = inport_b(port+1);
 	outport_b(port+1,value);
 	outport_b(port,save);
 	return data;
 }
 /* get the value of a VGA register */
-Uint8 getvgareg( Uint16 port, Uint8 index )
+uint8_t getvgareg( uint16_t port, uint8_t index )
 {
-	Uint8 save = inport_b(port);
+	uint8_t save = inport_b(port);
 	outport_b(port,index);
-	Uint8 data = inport_b(port+1);
+	uint8_t data = inport_b(port+1);
 	outport_b(port,save);
 	return data;
 }

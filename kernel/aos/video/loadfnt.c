@@ -8,7 +8,7 @@
 #include <fs/ramdisk.h>
 #include <memops.h>
 /* fnt file magic (OS magic + file format magic) */
-static Uint8 fnt_magic[24] =
+static uint8_t fnt_magic[24] =
 {
 	'A', 'L', 'I', 'C', 'E', 'O', 'S',
 	0xE3, 0x81, 0xA7, 0xE3, 0x82, 0x8C, /* Hiragana "dere", UTF-8 */
@@ -18,16 +18,16 @@ static Uint8 fnt_magic[24] =
 /* fnt file header structure */
 typedef struct
 {
-	Uint8 magic[24];
-	Uint8 width;
-	Uint8 height;
-	Uint8 format;
-	Uint8 flags;
-	Uint32 limit; /* highest defined character (usually 255) */
+	uint8_t magic[24];
+	uint8_t width;
+	uint8_t height;
+	uint8_t format;
+	uint8_t flags;
+	uint32_t limit; /* highest defined character (usually 255) */
 } fnt_header_t;
 /* header is followed by the raw glyph bitmaps */
 /* load a font from the ramdisk */
-Uint8 loadfnt( fnt_t *dest, char *fname )
+uint8_t loadfnt( fnt_t *dest, char *fname )
 {
 	/* there are many error checks here... */
 	if ( !dest )
@@ -37,7 +37,7 @@ Uint8 loadfnt( fnt_t *dest, char *fname )
 		return 1;
 	if ( fnt->size < sizeof(fnt_header_t) )
 		return 1;
-	Uint8 *fntdata = (Uint8*)rd_find_data(fname);
+	uint8_t *fntdata = (uint8_t*)rd_find_data(fname);
 	/* verify header magic */
 	fnt_header_t *hd = (fnt_header_t*)fntdata;
 	if ( memcmp(&(hd->magic[0]),&fnt_magic[0],24) )

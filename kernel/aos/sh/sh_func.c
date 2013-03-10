@@ -23,9 +23,9 @@ cmd_t* sh_cmds[SH_NUMCMDS] =
 	&sh_clear,
 };
 /* functions and their cmd_t structs */
-static Uint32 cmd_help( Uint32 argc, char **argv )
+static uint32_t cmd_help( uint32_t argc, char **argv )
 {
-	Uint32 i;
+	uint32_t i;
 	if ( argc <= 1 )
 	{
 		for ( i=0; i<SH_NUMCMDS; i++ )
@@ -51,7 +51,7 @@ static cmd_t sh_help =
 		"otherwise shows help for a specific command\n",
 	.run  = cmd_help,
 };
-static Uint32 cmd_listdemos( Uint32 argc, char **argv )
+static uint32_t cmd_listdemos( uint32_t argc, char **argv )
 {
 	listdemos();
 	return 0;
@@ -63,14 +63,14 @@ static cmd_t sh_listdemos =
 		"list the available demos\n",
 	.run  = cmd_listdemos,
 };
-static Uint32 cmd_rundemo( Uint32 argc, char **argv )
+static uint32_t cmd_rundemo( uint32_t argc, char **argv )
 {
 	if ( argc <= 1 )
 	{
 		mode_3h.fbprintf("usage: %s <demoname>\n",argv[0]);
 		return 0;
 	}
-	Uint32 i;
+	uint32_t i;
 	for ( i=0; i<DEMO_COUNT; i++ )
 	{
 		if ( !strcmp(demos[i].name,argv[1]) )
@@ -89,7 +89,7 @@ static cmd_t sh_rundemo =
 		"runs a specific demo\n",
 	.run  = cmd_rundemo,
 };
-static Uint32 cmd_clear( Uint32 argc, char **argv )
+static uint32_t cmd_clear( uint32_t argc, char **argv )
 {
 	mode_3h.clear();
 	mode_3h.fbsetcursor(0,0);

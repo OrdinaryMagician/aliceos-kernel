@@ -8,7 +8,7 @@
 #define VGAMISC_H
 #include <sys/types.h>
 /* plane switch */
-void planeswitch( Uint8 p );
+void planeswitch( uint8_t p );
 /* blank screen */
 void vgablank( void );
 /* unblank screen */

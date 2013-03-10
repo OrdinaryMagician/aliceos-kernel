@@ -11,12 +11,12 @@
 /* GDT entry struct */
 typedef struct
 {
-	Uint16 limit_l;
-	Uint16 base_l;
-	Uint8 base_m;
-	Uint8 access;
-	Uint8 granularity;
-	Uint8 base_h;
+	uint16_t limit_l;
+	uint16_t base_l;
+	uint8_t base_m;
+	uint8_t access;
+	uint8_t granularity;
+	uint8_t base_h;
 } attribute((packed)) gdt_entry_t;
 /*
 	GDT access byte format:
@@ -37,17 +37,17 @@ typedef struct
 /* GDT array pointer struct */
 typedef struct
 {
-	Uint16 limit;
-	Uint32 base;
+	uint16_t limit;
+	uint32_t base;
 } attribute((packed)) gdt_ptr_t;
 /* IDT entry struct */
 typedef struct
 {
-	Uint16 base_l;
-	Uint16 sel;
-	Uint8 zero;
-	Uint8 flags;
-	Uint16 base_h;
+	uint16_t base_l;
+	uint16_t sel;
+	uint8_t zero;
+	uint8_t flags;
+	uint16_t base_h;
 } attribute((packed)) idt_entry_t;
 /*
 	IDT flags byte format:
@@ -59,8 +59,8 @@ typedef struct
 /* IDT array pointer struct */
 typedef struct
 {
-	Uint16 limit;
-	Uint32 base;
+	uint16_t limit;
+	uint32_t base;
 } attribute((packed)) idt_ptr_t;
 /* Initialize descriptor tables (duh) */
 void init_descriptor_tables( void );

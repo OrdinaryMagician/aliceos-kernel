@@ -7,10 +7,10 @@
 #include <xstrstr.h>
 #include <strops.h>
 /* extended substring search */
-char *xstrstr_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrstr_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, lent = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0, lent = 0;
+	uint8_t foundit = 0;
 	if ( strlen(mainstr) < strlen(searchstr) )
 		return NULL;
 	if ( strlen(searchstr) <= 0 )
@@ -38,10 +38,10 @@ char *xstrstr(char *mainstr, char *searchstr)
 	return xstrstr_o(mainstr,searchstr,0);
 }
 /* extended substring search backwards */
-char *xstrlstr_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrlstr_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0;
+	uint8_t foundit = 0;
 	if ( strlen(mainstr) < strlen(searchstr) )
 		return NULL;
 	if ( strlen(searchstr) <= 0 )
@@ -71,10 +71,10 @@ char *xstrlstr(char *mainstr, char *searchstr)
 	return xstrlstr_o(mainstr,searchstr,strlen(mainstr));
 }
 /* extended substring search backwards (case insensitive) */
-char *xstrilstr_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrilstr_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0;
+	uint8_t foundit = 0;
 	if ( strlen(mainstr) < strlen(searchstr) )
 		return NULL;
 	if ( strlen(searchstr) <= 0 )
@@ -104,10 +104,10 @@ char *xstrilstr(char *mainstr, char *searchstr)
 	return xstrilstr_o(mainstr,searchstr,strlen(mainstr));
 }
 /* extended substring search (case insensitive) */
-char *xstristr_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstristr_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, lent = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0, lent = 0;
+	uint8_t foundit = 0;
 	if ( strlen(mainstr) < strlen(searchstr) )
 		return NULL;
 	if ( strlen(searchstr) <= 0 )
@@ -137,10 +137,10 @@ char *xstristr(char *mainstr, char *searchstr)
 	return xstristr_o(mainstr,searchstr,0);
 }
 /* find first of for cstring */
-char *xstrfof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrfof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0, lent = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0, sposz = 0, lent = 0;
+	uint8_t foundit = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -171,10 +171,10 @@ char *xstrfof(char *mainstr, char *searchstr)
 	return xstrfof_o(mainstr,searchstr,0);
 }
 /* find first of for cstring (case insensitive!) */
-char *xstrifof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrifof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0, lent = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0, sposz = 0, lent = 0;
+	uint8_t foundit = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -205,10 +205,10 @@ char *xstrifof(char *mainstr, char *searchstr)
 	return xstrifof_o(mainstr,searchstr,0);
 }
 /* find first NOT of for cstring */
-char *xstrfnof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrfnof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0, lent = 0;
-	Uint32 occurences = 0;
+	uint32_t posz = 0, sposz = 0, lent = 0;
+	uint32_t occurences = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -236,10 +236,10 @@ char *xstrfnof(char *mainstr, char *searchstr)
 	return xstrfnof_o(mainstr,searchstr,0);
 }
 /* find first NOT of for cstring (case insensitive!) */
-char *xstrifnof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrifnof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0, lent = 0;
-	Uint32 occurences = 0;
+	uint32_t posz = 0, sposz = 0, lent = 0;
+	uint32_t occurences = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -267,10 +267,10 @@ char *xstrifnof(char *mainstr, char *searchstr)
 	return xstrifnof_o(mainstr,searchstr,0);
 }
 /* find last of for cstring */
-char *xstrlof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrlof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0, sposz = 0;
+	uint8_t foundit = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -301,10 +301,10 @@ char *xstrlof(char *mainstr, char *searchstr)
 	return xstrlof_o(mainstr,searchstr,strlen(mainstr));
 }
 /* find last of for cstring (case insensitive!) */
-char *xstrilof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrilof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0;
-	Uint8 foundit = 0;
+	uint32_t posz = 0, sposz = 0;
+	uint8_t foundit = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -335,10 +335,10 @@ char *xstrilof(char *mainstr, char *searchstr)
 	return xstrilof_o(mainstr,searchstr,strlen(mainstr));
 }
 /* find last NOT of for cstring */
-char *xstrlnof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrlnof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0;
-	Uint32 occurences = 0;
+	uint32_t posz = 0, sposz = 0;
+	uint32_t occurences = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )
@@ -366,10 +366,10 @@ char *xstrlnof(char *mainstr, char *searchstr)
 	return xstrlnof_o(mainstr,searchstr,strlen(mainstr));
 }
 /* find last NOT of for cstring (case insensitive!) */
-char *xstrilnof_o(char *mainstr, char *searchstr, Uint32 startoff)
+char *xstrilnof_o(char *mainstr, char *searchstr, uint32_t startoff)
 {
-	Uint32 posz = 0, sposz = 0;
-	Uint32 occurences = 0;
+	uint32_t posz = 0, sposz = 0;
+	uint32_t occurences = 0;
 	if ( strlen(searchstr) <= 0 )
 		return NULL;
 	if ( strlen(mainstr) <= 0 )

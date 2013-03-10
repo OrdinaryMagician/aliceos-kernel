@@ -8,7 +8,7 @@
 #define PALETTES_H
 #include <sys/types.h>
 /* Alice standard 16 color palette, reduced from 8-bit to DAC's 6-bit */
-Uint8 alicepal[48];
+uint8_t alicepal[48];
 /* Alice palette color names */
 #define APAL_BLACK       0
 #define APAL_MAROON      1
@@ -27,7 +27,7 @@ Uint8 alicepal[48];
 #define APAL_CYAN       14
 #define APAL_WHITE      15
 /* Alice standard 256 color palette, reduced from 8-bit to DAC's 6-bit */
-Uint8 alicepal256[768];
+uint8_t alicepal256[768];
 /* Alice palette offsets and lengths */
 #define APAL256_16PAL_POS 0
 #define APAL256_16PAL_OFF 0

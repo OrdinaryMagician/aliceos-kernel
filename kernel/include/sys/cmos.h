@@ -7,5 +7,5 @@
 #ifndef CMOS_H
 #define CMOS_H
 #include <sys/types.h>
-void cmos_dump( Uint8 *here );
+void cmos_dump( uint8_t *here );
 #endif

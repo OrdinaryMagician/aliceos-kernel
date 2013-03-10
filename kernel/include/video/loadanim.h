@@ -26,22 +26,22 @@
 /* struct for each anim frame */
 typedef struct
 {
-	Uint16 index;
-	Uint16 next;
-	Uint32 duration;
-	Uint32 frameloc;
-	Uint32 framesize;
+	uint16_t index;
+	uint16_t next;
+	uint32_t duration;
+	uint32_t frameloc;
+	uint32_t framesize;
 } anm_frame_t;
 /* struct for an animation */
 typedef struct
 {
 	anm_frame_t *frames;
-	Uint8 *pal;
-	Uint16 w;
-	Uint16 h;
-	Uint8 flags;
-	Uint8 depth;
+	uint8_t *pal;
+	uint16_t w;
+	uint16_t h;
+	uint8_t flags;
+	uint8_t depth;
 } anm_t;
 /* load an animation from the ramdisk */
-Uint8 loadanm( anm_t *dest, char *fname );
+uint8_t loadanm( anm_t *dest, char *fname );
 #endif

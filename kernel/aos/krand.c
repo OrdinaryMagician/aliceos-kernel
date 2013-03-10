@@ -5,14 +5,14 @@
 	Released under the MIT License.
 */
 #include <krand.h>
-static Uint32 krand_seed = 1;
+static uint32_t krand_seed = 1;
 /* get next random number */
-Uint32 krand()
+uint32_t krand()
 {
 	return (krand_seed = (krand_seed<<1)*35447+(krand_seed/87));
 }
 /* set a specific seed */
-void ksrand( Uint32 nseed )
+void ksrand( uint32_t nseed )
 {
 	krand_seed = nseed;
 }

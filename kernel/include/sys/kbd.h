@@ -133,10 +133,10 @@
 /* a key event struct */
 typedef struct
 {
-	Uint16 code;   /* special key code (useful for non-printable keys) */
-	Uint8 mod;     /* any current modifier keys applied */
-	Uint8 type;    /* 0: null, 1: normal, 2: special, 3: function */
-	Uint8 pressed; /* pressed or released? */
+	uint16_t code;   /* special key code (useful for non-printable keys) */
+	uint8_t mod;     /* any current modifier keys applied */
+	uint8_t type;    /* 0: null, 1: normal, 2: special, 3: function */
+	uint8_t pressed; /* pressed or released? */
 	char chr;      /* screen-printable representation */
 } key_t;
 /* a keyboard event handler */
@@ -146,9 +146,9 @@ void kbd_reset( void );
 /* turn on keyboard driver */
 void kbd_on( void );
 /* add an input handler */
-Uint8 kbd_addhandler( kbd_handler_t hnd );
+uint8_t kbd_addhandler( kbd_handler_t hnd );
 /* remove an input handler */
-Uint8 kbd_rmhandler( kbd_handler_t hnd );
+uint8_t kbd_rmhandler( kbd_handler_t hnd );
 /* get a key */
 void kbd_getkey( key_t *key );
 #endif

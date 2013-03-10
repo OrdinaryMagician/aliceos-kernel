@@ -8,7 +8,7 @@
 #include <fs/ramdisk.h>
 #include <memops.h>
 /* img file magic (OS magic + file format magic) */
-static Uint8 img_magic[24] =
+static uint8_t img_magic[24] =
 {
 	'A', 'L', 'I', 'C', 'E', 'O', 'S',
 	0xE3, 0x81, 0xA7, 0xE3, 0x82, 0x8C, /* Hiragana "dere", UTF-8 */
@@ -18,16 +18,16 @@ static Uint8 img_magic[24] =
 /* img file header structure */
 typedef struct
 {
-	Uint8 magic[24];
-	Uint8 flags;
-	Uint8 depth;
-	Uint16 width;
-	Uint16 height;
-	Uint16 palsz;
+	uint8_t magic[24];
+	uint8_t flags;
+	uint8_t depth;
+	uint16_t width;
+	uint16_t height;
+	uint16_t palsz;
 } img_header_t;
 /* header is followed by palette data (if available), then image data */
 /* load an image from the ramdisk */
-Uint8 loadimg( img_t *dest, char *fname )
+uint8_t loadimg( img_t *dest, char *fname )
 {
 	/* there are many error checks here... */
 	if ( !dest )
@@ -37,7 +37,7 @@ Uint8 loadimg( img_t *dest, char *fname )
 		return 1;
 	if ( img->size < sizeof(img_header_t) )
 		return 1;
-	Uint8 *imgdata = (Uint8*)rd_find_data(fname);
+	uint8_t *imgdata = (uint8_t*)rd_find_data(fname);
 	/* verify header magic */
 	img_header_t *hd = (img_header_t*)imgdata;
 	if ( memcmp(&(hd->magic[0]),&img_magic[0],24) )

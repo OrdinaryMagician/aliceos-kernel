@@ -11,15 +11,15 @@
 #include <memops.h>
 #include <printk.h>
 /* internal: current mode keys */
-static Uint8 kbd_cmod  = 0;
-static Uint8 kbd_shift = 0; /* shift pressed? */
-static Uint8 kbd_caps  = 0; /* CRUISE CONTROL ENGAGED? */
+static uint8_t kbd_cmod  = 0;
+static uint8_t kbd_shift = 0; /* shift pressed? */
+static uint8_t kbd_caps  = 0; /* CRUISE CONTROL ENGAGED? */
 /* input handlers */
 static kbd_handler_t kbd_handler[KBD_MAX_HANDLERS];
-static Uint8 kbd_handlers = 0;
+static uint8_t kbd_handlers = 0;
 /* internal: qwerty layout arrays */
 /* key types: 1 normal (printable), 2 special, 3 function */
-static Uint8 kbd_types[128] =
+static uint8_t kbd_types[128] =
 {
 	0,2,1,1,1,1,1,1,
 	1,1,1,1,1,1,1,1,
@@ -39,7 +39,7 @@ static Uint8 kbd_types[128] =
 	2,2,2,2,2,2,2,2,
 };
 /* when preceded by E0 */
-static Uint8 kbd_typesE0[128] =
+static uint8_t kbd_typesE0[128] =
 {
 	0,2,2,2,2,2,2,2,
 	2,2,2,2,2,2,2,2,
@@ -119,7 +119,7 @@ static char kbd_chrE0[128] =
 	0,0,0,0,0,0,0,0,
 };
 /* numeric key codes */
-static Uint16 kbd_keys[128] =
+static uint16_t kbd_keys[128] =
 {
 	KB_NULL,KB_ESC,KB_1,KB_2,KB_3,KB_4,KB_5,KB_6,
 	KB_7,KB_8,KB_9,KB_0,KB_MINUS,KB_PLUS,KB_BKSP,KB_TAB,
@@ -139,7 +139,7 @@ static Uint16 kbd_keys[128] =
 	0xFF78,0xFF79,0xFF7A,0xFF7B,0xFF7C,0xFF7D,0xFF7E,0xFF7F,
 };
 /* when preceded by 0xE0 */
-static Uint16 kbd_keysE0[128] =
+static uint16_t kbd_keysE0[128] =
 {
 	KB_NULL,0xFF81,0xFF82,0xFF83,0xFF84,0xFF85,0xFF86,0xFF87,
 	0xFF88,0xFF89,0xFF8A,0xFF8B,0xFF8C,0xFF8D,0xFF8E,0xFF8F,
@@ -161,7 +161,7 @@ static Uint16 kbd_keysE0[128] =
 /* parse a raw key into a key_t format */
 static void kbd_parsekey( char *key, key_t *pkey )
 {
-	Uint8 i = 0;
+	uint8_t i = 0;
 	if ( key[0] == 0xE1 ) /* damn pause key why are you so long */
 	{
 		pkey->type = 2;
@@ -263,7 +263,7 @@ void kbd_getkey( key_t *key )
 		got[4] = kbd_getch();
 		got[5] = kbd_getch();
 	}
-	memset((Uint8*)key,0,sizeof(key_t));
+	memset((uint8_t*)key,0,sizeof(key_t));
 	kbd_parsekey(got,key);
 }
 static void kbd_basehandler( regs_t *regs )
@@ -271,7 +271,7 @@ static void kbd_basehandler( regs_t *regs )
 	int_enable();
 	key_t parsed;
 	kbd_getkey(&parsed);
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<kbd_handlers; i++ )
 	{
 		kbd_handler_t hnd = kbd_handler[i];
@@ -283,7 +283,7 @@ static void kbd_basehandler( regs_t *regs )
 /* turn on keyboard driver */
 void kbd_on( void )
 {
-	memset((Uint8*)&kbd_handler[0],0,
+	memset((uint8_t*)&kbd_handler[0],0,
 		sizeof(kbd_handler_t)*KBD_MAX_HANDLERS);
 	kbd_handlers = 0;
 	register_irq_handler(KBD_IRQ,kbd_basehandler);
@@ -291,13 +291,13 @@ void kbd_on( void )
 /* reset keyboard */
 void kbd_reset( void )
 {
-	Uint8 tmp = inport_b(KBD_PORT+1);
+	uint8_t tmp = inport_b(KBD_PORT+1);
 	outport_b(KBD_PORT+1,tmp|0x80);
 	outport_b(KBD_PORT+1,tmp&0x7F);
 	inport_b(KBD_PORT+1);
 }
 /* add an input handler */
-Uint8 kbd_addhandler( kbd_handler_t hnd )
+uint8_t kbd_addhandler( kbd_handler_t hnd )
 {
 	if ( kbd_handlers == KBD_MAX_HANDLERS ) /* list full */
 		return 1;
@@ -305,16 +305,16 @@ Uint8 kbd_addhandler( kbd_handler_t hnd )
 	kbd_handlers++;
 	return 0;
 }
-static void kbd_rmhandlerid( Uint8 id )
+static void kbd_rmhandlerid( uint8_t id )
 {
-	memmove((Uint8*)&kbd_handler[id],(Uint8*)&kbd_handler[id+1],
+	memmove((uint8_t*)&kbd_handler[id],(uint8_t*)&kbd_handler[id+1],
 		sizeof(kbd_handler_t)*(kbd_handlers-id));
 	kbd_handlers--;
 }
 /* remove an input handler */
-Uint8 kbd_rmhandler( kbd_handler_t hnd )
+uint8_t kbd_rmhandler( kbd_handler_t hnd )
 {
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<kbd_handlers; i++ )
 	{
 		if ( kbd_handler[i] != hnd )

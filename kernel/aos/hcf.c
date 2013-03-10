@@ -22,7 +22,7 @@ void OHSHI( char *mesg, regs_t *regs )
 	mode_3h.fbsetcursor(0,0);
 	/* Yellow on Red means baaaaaad */
 	mode_3h.fbsetattr(APAL_YELLOW,APAL_MAROON,EXATTR_NOSCR);
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<80; i++ )
 		mode_3h.drawchar(i,0,' ');
 	for ( i=0; i<80; i++ )

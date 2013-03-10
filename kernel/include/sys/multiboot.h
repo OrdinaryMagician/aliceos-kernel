@@ -25,104 +25,104 @@
 /* structures */
 typedef struct
 {
-	Uint32 size;
-	Uint32 addr_l;
-	Uint32 addr_h;
-	Uint32 len_l;
-	Uint32 len_h;
-	Uint32 type;
+	uint32_t size;
+	uint32_t addr_l;
+	uint32_t addr_h;
+	uint32_t len_l;
+	uint32_t len_h;
+	uint32_t type;
 } attribute((packed)) mmap_entry_t;
 typedef struct
 {
-	Uint32 mod_start;
-	Uint32 mod_end;
-	Uint32 cmdline;
-	Uint32 pad;
+	uint32_t mod_start;
+	uint32_t mod_end;
+	uint32_t cmdline;
+	uint32_t pad;
 } attribute((packed)) mbootmod_t;
 typedef struct
 {
-	Uint32 tabsize;
-	Uint32 strsize;
-	Uint32 addr;
-	Uint32 reserved;
+	uint32_t tabsize;
+	uint32_t strsize;
+	uint32_t addr;
+	uint32_t reserved;
 } attribute((packed)) aout_syms_t;
 typedef struct
 {
-	Uint32 num;
-	Uint32 size;
-	Uint32 addr;
-	Uint32 shndx;
+	uint32_t num;
+	uint32_t size;
+	uint32_t addr;
+	uint32_t shndx;
 } attribute((packed)) elf_hdr_t;
 typedef struct
 {
-	Uint32 size;
-	Uint8 drive_number;
-	Uint8 drive_mode;
-	Uint16 drive_cylinders;
-	Uint8 drive_heads;
-	Uint8 drive_sectors;
-	Uint8 *drive_ports;
+	uint32_t size;
+	uint8_t drive_number;
+	uint8_t drive_mode;
+	uint16_t drive_cylinders;
+	uint8_t drive_heads;
+	uint8_t drive_sectors;
+	uint8_t *drive_ports;
 } attribute((packed)) drive_t;
 typedef struct
 {
-	Uint16 version;
-	Uint16 cseg;
-	Uint32 offset;
-	Uint16 cseg_16;
-	Uint16 dseg;
-	Uint16 flags;
-	Uint16 cseg_len;
-	Uint16 cseg_16_len;
-	Uint16 dseg_len;
+	uint16_t version;
+	uint16_t cseg;
+	uint32_t offset;
+	uint16_t cseg_16;
+	uint16_t dseg;
+	uint16_t flags;
+	uint16_t cseg_len;
+	uint16_t cseg_16_len;
+	uint16_t dseg_len;
 } attribute((packed)) apm_table_t;
 typedef struct
 {
-	Uint16 attributes;
-	Uint8 winA,winB;
-	Uint16 granularity;
-	Uint16 winsize;
-	Uint16 segmentA, segmentB;
-	Uint32 realFctPtr;
-	Uint16 pitch;
-	Uint16 Xres, Yres;
-	Uint8 Wchar, Ychar, planes, bpp, banks;
-	Uint8 memory_model, bank_size, image_pages;
-	Uint8 reserved0;
-	Uint8 red_mask, red_position;
-	Uint8 green_mask, green_position;
-	Uint8 blue_mask, blue_position;
-	Uint8 rsv_mask, rsv_position;
-	Uint8 directcolor_attributes;
-	Uint32 physbase;
-	Uint32 reserved1;
-	Uint16 reserved2;
+	uint16_t attributes;
+	uint8_t winA,winB;
+	uint16_t granularity;
+	uint16_t winsize;
+	uint16_t segmentA, segmentB;
+	uint32_t realFctPtr;
+	uint16_t pitch;
+	uint16_t Xres, Yres;
+	uint8_t Wchar, Ychar, planes, bpp, banks;
+	uint8_t memory_model, bank_size, image_pages;
+	uint8_t reserved0;
+	uint8_t red_mask, red_position;
+	uint8_t green_mask, green_position;
+	uint8_t blue_mask, blue_position;
+	uint8_t rsv_mask, rsv_position;
+	uint8_t directcolor_attributes;
+	uint32_t physbase;
+	uint32_t reserved1;
+	uint16_t reserved2;
 } attribute((packed)) vbe_info_t;
 typedef struct
 {
-	Uint32 flags;
-	Uint32 mem_lower;
-	Uint32 mem_upper;
-	Uint32 boot_device;
-	Uint32 cmdline;
-	Uint32 mods_count;
-	Uint32 mods_addr;
+	uint32_t flags;
+	uint32_t mem_lower;
+	uint32_t mem_upper;
+	uint32_t boot_device;
+	uint32_t cmdline;
+	uint32_t mods_count;
+	uint32_t mods_addr;
 	union
 	{
 		aout_syms_t aout;
 		elf_hdr_t elf;
 	} syms;
-	Uint32 mmap_length;
-	Uint32 mmap_addr;
-	Uint32 drives_length;
-	Uint32 drives_addr;
-	Uint32 config_table;
-	Uint32 boot_loader_name;
-	Uint32 apm_table;
-	Uint32 vbe_control_info;
-	Uint32 vbe_mode_info;
-	Uint32 vbe_mode;
-	Uint32 vbe_interface_seg;
-	Uint32 vbe_interface_off;
-	Uint32 vbe_interface_len;
+	uint32_t mmap_length;
+	uint32_t mmap_addr;
+	uint32_t drives_length;
+	uint32_t drives_addr;
+	uint32_t config_table;
+	uint32_t boot_loader_name;
+	uint32_t apm_table;
+	uint32_t vbe_control_info;
+	uint32_t vbe_mode_info;
+	uint32_t vbe_mode;
+	uint32_t vbe_interface_seg;
+	uint32_t vbe_interface_off;
+	uint32_t vbe_interface_len;
 } attribute((packed)) multiboot_t;
 #endif

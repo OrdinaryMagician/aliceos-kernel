@@ -8,12 +8,12 @@
 #define PORT_H
 #include <sys/types.h>
 /* read/write bytes */
-extern Uint8 inport_b( Uint16 port );
-extern void outport_b( Uint16 port, Uint8 data );
+extern uint8_t inport_b( uint16_t port );
+extern void outport_b( uint16_t port, uint8_t data );
 /* read/write words */
-extern Uint16 inport_w( Uint16 port );
-extern void outport_w( Uint16 port, Uint16 data );
+extern uint16_t inport_w( uint16_t port );
+extern void outport_w( uint16_t port, uint16_t data );
 /* read/write "longs" */
-extern Uint32 inport_l( Uint16 port );
-extern void outport_l( Uint16 port, Uint32 data );
+extern uint32_t inport_l( uint16_t port );
+extern void outport_l( uint16_t port, uint32_t data );
 #endif

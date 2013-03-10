@@ -25,15 +25,15 @@
 typedef struct
 {
 	/* Bitfields are phun~ */
-	Uint32 present  : 1;
-	Uint32 rw       : 1;
-	Uint32 user     : 1;
-	Uint32          : 2;
-	Uint32 accessed : 1;
-	Uint32 dirty    : 1;
-	Uint32          : 2;
-	Uint32          : 3;
-	Uint32 frame    :20;
+	uint32_t present  : 1;
+	uint32_t rw       : 1;
+	uint32_t user     : 1;
+	uint32_t          : 2;
+	uint32_t accessed : 1;
+	uint32_t dirty    : 1;
+	uint32_t          : 2;
+	uint32_t          : 3;
+	uint32_t frame    :20;
 } page_t;
 /* 4KB page table */
 typedef struct
@@ -46,12 +46,12 @@ typedef struct
 	/* pointers to each table */
 	ptbl_t *tables[1024];
 	/* physical addresses of each table */
-	Uint32 tablesPhysical[1024];
+	uint32_t tablesPhysical[1024];
 	/* the physical address of the array above */
-	Uint32 physAddr;
+	uint32_t physAddr;
 } pdir_t;
 /* allocate a frame */
-void alloc_frame( page_t *page, Uint8 iskernel, Uint8 iswriteable );
+void alloc_frame( page_t *page, uint8_t iskernel, uint8_t iswriteable );
 /* free a frame */
 void free_frame( page_t *page );
 /* initialize paging */
@@ -59,5 +59,5 @@ void init_paging( void );
 /* loads the specified page directory in CR3 */
 void switch_pdir( pdir_t *newdir );
 /* get a specific page, if make isn't zero, create it if it doesn't exist */
-page_t *get_page( Uint32 addr, Uint8 make, pdir_t *dir );
+page_t *get_page( uint32_t addr, uint8_t make, pdir_t *dir );
 #endif

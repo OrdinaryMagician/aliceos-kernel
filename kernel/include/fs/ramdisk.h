@@ -48,24 +48,24 @@ As a safeguard, at the end of the whole thing there's a trailer composed of:
 #define RDHEAD_SIZ 8
 typedef struct
 {
-	Uint32 magic;
-	Uint32 numents;
+	uint32_t magic;
+	uint32_t numents;
 } rd_header_t;
 #define RDENT_SIZ 264
 typedef struct
 {
 	char name[256];
-	Uint32 start;
-	Uint32 size;
+	uint32_t start;
+	uint32_t size;
 } rd_entry_t;
 /* try to find an entry in the ramdisk by filename */
 rd_entry_t *rd_find( char *fname );
 /* try to find an entry in the ramdisk by filename, return its data address */
-Uint32 rd_find_data( char *fname );
+uint32_t rd_find_data( char *fname );
 /* retrieve an entry by its index number */
-rd_entry_t *rd_entry( Uint32 idx );
+rd_entry_t *rd_entry( uint32_t idx );
 /* retrive the number of entries in the ramdisk */
-Uint32 rd_numents( void );
+uint32_t rd_numents( void );
 /* initialize ramdisk handler */
-Uint8 init_ramdisk( Uint32 start, Uint32 end );
+uint8_t init_ramdisk( uint32_t start, uint32_t end );
 #endif

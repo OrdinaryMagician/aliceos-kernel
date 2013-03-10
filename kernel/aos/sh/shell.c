@@ -15,16 +15,16 @@
 /* internal variables */
 static char *sh_cmdline;
 static char *sh_lcmdline;
-static Uint32 sh_returned;
-static Uint8 sh_enabled;
-static Uint8 sh_executing;
-static Uint32 sh_gotch;
+static uint32_t sh_returned;
+static uint8_t sh_enabled;
+static uint8_t sh_executing;
+static uint32_t sh_gotch;
 /* prototypes */
 static void sh_init( void );
 static void sh_disable( void );
 static void sh_enable( void );
 static char* sh_lastcmd( void );
-static Uint32 sh_lastret( void );
+static uint32_t sh_lastret( void );
 /* shell struct */
 shell_t shell =
 {
@@ -41,8 +41,8 @@ static void printPS1( void )
 /* command parser */
 static void sh_parsecmd( void )
 {
-	Uint32 i;
-	Uint32 argc;
+	uint32_t i;
+	uint32_t argc;
 	char **argv;
 	sh_gotch = 0;
 	/* no command? */
@@ -60,8 +60,8 @@ static void sh_parsecmd( void )
 	while ( *(tk = strtok(tk," ")) )
 		argc++;
 	/* generate parameter array for command */
-	argv = (char**)kmalloc((argc+1)*sizeof(char*));
-	memset((Uint8*)argv,0,(argc+1)*sizeof(char*));
+	argv = kmalloc((argc+1)*sizeof(char*));
+	memset((uint8_t*)argv,0,(argc+1)*sizeof(char*));
 	tk = sh_cmdline;
 	i = 0;
 	while ( *tk && (i<256) )
@@ -69,7 +69,7 @@ static void sh_parsecmd( void )
 		argv[i++] = tk;
 		tk = tk+strlen(tk)+1;
 	}
-	Uint8 found = 0;
+	uint8_t found = 0;
 	for ( i=0; i<SH_NUMCMDS; i++ )
 	{
 		if ( !strcmp(sh_cmds[i]->name,argv[0]) )
@@ -82,7 +82,7 @@ static void sh_parsecmd( void )
 	if ( !found )
 		mode_3h.fbprintf("shell: command not found: %s\n",argv[0]);
 	/* free parameters */
-	kfree((Uint32)argv);
+	kfree(argv);
 	printPS1();
 	sh_executing = 0;
 	return;
@@ -119,8 +119,8 @@ static void sh_getkey( key_t *key )
 		if ( !sh_gotch )
 			return;
 		sh_cmdline[--sh_gotch] = 0;
-		Sint32 cx, cy;
-		Uint16 rx, ry;
+		int32_t cx, cy;
+		uint16_t rx, ry;
 		mode_3h.fbgetcursor(&cx,&cy);
 		mode_3h.fbgetres(&rx,&ry);
 		if ( !cx )
@@ -144,10 +144,10 @@ static void sh_getkey( key_t *key )
 /* Initialize internal shell */
 static void sh_init( void )
 {
-	sh_cmdline = (char*)kmalloc(256);
-	memset((Uint8*)sh_cmdline,0,256);
-	sh_lcmdline = (char*)kmalloc(256);
-	memset((Uint8*)sh_lcmdline,0,256);
+	sh_cmdline = kmalloc(256);
+	memset((uint8_t*)sh_cmdline,0,256);
+	sh_lcmdline = kmalloc(256);
+	memset((uint8_t*)sh_lcmdline,0,256);
 	sh_returned = 0;
 	sh_enabled = 0;
 	sh_executing = 0;
@@ -176,12 +176,12 @@ static void sh_enable( void )
 /* Retrieve the last command typed */
 static char* sh_lastcmd( void )
 {
-	char *toret = (char*)kmalloc(256);
+	char *toret = kmalloc(256);
 	strncpy(toret,sh_lcmdline,256);
 	return toret;
 }
 /* Get the return code of last command */
-static Uint32 sh_lastret( void )
+static uint32_t sh_lastret( void )
 {
 	return sh_returned;
 }

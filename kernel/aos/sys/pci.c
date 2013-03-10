@@ -7,7 +7,7 @@
 #include <sys/pci.h>
 #include <sys/port.h>
 /* pci configuration (read) */
-Uint16 pci_cfg_r( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off )
+uint16_t pci_cfg_r( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off )
 {
 	pci_addr_t addr;
 	addr.zero = 0;
@@ -16,11 +16,11 @@ Uint16 pci_cfg_r( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off )
 	addr.devno = slot;
 	addr.busno = bus;
 	addr.enable = 1;
-	outport_l(PCI_CONF_ADDR,*(Uint32*)&addr);
+	outport_l(PCI_CONF_ADDR,*(uint32_t*)&addr);
 	return (inport_l(PCI_CONF_DATA)>>((off&2)*8))&0xFFFF;
 }
 /* pci configuration (write) */
-void pci_cfg_w( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off, Uint8 data )
+void pci_cfg_w( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off, uint8_t data )
 {
 	pci_addr_t addr;
 	addr.zero = 0;
@@ -29,6 +29,6 @@ void pci_cfg_w( Uint8 bus, Uint8 slot, Uint8 fn, Uint8 off, Uint8 data )
 	addr.devno = slot;
 	addr.busno = bus;
 	addr.enable = 1;
-	outport_l(PCI_CONF_ADDR,*(Uint32*)&addr);
+	outport_l(PCI_CONF_ADDR,*(uint32_t*)&addr);
 	outport_l(PCI_CONF_DATA,data);
 }

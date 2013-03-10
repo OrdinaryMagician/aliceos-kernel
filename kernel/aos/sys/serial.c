@@ -7,7 +7,7 @@
 #include <sys/serial.h>
 #include <sys/port.h>
 #include <sys/helpers.h>
-void serial_on( Uint16 dev )
+void serial_on( uint16_t dev )
 {
 	outport_b(dev+1,0x00);
 	outport_b(dev+3,0x80);
@@ -17,44 +17,44 @@ void serial_on( Uint16 dev )
 	outport_b(dev+2,0xC7);
 	outport_b(dev+4,0x0B);
 }
-Uint8 serial_recv_d( Uint16 dev )
+uint8_t serial_recv_d( uint16_t dev )
 {
 	return inport_b(dev+5)&1;
 }
-char serial_recv( Uint16 dev )
+char serial_recv( uint16_t dev )
 {
 	while ( serial_recv_d(dev) == 0 );
 	return inport_b(dev);
 }
-char serial_recv_async( Uint16 dev )
+char serial_recv_async( uint16_t dev )
 {
 	return inport_b(dev);
 }
-Uint8 serial_transmit_empty( Uint16 dev )
+uint8_t serial_transmit_empty( uint16_t dev )
 {
 	return inport_b(dev+5)&0x20;
 }
-void serial_chr( Uint16 dev, char c )
+void serial_chr( uint16_t dev, char c )
 {
 	while ( serial_transmit_empty(dev) == 0 );
 	outport_b(dev,c);
 }
-void serial_str( Uint16 dev, char *s )
+void serial_str( uint16_t dev, char *s )
 {
 	while ( *s )
 		serial_chr(dev,*(s++));
 }
-void serial_mchr( Uint16 dev, char c, Sint32 i )
+void serial_mchr( uint16_t dev, char c, int32_t i )
 {
 	while ( i-- > 0 )
 		serial_chr(c,dev);
 }
-void serial_uns( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
+void serial_uns( uint16_t dev, uint32_t val, uint16_t width, uint8_t zeropad )
 {
 	if ( !width )
 	{
 		char c[10];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -67,7 +67,7 @@ void serial_uns( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -80,14 +80,14 @@ void serial_uns( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
 			serial_chr(dev,c[--i]);
 	}
 }
-void serial_dec( Uint16 dev, Sint32 val, Uint16 width, Uint8 zeropad )
+void serial_dec( uint16_t dev, int32_t val, uint16_t width, uint8_t zeropad )
 {
-	Uint8 isneg = (val<0);
+	uint8_t isneg = (val<0);
 	val = abs(val);
 	if ( !width )
 	{
 		char c[10];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -102,7 +102,7 @@ void serial_dec( Uint16 dev, Sint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -117,12 +117,12 @@ void serial_dec( Uint16 dev, Sint32 val, Uint16 width, Uint8 zeropad )
 			serial_chr(dev,c[--i]);
 	}
 }
-void serial_hex( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
+void serial_hex( uint16_t dev, uint32_t val, uint16_t width, uint8_t zeropad )
 {
 	if ( !width )
 	{
 		char c[8];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A)
@@ -136,7 +136,7 @@ void serial_hex( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A)
@@ -150,12 +150,12 @@ void serial_hex( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
 			serial_chr(dev,c[--i]);
 	}
 }
-void serial_oct( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
+void serial_oct( uint16_t dev, uint32_t val, uint16_t width, uint8_t zeropad )
 {
 	if ( !width )
 	{
 		char c[11];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] ='0'+(val&0x07);
@@ -168,7 +168,7 @@ void serial_oct( Uint16 dev, Uint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] ='0'+(val&0x07);

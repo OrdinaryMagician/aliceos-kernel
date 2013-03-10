@@ -25,13 +25,13 @@
 /* struct for a font */
 typedef struct
 {
-	Uint8 *data;
-	Uint8 w;
-	Uint8 h;
-	Uint8 flags;
-	Uint8 format;
-	Uint32 limit;
+	uint8_t *data;
+	uint8_t w;
+	uint8_t h;
+	uint8_t flags;
+	uint8_t format;
+	uint32_t limit;
 } fnt_t;
 /* load a font from the ramdisk */
-Uint8 loadfnt( fnt_t *dest, char *fname );
+uint8_t loadfnt( fnt_t *dest, char *fname );
 #endif

@@ -23,7 +23,7 @@ extern void int_enable( void );
 /* sti */
 extern void int_disable( void );
 /* halt kernel */
-extern void khalt( Uint32 err );
+extern void khalt( uint32_t err );
 /* codes for khalt (they are loaded to register eax) */
 #define EXIT_BERP      0x50524542 /* basic error response printer */
 #define EXIT_EXCEPTION 0xDEADBEEF /* after halt and catch fire */

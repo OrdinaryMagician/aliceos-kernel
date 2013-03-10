@@ -26,13 +26,13 @@
 /* struct for an image */
 typedef struct
 {
-	Uint8 *data;
-	Uint8 *pal;
-	Uint16 w;
-	Uint16 h;
-	Uint8 flags;
-	Uint8 depth;
+	uint8_t *data;
+	uint8_t *pal;
+	uint16_t w;
+	uint16_t h;
+	uint8_t flags;
+	uint8_t depth;
 } img_t;
 /* load an image from the ramdisk */
-Uint8 loadimg( img_t *dest, char *fname );
+uint8_t loadimg( img_t *dest, char *fname );
 #endif

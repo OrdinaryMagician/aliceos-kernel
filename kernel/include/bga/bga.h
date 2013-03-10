@@ -11,9 +11,9 @@
 #include <video/loadimg.h>
 #include <video/loadfnt.h>
 /* some necessary functions */
-void setbgareg(Uint8 reg, Uint16 val);
-Uint16 getbgareg(Uint8 reg);
-void bga_bankswitch(Uint8 bank);
+void setbgareg(uint8_t reg, uint16_t val);
+uint16_t getbgareg(uint8_t reg);
+void bga_bankswitch(uint8_t bank);
 /* extended attributes for text drawing */
 #define EXATTR_MASKED  1 /* Zero brightness pixels of font (and background) are
 			    transparent when drawing (NOTE: Will break cursor
@@ -32,12 +32,12 @@ void bga_bankswitch(Uint8 bank);
 /* struct for bga driver, should be similar to vga struct */
 typedef struct
 {
-	Uint16 id; /* identificative number */
+	uint16_t id; /* identificative number */
 	char name[256]; /* identificative name */
-	Uint16 w, h; /* resolution */
-	Uint8 *mem; /* pointer to framebuffer memory */
+	uint16_t w, h; /* resolution */
+	uint8_t *mem; /* pointer to framebuffer memory */
 	/* mode setting */
-	Uint8 (*setmode)( Uint16 w, Uint16 h );
+	uint8_t (*setmode)( uint16_t w, uint16_t h );
 	/* palette setting */
 	void (*setpal)( color_t* pal );
 	void (*getpal)( color_t* pal );
@@ -47,35 +47,35 @@ typedef struct
 	/* clear screen */
 	void (*clear)( void );
 	/* scrolling */
-	void (*hscroll)( Sint32 offset );
-	void (*vscroll)( Sint32 offset );
+	void (*hscroll)( int32_t offset );
+	void (*vscroll)( int32_t offset );
 	/* pixel drawing functions */
-	void (*putpixel)( Uint16 x, Uint16 y, color_t c );
-	color_t (*getpixel)( Uint16 x, Uint16 y );
+	void (*putpixel)( uint16_t x, uint16_t y, color_t c );
+	color_t (*getpixel)( uint16_t x, uint16_t y );
 	/* primitive drawing functions (rect, line, bitmap, char, etc.) */
-	void (*drawrect)( Uint16 x, Uint16 y, Uint16 w, Uint16 h, color_t c );
-	void (*drawhline)( Uint16 x, Uint16 y, Uint16 l, color_t c );
-	void (*drawvline)( Uint16 x, Uint16 y, Uint16 l, color_t c );
-	void (*drawimg)( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy,
-			 Uint16 w, Uint16 h );
-	void (*drawchar)( Uint16 x, Uint16 y, char c );
-	void (*drawwchar)( Uint16 x, Uint16 y, wchar c );
-	void (*drawstring)( Uint16 x, Uint16 y, char *s );
-	void (*drawwstring)( Uint16 x, Uint16 y, wchar *s );
+	void (*drawrect)( uint16_t x, uint16_t y, uint16_t w, uint16_t h, color_t c );
+	void (*drawhline)( uint16_t x, uint16_t y, uint16_t l, color_t c );
+	void (*drawvline)( uint16_t x, uint16_t y, uint16_t l, color_t c );
+	void (*drawimg)( img_t *img, uint16_t x, uint16_t y, uint16_t ox, uint16_t oy,
+			 uint16_t w, uint16_t h );
+	void (*drawchar)( uint16_t x, uint16_t y, char c );
+	void (*drawwchar)( uint16_t x, uint16_t y, wchar c );
+	void (*drawstring)( uint16_t x, uint16_t y, char *s );
+	void (*drawwstring)( uint16_t x, uint16_t y, wchar *s );
 	/* framebuffer (console) management */
-	void (*fbgetres)( Uint16 *cols, Uint16 *rows );
-	void (*fbgetcursor)( Sint32 *col, Sint32 *row );
-	void (*fbsetcursor)( Sint32 col, Sint32 row );
-	void (*fbmovecursor)( Sint32 cols, Sint32 rows );
-	void (*fbcursorvis)( Uint8 on );
+	void (*fbgetres)( uint16_t *cols, uint16_t *rows );
+	void (*fbgetcursor)( int32_t *col, int32_t *row );
+	void (*fbsetcursor)( int32_t col, int32_t row );
+	void (*fbmovecursor)( int32_t cols, int32_t rows );
+	void (*fbcursorvis)( uint8_t on );
 	void (*fbputc)( char c );
 	void (*fbwputc)( wchar c );
 	void (*fbputs)( char *s );
 	void (*fbwputs)( wchar *s );
 	void (*fbprintf)( char *s, ... );
 	void (*fbwprintf)( wchar *s, ... );
-	void (*fbsetattr)( Uint8 fg, Uint8 bg, Uint8 ex );
-	void (*fbgetattr)( Uint8 *fg, Uint8 *bg, Uint8 *ex );
+	void (*fbsetattr)( uint8_t fg, uint8_t bg, uint8_t ex );
+	void (*fbgetattr)( uint8_t *fg, uint8_t *bg, uint8_t *ex );
 } bga_driver_t;
 /* the actual driver struct */
 bga_driver_t bga_drv;

@@ -16,44 +16,44 @@
 #include <memops.h>
 #include <printk.h>
 /* from kmem.c */
-extern Uint32 p_addr;
-extern Uint32 m_addr;
+extern uint32_t p_addr;
+extern uint32_t m_addr;
 /* directories */
 pdir_t *current_directory = NULL;
 pdir_t *kernel_directory = NULL;
 /* bitset of frames */
-Uint32 *frames;
-Uint32 nframes;
+uint32_t *frames;
+uint32_t nframes;
 /* prototypes */
 static void page_fault( regs_t *regs );
 /* set a bit in the bitset */
-static void set_frame( Uint32 addr )
+static void set_frame( uint32_t addr )
 {
-	Uint32 faddr = addr/0x1000;
-	Uint32 idx = faddr/0x20;
-	Uint32 off = faddr%0x20;
+	uint32_t faddr = addr/0x1000;
+	uint32_t idx = faddr/0x20;
+	uint32_t off = faddr%0x20;
 	frames[idx] |= 1<<off;
 }
 /* clear a bit in the bitset */
-static void clr_frame( Uint32 addr )
+static void clr_frame( uint32_t addr )
 {
-	Uint32 faddr = addr/0x1000;
-	Uint32 idx = faddr/0x20;
-	Uint32 off = faddr%0x20;
+	uint32_t faddr = addr/0x1000;
+	uint32_t idx = faddr/0x20;
+	uint32_t off = faddr%0x20;
 	frames[idx] &= ~(1<<off);
 }
 /* test the value of a bit in the bitset */
-static Uint32 chk_frame( Uint32 addr )
+static uint32_t chk_frame( uint32_t addr )
 {
-	Uint32 faddr = addr/0x1000;
-	Uint32 idx = faddr/0x20;
-	Uint32 off = faddr%0x20;
+	uint32_t faddr = addr/0x1000;
+	uint32_t idx = faddr/0x20;
+	uint32_t off = faddr%0x20;
 	return frames[idx]&(1<<off);
 }
 /* find the first free frame, return UINT32_MAX if there are no free frames */
-static Uint32 ffree_frame( void )
+static uint32_t ffree_frame( void )
 {
-	Uint32 i, j;
+	uint32_t i, j;
 	for ( i=0; i<(nframes/0x20); i++ )
 	{
 		if ( frames[i] == 0xFFFFFFFF )
@@ -65,11 +65,11 @@ static Uint32 ffree_frame( void )
 	return UINT32_MAX;
 }
 /* allocate a frame */
-void alloc_frame( page_t *page, Uint8 iskernel, Uint8 iswriteable )
+void alloc_frame( page_t *page, uint8_t iskernel, uint8_t iswriteable )
 {
 	if ( page->frame )
 		return;
-	Uint32 idx = ffree_frame();
+	uint32_t idx = ffree_frame();
 	if ( idx == UINT32_MAX ) /* we're screwed */
 		BERP("No more free frames");
 	/* take it */
@@ -82,7 +82,7 @@ void alloc_frame( page_t *page, Uint8 iskernel, Uint8 iswriteable )
 /* free a frame */
 void free_frame( page_t *page )
 {
-	Uint32 frm = page->frame;
+	uint32_t frm = page->frame;
 	if ( !frm )
 		return;	/* no need to do anything */
 	/* clear 'n stuff */
@@ -93,13 +93,13 @@ void free_frame( page_t *page )
 void init_paging( void )
 {
 	nframes = m_addr/0x1000;
-	frames = (Uint32*)kmalloc(nframes/0x20);
-	memset((Uint8*)frames,0,nframes/0x20);
+	frames = kmalloc(nframes/0x20);
+	memset((uint8_t*)frames,0,nframes/0x20);
 	/* a page directory for the kernel */
-	kernel_directory = (pdir_t*)kmalloc_a(sizeof(pdir_t));
-	memset((Uint8*)kernel_directory,0,sizeof(pdir_t));
+	kernel_directory = kmalloc_a(sizeof(pdir_t));
+	memset((uint8_t*)kernel_directory,0,sizeof(pdir_t));
 	current_directory = kernel_directory;
-	Uint32 i;
+	uint32_t i;
 	/* dynamic allocator frames, pass 1 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		get_page(i,1,kernel_directory);
@@ -117,28 +117,28 @@ void init_paging( void )
 	kdmem_init(KDMEM_ST,KDMEM_SIZ,KDMEM_RESV);
 }
 /* these functions are in pagingasm.s */
-extern void loadcr3( Uint32 phys );
+extern void loadcr3( uint32_t phys );
 extern void enablepaging( void );
-extern Uint32 getfaultaddr( void );
+extern uint32_t getfaultaddr( void );
 /* loads the specified page directory in CR3 */
 void switch_pdir( pdir_t *newdir )
 {
 	current_directory = newdir;
-	loadcr3((Uint32)&newdir->tablesPhysical);
+	loadcr3((uint32_t)&newdir->tablesPhysical);
 	enablepaging();
 }
 /* get a specific page, if make isn't zero, create it if it doesn't exist */
-page_t *get_page( Uint32 addr, Uint8 make, pdir_t *dir )
+page_t *get_page( uint32_t addr, uint8_t make, pdir_t *dir )
 {
 	addr /= 0x1000;
-	Uint32 tidx = addr/0x400;
+	uint32_t tidx = addr/0x400;
 	if ( dir->tables[tidx] )
 		return &dir->tables[tidx]->pages[addr%0x400];
 	if ( make )
 	{
-		Uint32 tmp;
-		dir->tables[tidx] = (ptbl_t*)kmalloc_ap(sizeof(ptbl_t),&tmp);
-		memset((Uint8*)dir->tables[tidx],0,sizeof(ptbl_t));
+		uint32_t tmp;
+		dir->tables[tidx] = kmalloc_ap(sizeof(ptbl_t),&tmp);
+		memset((uint8_t*)dir->tables[tidx],0,sizeof(ptbl_t));
 		dir->tablesPhysical[tidx] = tmp|7; /* present, rw, user */
 		return &dir->tables[tidx]->pages[addr%0x400];
 	}
@@ -149,9 +149,9 @@ static void page_fault( regs_t *regs )
 {
 	/* save registers just in case */
 	regs_t srg;
-	memcpy((Uint8*)&srg,(Uint8*)regs,sizeof(regs_t));
+	memcpy((uint8_t*)&srg,(uint8_t*)regs,sizeof(regs_t));
 	/* get the faulting address */
-	Uint32 fault_addr = getfaultaddr();
+	uint32_t fault_addr = getfaultaddr();
 	char pfmesg[256];
 	strcpy(pfmesg,"SEGMENTATION FAULT");
 	if ( !(srg.errno&1) )
@@ -165,9 +165,9 @@ static void page_fault( regs_t *regs )
 	if ( srg.errno&10 )
 		strcat(pfmesg," [INST]");
 	strcat(pfmesg," AT 0x");
-	Uint32 val = fault_addr;
+	uint32_t val = fault_addr;
 	char digs[8];
-	Sint8 i = 0;
+	int8_t i = 0;
 	do
 	{
 		digs[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A)

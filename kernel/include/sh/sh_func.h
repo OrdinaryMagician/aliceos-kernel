@@ -12,7 +12,7 @@ typedef struct
 {
 	char *name;
 	char *help;
-	Uint32 (*run)( Uint32 argc, char **argv );
+	uint32_t (*run)( uint32_t argc, char **argv );
 } cmd_t;
 #define SH_NUMCMDS 4
 cmd_t* sh_cmds[SH_NUMCMDS];

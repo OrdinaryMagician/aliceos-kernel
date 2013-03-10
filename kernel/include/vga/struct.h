@@ -36,51 +36,51 @@
 /* struct for video mode */
 typedef struct
 {
-	Uint16 id; /* identificative number */
+	uint16_t id; /* identificative number */
 	char name[256]; /* identificative name */
-	Uint16 w, h; /* resolution */
-	Uint8 layout; /* memory access layout (linear or planar) */
-	Uint8 depth; /* number of colors */
-	Uint8 *mem; /* pointer to buffer memory */
+	uint16_t w, h; /* resolution */
+	uint8_t layout; /* memory access layout (linear or planar) */
+	uint8_t depth; /* number of colors */
+	uint8_t *mem; /* pointer to buffer memory */
 	/* mode setting */
 	void (*setmode)( void );
 	/* palette setting */
-	void (*setpal)( Uint8* pal );
-	void (*getpal)( Uint8* pal );
+	void (*setpal)( uint8_t* pal );
+	void (*getpal)( uint8_t* pal );
 	/* font setting */
 	void (*setfont)( fnt_t* fnt );
 	fnt_t* (*getfont)( void );
 	/* clear screen */
 	void (*clear)( void );
 	/* scrolling */
-	void (*hscroll)( Sint32 offset );
-	void (*vscroll)( Sint32 offset );
+	void (*hscroll)( int32_t offset );
+	void (*vscroll)( int32_t offset );
 	/* pixel drawing functions */
-	void (*putpixel)( Uint16 x, Uint16 y, Uint8 c );
-	Uint8 (*getpixel)( Uint16 x, Uint16 y );
+	void (*putpixel)( uint16_t x, uint16_t y, uint8_t c );
+	uint8_t (*getpixel)( uint16_t x, uint16_t y );
 	/* primitive drawing functions (rect, line, bitmap, char, etc.) */
-	void (*drawrect)( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
-	void (*drawhline)( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-	void (*drawvline)( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-	void (*drawimg)( img_t *img, Uint16 x, Uint16 y, Uint16 ox, Uint16 oy,
-			 Uint16 w, Uint16 h, Uint16 palshift );
-	void (*drawchar)( Uint16 x, Uint16 y, char c );
-	void (*drawwchar)( Uint16 x, Uint16 y, wchar c );
-	void (*drawstring)( Uint16 x, Uint16 y, char *s );
-	void (*drawwstring)( Uint16 x, Uint16 y, wchar *s );
+	void (*drawrect)( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c );
+	void (*drawhline)( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
+	void (*drawvline)( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
+	void (*drawimg)( img_t *img, uint16_t x, uint16_t y, uint16_t ox, uint16_t oy,
+			 uint16_t w, uint16_t h, uint16_t palshift );
+	void (*drawchar)( uint16_t x, uint16_t y, char c );
+	void (*drawwchar)( uint16_t x, uint16_t y, wchar c );
+	void (*drawstring)( uint16_t x, uint16_t y, char *s );
+	void (*drawwstring)( uint16_t x, uint16_t y, wchar *s );
 	/* framebuffer (console) management */
-	void (*fbgetres)( Uint16 *cols, Uint16 *rows );
-	void (*fbgetcursor)( Sint32 *col, Sint32 *row );
-	void (*fbsetcursor)( Sint32 col, Sint32 row );
-	void (*fbmovecursor)( Sint32 cols, Sint32 rows );
-	void (*fbcursorvis)( Uint8 on );
+	void (*fbgetres)( uint16_t *cols, uint16_t *rows );
+	void (*fbgetcursor)( int32_t *col, int32_t *row );
+	void (*fbsetcursor)( int32_t col, int32_t row );
+	void (*fbmovecursor)( int32_t cols, int32_t rows );
+	void (*fbcursorvis)( uint8_t on );
 	void (*fbputc)( char c );
 	void (*fbwputc)( wchar c );
 	void (*fbputs)( char *s );
 	void (*fbwputs)( wchar *s );
 	void (*fbprintf)( char *s, ... );
 	void (*fbwprintf)( wchar *s, ... );
-	void (*fbsetattr)( Uint8 fg, Uint8 bg, Uint8 ex );
-	void (*fbgetattr)( Uint8 *fg, Uint8 *bg, Uint8 *ex );
+	void (*fbsetattr)( uint8_t fg, uint8_t bg, uint8_t ex );
+	void (*fbgetattr)( uint8_t *fg, uint8_t *bg, uint8_t *ex );
 } vga_mode_t;
 #endif

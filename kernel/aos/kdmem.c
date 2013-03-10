@@ -12,7 +12,7 @@
 /* in sys/paging.c */
 extern pdir_t *kernel_directory;
 /* in sys/pagingasm.s */
-extern Uint32 pagingenabled( void );
+extern uint8_t pagingenabled( void );
 /*
 	How this memory model works:
 
@@ -37,17 +37,17 @@ extern Uint32 pagingenabled( void );
 /* memory block list */
 static memblk_t *kdmem_list = NULL;
 /* total (virtual) memory range available for allocation */
-static Uint32 kdmem_range[2] = {0x00000000,0xFFFFFFFF};
+static uint32_t kdmem_range[2] = {0x00000000,0xFFFFFFFF};
 /* pile sizes */
-static Uint32 kdmem_psize = 0;
-static Uint32 kdmem_psize_max = 0;
+static uint32_t kdmem_psize = 0;
+static uint32_t kdmem_psize_max = 0;
 /* we're enabled? */
-Uint8 kdmem_enabled = 0;
+uint8_t kdmem_enabled = 0;
 /* find the first gap where we can fit a specific block */
-static Uint32 mblk_findgap( Uint32 sz, Uint8 algn, Uint32 *idx )
+static uint32_t mblk_findgap( uint32_t sz, uint8_t algn, uint32_t *idx )
 {
-	Uint32 i;
-	Uint32 pa = kdmem_range[0], pb = kdmem_range[1];
+	uint32_t i;
+	uint32_t pa = kdmem_range[0], pb = kdmem_range[1];
 	if ( algn )
 		pa = (pa&0xFFFFF000)+0x1000;
 	/* nothing in the list */
@@ -97,13 +97,13 @@ static Uint32 mblk_findgap( Uint32 sz, Uint8 algn, Uint32 *idx )
 	return 0; /* i-it doesn't fit... */
 }
 /* add a memory block to the pile */
-static Uint8 mblk_add( Uint32 idx, Uint32 start, Uint32 end )
+static uint8_t mblk_add( uint32_t idx, uint32_t start, uint32_t end )
 {
 	/* list full */
 	if ( kdmem_psize >= kdmem_psize_max )
 		return 0;
 	if ( idx < kdmem_psize ) /* push everything above */
-		memmove((Uint8*)(kdmem_list+idx+1),(Uint8*)(kdmem_list+idx),
+		memmove((uint8_t*)(kdmem_list+idx+1),(uint8_t*)(kdmem_list+idx),
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	/* put it on the list */
 	kdmem_list[idx].start = start;
@@ -112,7 +112,7 @@ static Uint8 mblk_add( Uint32 idx, Uint32 start, Uint32 end )
 	return 1;
 }
 /* remove a memory block from the pile */
-static Uint8 mblk_rm( Uint32 idx )
+static uint8_t mblk_rm( uint32_t idx )
 {
 	/* if there are no blocks reserved yet */
 	if ( !kdmem_psize )
@@ -121,26 +121,26 @@ static Uint8 mblk_rm( Uint32 idx )
 	if ( idx >= kdmem_psize )
 		return 0;
 	/* zero out this block entry */
-	memset((Uint8*)(kdmem_list+idx),0,sizeof(memblk_t));
+	memset((uint8_t*)(kdmem_list+idx),0,sizeof(memblk_t));
 	if ( idx < --kdmem_psize ) /* push back anything on top if needed */
-		memmove((Uint8*)(kdmem_list+idx),(Uint8*)(kdmem_list+idx+1),
+		memmove((uint8_t*)(kdmem_list+idx),(uint8_t*)(kdmem_list+idx+1),
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	return 1;
 }
 /* find the memory block that starts at a specific address */
-static Uint32 mblk_find( Uint32 addr )
+static uint32_t mblk_find( uint32_t addr )
 {
-	Uint32 i;
+	uint32_t i;
 	for ( i=0; i<kdmem_psize; i++ )
 		if ( kdmem_list[i].start == addr )
 			return i;
 	return UINT32_MAX;
 }
 /* reserve a memory area */
-Uint32 kdalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys ) /* global */
+void *kdalloc_global( uint32_t sz, uint8_t algn, uint32_t *phys ) /* global */
 {
-	Uint32 idx = 0;
-	Uint32 addr = mblk_findgap(sz,algn,&idx);
+	uint32_t idx = 0;
+	uint32_t addr = mblk_findgap(sz,algn,&idx);
 	if ( !addr )
 		return 0; /* no space available */
 	if ( !mblk_add(idx,addr,addr+sz) )
@@ -155,87 +155,87 @@ Uint32 kdalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys ) /* global */
 		else
 			*phys = addr;
 	}
-	return addr;
+	return (void*)addr;
 }
 /* vanilla */
-Uint32 kdalloc( Uint32 sz )
+void *kdalloc( uint32_t sz )
 {
 	return kdalloc_global(sz,0,NULL);
 }
 /* page-aligned */
-Uint32 kdalloc_a( Uint32 sz )
+void *kdalloc_a( uint32_t sz )
 {
 	return kdalloc_global(sz,1,NULL);
 }
 /* return physical address */
-Uint32 kdalloc_p( Uint32 sz, Uint32 *phys )
+void *kdalloc_p( uint32_t sz, uint32_t *phys )
 {
 	return kdalloc_global(sz,0,phys);
 }
 /* page-aligned and return physical address */
-Uint32 kdalloc_ap( Uint32 sz, Uint32 *phys )
+void *kdalloc_ap( uint32_t sz, uint32_t *phys )
 {
 	return kdalloc_global(sz,1,phys);
 }
 /* reallocate (resize) a memory area */
-Uint32 kdrealloc_global( Uint32 prev, Uint32 newsz, Uint8 algn, Uint32 *phys ) /* generic */
+void *kdrealloc_global( void *prev, uint32_t newsz, uint8_t algn, uint32_t *phys ) /* generic */
 {
-	Uint32 blk = mblk_find(prev);
+	uint32_t blk = mblk_find((uint32_t)prev);
 	if ( blk == UINT32_MAX )
 		return 0; /* no block at this address */
-	Uint32 osz = kdmem_list[blk].end-kdmem_list[blk].start;
+	uint32_t osz = kdmem_list[blk].end-kdmem_list[blk].start;
 	if ( !mblk_rm(blk) )
 		return 0;
-	Uint32 naddr = kdalloc_global(newsz,algn,phys);
+	void *naddr = kdalloc_global(newsz,algn,phys);
 	if ( !naddr )
 		return 0;
-	memmove((Uint8*)naddr,(Uint8*)prev,osz);
+	memmove((uint8_t*)naddr,(uint8_t*)prev,osz);
 	return naddr;
 }
 /* vanilla */
-Uint32 kdrealloc( Uint32 prev, Uint32 newsz )
+void *kdrealloc( void *prev, uint32_t newsz )
 {
 	return kdrealloc_global(prev,newsz,0,NULL);
 }
 /* page-aligned */
-Uint32 kdrealloc_a( Uint32 prev, Uint32 newsz )
+void *kdrealloc_a( void *prev, uint32_t newsz )
 {
 	return kdrealloc_global(prev,newsz,1,NULL);
 }
 /* return physical address */
-Uint32 kdrealloc_p( Uint32 prev, Uint32 newsz, Uint32 *phys )
+void *kdrealloc_p( void *prev, uint32_t newsz, uint32_t *phys )
 {
 	return kdrealloc_global(prev,newsz,0,phys);
 }
 /* page-aligned and return physical address */
-Uint32 kdrealloc_ap( Uint32 prev, Uint32 newsz, Uint32 *phys )
+void *kdrealloc_ap( void *prev, uint32_t newsz, uint32_t *phys )
 {
 	return kdrealloc_global(prev,newsz,1,phys);
 }
 /* free a memory area */
-void kdfree( Uint32 a )
+void kdfree( void *a )
 {
-	Uint32 blk = mblk_find(a);
+	uint32_t blk = mblk_find((uint32_t)a);
 	if ( blk == UINT32_MAX )
 		return; /* just ignore everything */
 	mblk_rm(blk);
 }
 /* retrieve used blocks */
-Uint32 kdmem_count( void )
+uint32_t kdmem_count( void )
 {
 	return kdmem_psize;
 }
 /* retrieve total memory used */
-Uint32 kdmem_amount( void )
+uint32_t kdmem_amount( void )
 {
-	Uint32 i;
-	Uint32 mem = 0;
+	uint32_t i;
+	uint32_t mem = 0;
 	for ( i=0; i<kdmem_psize; i++ )
 		mem += kdmem_list[i].end-kdmem_list[i].start;
 	return mem;
 }
 /* initialize dynamic memory allocator */
-void kdmem_init( Uint32 start, Uint32 size, Uint32 psize )
+void kdmem_init( uint32_t start, uint32_t size, uint32_t psize )
 {
 	/* sanity checks */
 	if ( !size )
@@ -249,7 +249,7 @@ void kdmem_init( Uint32 start, Uint32 size, Uint32 psize )
 	/* list is located at the start, followed by the memory area */
 	kdmem_list = (memblk_t*)start;
 	/* will not check if there is enough space available for it */
-	memset((Uint8*)kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
+	memset((uint8_t*)kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
 	kdmem_psize = 0;
 	kdmem_enabled = 1;
 }

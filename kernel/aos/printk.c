@@ -8,11 +8,11 @@
 #include <sys/va_list.h>
 #include <sys/serial.h>
 /* behind-the-scenes function */
-static void vaprintk( Uint16 dev, char *s, va_list args )
+static void vaprintk( uint16_t dev, char *s, va_list args )
 {
-	Uint8 alt;
-	Uint8 zp;
-	Uint16 wide;
+	uint8_t alt;
+	uint8_t zp;
+	uint16_t wide;
 	/* the basic loop */
 	while ( *s )
 	{
@@ -56,13 +56,13 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 			wide = wide*10+(*(s++)-'0');
 		if ( *s == 'd' ) /* signed base 10 integer */
 		{
-			serial_dec(dev,(Sint32)va_arg(args,Sint32),wide,zp);
+			serial_dec(dev,(int32_t)va_arg(args,int32_t),wide,zp);
 			s++;
 			continue;
 		}
 		if ( *s == 'u' ) /* unsigned base 10 integer */
 		{
-			serial_uns(dev,(Uint32)va_arg(args,Uint32),wide,zp);
+			serial_uns(dev,(uint32_t)va_arg(args,uint32_t),wide,zp);
 			s++;
 			continue;
 		}
@@ -70,7 +70,7 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 		{
 			if ( alt )
 				serial_str(dev,"0x");
-			serial_hex(dev,(Uint32)va_arg(args,Uint32),wide,zp);
+			serial_hex(dev,(uint32_t)va_arg(args,uint32_t),wide,zp);
 			s++;
 			continue;
 		}
@@ -78,7 +78,7 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 		{
 			if ( alt )
 				serial_chr(dev,'0');
-			serial_oct(dev,(Uint32)va_arg(args,Uint32),wide,zp);
+			serial_oct(dev,(uint32_t)va_arg(args,uint32_t),wide,zp);
 			s++;
 			continue;
 		}
@@ -87,7 +87,7 @@ static void vaprintk( Uint16 dev, char *s, va_list args )
 	}
 }
 /* printing to a serial device, for debug purposes */
-void printk_s( Uint16 dev, char *s, ... )
+void printk_s( uint16_t dev, char *s, ... )
 {
 	va_list args;
 	va_start(args,s);

@@ -9,9 +9,9 @@
 #include <sys/port.h>
 #include <sys/helpers.h>
 /* plane switch */
-void planeswitch( Uint8 p )
+void planeswitch( uint8_t p )
 {
-	Uint8 pmask;
+	uint8_t pmask;
 	pmask = 1<<(p&3);
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,p);
 	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,pmask);
@@ -19,7 +19,7 @@ void planeswitch( Uint8 p )
 /* blank screen */
 void vgablank( void )
 {
-	Uint8 reg = getvgareg(VGA_SEQ,VGA_SEQ_CMODE);
+	uint8_t reg = getvgareg(VGA_SEQ,VGA_SEQ_CMODE);
 	setvgareg(VGA_SEQ,VGA_SEQ_RESET,0x01);
 	setvgareg(VGA_SEQ,VGA_SEQ_CMODE,reg|(1<<5));
 	setvgareg(VGA_SEQ,VGA_SEQ_RESET,0x03);
@@ -27,7 +27,7 @@ void vgablank( void )
 /* unblank screen */
 void vgaunblank( void )
 {
-	Uint8 reg = getvgareg(VGA_SEQ,VGA_SEQ_CMODE);
+	uint8_t reg = getvgareg(VGA_SEQ,VGA_SEQ_CMODE);
 	setvgareg(VGA_SEQ,VGA_SEQ_RESET,0x01);
 	setvgareg(VGA_SEQ,VGA_SEQ_CMODE,reg&~(1<<5));
 	setvgareg(VGA_SEQ,VGA_SEQ_RESET,0x03);
@@ -38,7 +38,7 @@ void disableblink( void )
 {
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
-	Uint8 reg = inport_b(VGA_AC_R);
+	uint8_t reg = inport_b(VGA_AC_R);
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
 	outport_b(VGA_AC_W,reg&~(1<<3));
@@ -49,7 +49,7 @@ void enableblink( void )
 {
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
-	Uint8 reg = inport_b(VGA_AC_R);
+	uint8_t reg = inport_b(VGA_AC_R);
 	inport_b(VGA_INSTAT1);
 	outport_b(VGA_AC_I,VGA_AC_ATRM);
 	outport_b(VGA_AC_W,reg|(1<<3));

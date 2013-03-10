@@ -13,35 +13,35 @@
 /* in sys/paging.c */
 extern pdir_t *kernel_directory;
 /* in sys/pagingasm.s */
-extern Uint32 pagingenabled( void );
+extern uint8_t pagingenabled( void );
 /* in kdmem.c */
-extern Uint8 kdmem_enabled;
+extern uint8_t kdmem_enabled;
 /* placement address */
-Uint32 p_addr_init = 0;
-Uint32 p_addr = 0;
+uint32_t p_addr_init = 0;
+uint32_t p_addr = 0;
 /* max address */
-Uint32 m_addr = 0;
+uint32_t m_addr = 0;
 /* allocation stats */
-Uint32 alloc_count = 0;
-Uint32 alloc_mem = 0;
+uint32_t alloc_count = 0;
+uint32_t alloc_mem = 0;
 /* gaps to skip (start, end) */
 typedef struct
 {
-	Uint32 start, end;
+	uint32_t start, end;
 } memgap_t;
 memgap_t a_skip[32];
-Uint8 n_skip = 0;
+uint8_t n_skip = 0;
 /* global allocation function */
-Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
+void *kmalloc_global( uint32_t sz, uint8_t algn, uint32_t *phys )
 {
 	if ( kdmem_enabled )
 		return kdalloc_global(sz,algn,phys);
-	Uint32 p_addr_veryold = p_addr;
+	uint32_t p_addr_veryold = p_addr;
 	/* page-align address in case it's not already */
 	if ( algn && p_addr&(0xFFFFF000) )
 		p_addr = (p_addr&0xFFFFF000)+0x1000;
 	/* skip any gaps */
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<n_skip; i++ )
 	{
 		if ( (p_addr >= a_skip[i].start) && (p_addr <= a_skip[i].end) )
@@ -65,70 +65,70 @@ Uint32 kmalloc_global( Uint32 sz, Uint8 algn, Uint32 *phys )
 		else
 			*phys = p_addr;
 	}
-	Uint32 p_addr_old = p_addr;
+	uint32_t p_addr_old = p_addr;
 	p_addr += sz;
 	alloc_count++;
 	alloc_mem += p_addr-p_addr_veryold;
-	return p_addr_old;
+	return (void*)p_addr_old;
 }
 /* page-aligned kmalloc */
-Uint32 kmalloc_a( Uint32 sz )
+void *kmalloc_a( uint32_t sz )
 {
 	return kmalloc_global(sz,1,0);
 }
 /* page-aligned physical kmalloc */
-Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys )
+void *kmalloc_ap( uint32_t sz, uint32_t *phys )
 {
 	return kmalloc_global(sz,1,phys);
 }
 /* physical kmalloc */
-Uint32 kmalloc_p( Uint32 sz, Uint32 *phys )
+void *kmalloc_p( uint32_t sz, uint32_t *phys )
 {
 	return kmalloc_global(sz,0,phys);
 }
 /* the lite version */
-Uint32 kmalloc( Uint32 sz )
+void *kmalloc( uint32_t sz )
 {
 	return kmalloc_global(sz,0,0);
 }
 /* global reallocation function */
-Uint32 krealloc_global( Uint32 prev, Uint32 sz, Uint8 algn, Uint32 *phys )
+void *krealloc_global( void *prev, uint32_t sz, uint8_t algn, uint32_t *phys )
 {
 	if ( kdmem_enabled )
 		return kdrealloc_global(prev,sz,algn,phys);
 	return kmalloc_global(sz,algn,phys);
 }
 /* page-aligned krealloc */
-Uint32 krealloc_a( Uint32 prev, Uint32 sz )
+void *krealloc_a( void *prev, uint32_t sz )
 {
 	return krealloc_global(prev,sz,1,0);
 }
 /* page-aligned physical krealloc */
-Uint32 krealloc_ap( Uint32 prev, Uint32 sz, Uint32 *phys )
+void *krealloc_ap( void *prev, uint32_t sz, uint32_t *phys )
 {
 	return krealloc_global(prev,sz,1,phys);
 }
 /* physical krealloc */
-Uint32 krealloc_p( Uint32 prev, Uint32 sz, Uint32 *phys )
+void *krealloc_p( void *prev, uint32_t sz, uint32_t *phys )
 {
 	return krealloc_global(prev,sz,0,phys);
 }
 /* the lite version */
-Uint32 krealloc( Uint32 prev, Uint32 sz )
+void *krealloc( void *prev, uint32_t sz )
 {
 	return krealloc_global(prev,sz,0,0);
 }
 /* does nothing unless dynamic allocator is initiated */
-void kfree( Uint32 a )
+void kfree( void *a )
 {
 	if ( kdmem_enabled )
 		kdfree(a);
 }
 /* initialize the memory manager */
-void init_kmem( Uint32 iaddr, Uint32 eaddr )
+void init_kmem( uint32_t iaddr, uint32_t eaddr )
 {
 	/* skip any gaps */
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<n_skip; i++ )
 		if ( (iaddr >= a_skip[i].start) && (iaddr <= a_skip[i].end) )
 			iaddr = a_skip[i].end+1;
@@ -137,7 +137,7 @@ void init_kmem( Uint32 iaddr, Uint32 eaddr )
 	m_addr = eaddr;
 }
 /* add a memory gap to skip */
-void kmem_addgap( Uint32 start, Uint32 end )
+void kmem_addgap( uint32_t start, uint32_t end )
 {
 	if ( n_skip == 31 )
 		return;	/* TOO MANY ALREADY */

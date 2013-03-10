@@ -9,9 +9,9 @@
 #include <sys/types.h>
 typedef struct
 {
-	Uint32 gs, fs, es, ds;
-	Uint32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
-	Uint32 intno, errno;
-	Uint32 eip, cs, eflags, uesp, ss;
+	uint32_t gs, fs, es, ds;
+	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+	uint32_t intno, errno;
+	uint32_t eip, cs, eflags, uesp, ss;
 } regs_t;
 #endif

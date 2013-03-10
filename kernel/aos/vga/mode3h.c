@@ -13,45 +13,45 @@
 #include <vga/vgafont.h>
 #include <memops.h>
 /* mode 3h variables */
-static Uint16 *m3h_mem = (Uint16*)0xB8000; /* memory area */
+static uint16_t *m3h_mem = (uint16_t*)0xB8000; /* memory area */
 static fnt_t m3h_fnt; /* font (currently empty) */
-static Sint32 m3h_cx = 0, m3h_cy = 0; /* cursor position for text */
-static Uint8 m3h_cv = 1; /* cursor visibility for text */
-static Uint16 m3h_fbw = 80, m3h_fbh = 25; /* text columns and rows */
-static Uint8 m3h_attrs[3] = {7,0,0}; /* current text attributes */
+static int32_t m3h_cx = 0, m3h_cy = 0; /* cursor position for text */
+static uint8_t m3h_cv = 1; /* cursor visibility for text */
+static uint16_t m3h_fbw = 80, m3h_fbh = 25; /* text columns and rows */
+static uint8_t m3h_attrs[3] = {7,0,0}; /* current text attributes */
 /* mode 3h function prototypes */
 static void m3h_setmode( void );
-static void m3h_setpal( Uint8* pal );
-static void m3h_getpal( Uint8* pal );
+static void m3h_setpal( uint8_t* pal );
+static void m3h_getpal( uint8_t* pal );
 static void m3h_setfont( fnt_t* fnt );
 static fnt_t* m3h_getfont( void );
 static void m3h_clear( void );
-static void m3h_hscroll( Sint32 offset );
-static void m3h_vscroll( Sint32 offset );
-static void m3h_putpixel( Uint16 x, Uint16 y, Uint8 c );
-static Uint8 m3h_getpixel( Uint16 x, Uint16 y );
-static void m3h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c );
-static void m3h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-static void m3h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c );
-static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox,
-			 Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift );
-static void m3h_drawchar( Uint16 x, Uint16 y, char c );
-static void m3h_drawwchar( Uint16 x, Uint16 y, wchar c );
-static void m3h_drawstring( Uint16 x, Uint16 y, char *s );
-static void m3h_drawwstring( Uint16 x, Uint16 y, wchar *s );
-static void m3h_fbgetres( Uint16 *cols, Uint16 *rows );
-static void m3h_fbgetcursor( Sint32 *col, Sint32 *row );
-static void m3h_fbsetcursor( Sint32 col, Sint32 row );
-static void m3h_fbmovecursor( Sint32 cols, Sint32 rows );
-static void m3h_fbcursorvis( Uint8 on );
+static void m3h_hscroll( int32_t offset );
+static void m3h_vscroll( int32_t offset );
+static void m3h_putpixel( uint16_t x, uint16_t y, uint8_t c );
+static uint8_t m3h_getpixel( uint16_t x, uint16_t y );
+static void m3h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c );
+static void m3h_drawhline( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
+static void m3h_drawvline( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
+static void m3h_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
+			 uint16_t oy, uint16_t w, uint16_t h, uint16_t palshift );
+static void m3h_drawchar( uint16_t x, uint16_t y, char c );
+static void m3h_drawwchar( uint16_t x, uint16_t y, wchar c );
+static void m3h_drawstring( uint16_t x, uint16_t y, char *s );
+static void m3h_drawwstring( uint16_t x, uint16_t y, wchar *s );
+static void m3h_fbgetres( uint16_t *cols, uint16_t *rows );
+static void m3h_fbgetcursor( int32_t *col, int32_t *row );
+static void m3h_fbsetcursor( int32_t col, int32_t row );
+static void m3h_fbmovecursor( int32_t cols, int32_t rows );
+static void m3h_fbcursorvis( uint8_t on );
 static void m3h_fbputc( char c );
 static void m3h_fbwputc( wchar c );
 static void m3h_fbputs( char *s );
 static void m3h_fbwputs( wchar *s );
 static void m3h_fbprintf( char *s, ... );
 static void m3h_fbwprintf( wchar *s, ... );
-static void m3h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex );
-static void m3h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex );
+static void m3h_fbsetattr( uint8_t fg, uint8_t bg, uint8_t ex );
+static void m3h_fbgetattr( uint8_t *fg, uint8_t *bg, uint8_t *ex );
 /* mode 3h struct */
 vga_mode_t mode_3h =
 {
@@ -61,7 +61,7 @@ vga_mode_t mode_3h =
 	.h = 50,
 	.layout = LAYOUT_TEXT,
 	.depth = DEPTH_16COLOR,
-	.mem = (Uint8*)0xB8000,
+	.mem = (uint8_t*)0xB8000,
 	.setmode = m3h_setmode,
 	.setpal = m3h_setpal,
 	.getpal = m3h_setpal,
@@ -98,7 +98,7 @@ vga_mode_t mode_3h =
 static void m3h_setmode( void )
 {
 	int i;
-	Uint8 regs[] =
+	uint8_t regs[] =
 	{
 		/* MISC */
 		0x63,
@@ -118,7 +118,7 @@ static void m3h_setmode( void )
 		0x0C, 0x00, 0x0F, 0x08, 0x00,
 	};
 	int rg = 0;
-	Uint8 reg;
+	uint8_t reg;
 	/* MISC */
 	outport_b(VGA_MSCOUTW,regs[rg]);
 	rg++;
@@ -154,7 +154,7 @@ static void m3h_setmode( void )
 	/* clear video memory */
 	memsetw(m3h_mem,0x00,2000);
 }
-static void m3h_setpal( Uint8* pal )
+static void m3h_setpal( uint8_t* pal )
 {
 	int i;
 	/* CGA->EGA mapping */
@@ -167,7 +167,7 @@ static void m3h_setpal( Uint8* pal )
 		outport_b(VGA_DAC_DATA,(*pal++));
 	}
 }
-static void m3h_getpal( Uint8* pal )
+static void m3h_getpal( uint8_t* pal )
 {
 	int i;
 	/* CGA->EGA mapping */
@@ -194,7 +194,7 @@ static void m3h_clear( void )
 {
 	memsetw(m3h_mem,0x0F00,2000);
 }
-static void m3h_hscroll( Sint32 offset )
+static void m3h_hscroll( int32_t offset )
 {
 	/* noscroll */
 	if ( !offset )
@@ -205,7 +205,7 @@ static void m3h_hscroll( Sint32 offset )
 		memsetw(m3h_mem,0,2000);
 		return;
 	}
-	Uint16 ln;
+	uint16_t ln;
 	if ( offset > 0 )
 	{
 		for ( ln=0; ln<m3h_fbh; ln++ )
@@ -227,7 +227,7 @@ static void m3h_hscroll( Sint32 offset )
 		}
 	}
 }
-static void m3h_vscroll( Sint32 offset )
+static void m3h_vscroll( int32_t offset )
 {
 	/* noscroll */
 	if ( !offset )
@@ -254,12 +254,12 @@ static void m3h_vscroll( Sint32 offset )
 			offset*m3h_fbw);
 	}
 }
-static void m3h_putpixel( Uint16 x, Uint16 y, Uint8 c )
+static void m3h_putpixel( uint16_t x, uint16_t y, uint8_t c )
 {
 	/* bloxel, actually */
 	x %= mode_3h.w;
 	y %= mode_3h.h;
-	Uint16 *pair = m3h_mem+x+(y/2)*mode_3h.w;
+	uint16_t *pair = m3h_mem+x+(y/2)*mode_3h.w;
 	if ( c > 0x0F )
 		return;
 	if ( ((*pair)&0x00FF) != 0x00DF )
@@ -267,30 +267,30 @@ static void m3h_putpixel( Uint16 x, Uint16 y, Uint8 c )
 	if ( y%2 )
 	{
 		*pair &= 0x0F00;
-		*pair |= (Uint16)c<<12;
+		*pair |= (uint16_t)c<<12;
 	}
 	else
 	{
 		*pair &= 0xF000;
-		*pair |= (Uint16)c<<8;
+		*pair |= (uint16_t)c<<8;
 	}
 	*pair |= 0x00DF;
 }
-static Uint8 m3h_getpixel( Uint16 x, Uint16 y )
+static uint8_t m3h_getpixel( uint16_t x, uint16_t y )
 {
 	/* bloxel, actually */
 	x %= mode_3h.w;
 	y %= mode_3h.h;
-	Uint16 *pair = m3h_mem+x+(y/2)*mode_3h.w;
+	uint16_t *pair = m3h_mem+x+(y/2)*mode_3h.w;
 	if ( y%2 )
 		return ((*pair)&0xF000)>>12;
 	else
 		return ((*pair)&0x0F00)>>8;
 }
-static void m3h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
+static void m3h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c )
 {
-	Uint16 px, py;
-	Uint16 lx, ly;
+	uint16_t px, py;
+	uint16_t lx, ly;
 	px = x;
 	py = y;
 	lx = x+w;
@@ -304,26 +304,26 @@ static void m3h_drawrect( Uint16 x, Uint16 y, Uint16 w, Uint16 h, Uint8 c )
 		py++;
 	}
 }
-static void m3h_drawhline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
+static void m3h_drawhline( uint16_t x, uint16_t y, uint16_t l, uint8_t c )
 {
-	Uint16 px;
-	Uint16 lx;
+	uint16_t px;
+	uint16_t lx;
 	px = x;
 	lx = x+l;
 	while ( px < lx )
 		m3h_putpixel(px++,y,c);
 }
-static void m3h_drawvline( Uint16 x, Uint16 y, Uint16 l, Uint8 c )
+static void m3h_drawvline( uint16_t x, uint16_t y, uint16_t l, uint8_t c )
 {
-	Uint16 py;
-	Uint16 ly;
+	uint16_t py;
+	uint16_t ly;
 	py = y;
 	ly = y+l;
 	while ( py < ly )
 		m3h_putpixel(x,py++,c);
 }
-static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox,
-			 Uint16 oy, Uint16 w, Uint16 h, Uint16 palshift )
+static void m3h_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
+			 uint16_t oy, uint16_t w, uint16_t h, uint16_t palshift )
 {
 	if ( img->depth != IMG_DP_16COL )
 	{
@@ -331,11 +331,11 @@ static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox,
 		m3h_drawrect(x,y,w,h,1);
 		return;
 	}
-	Uint16 px, py;
-	Uint16 lx, ly;
-	Uint16 iw, ih;
-	Uint16 ix, iy;
-	Uint8 c;
+	uint16_t px, py;
+	uint16_t lx, ly;
+	uint16_t iw, ih;
+	uint16_t ix, iy;
+	uint8_t c;
 	iw = img->w;
 	ih = img->h;
 	px = x;
@@ -363,12 +363,12 @@ static void m3h_drawimg( img_t *img, Uint16 x, Uint16 y, Uint16 ox,
 			iy = oy;
 	}
 }
-static void m3h_drawchar( Uint16 x, Uint16 y, char c )
+static void m3h_drawchar( uint16_t x, uint16_t y, char c )
 {
-	Uint16 px, py;
+	uint16_t px, py;
 	px = x;
 	py = y;
-	Uint8 att[2];
+	uint8_t att[2];
 	att[0] = m3h_attrs[0];
 	att[1] = m3h_attrs[1];
 	if ( m3h_attrs[2]&EXATTR_REVBG )
@@ -381,30 +381,30 @@ static void m3h_drawchar( Uint16 x, Uint16 y, char c )
 	att[1] &= 0x0F;
 	m3h_mem[px+(py*m3h_fbw)] = (att[1]<<12)|(att[0]<<8)|c;
 }
-static void m3h_drawwchar( Uint16 x, Uint16 y, wchar c )
+static void m3h_drawwchar( uint16_t x, uint16_t y, wchar c )
 {
 	return;	/* not supported */
 }
-static void m3h_drawstring( Uint16 x, Uint16 y, char *s )
+static void m3h_drawstring( uint16_t x, uint16_t y, char *s )
 {
 	while ( *s )
 		m3h_drawchar((x++),y,*(s++));
 }
-static void m3h_drawwstring( Uint16 x, Uint16 y, wchar *s )
+static void m3h_drawwstring( uint16_t x, uint16_t y, wchar *s )
 {
 	return;	/* not supported */
 }
-static void m3h_fbgetres( Uint16 *cols, Uint16 *rows )
+static void m3h_fbgetres( uint16_t *cols, uint16_t *rows )
 {
 	*cols = m3h_fbw;
 	*rows = m3h_fbh;
 }
-static void m3h_fbgetcursor( Sint32 *col, Sint32 *row )
+static void m3h_fbgetcursor( int32_t *col, int32_t *row )
 {
 	*col = m3h_cx;
 	*row = m3h_cy;
 }
-static void m3h_fbsetcursor( Sint32 col, Sint32 row )
+static void m3h_fbsetcursor( int32_t col, int32_t row )
 {
 	while ( col >= m3h_fbw )
 		col -= m3h_fbw;
@@ -416,13 +416,13 @@ static void m3h_fbsetcursor( Sint32 col, Sint32 row )
 		row += m3h_fbh;
 	m3h_cx = col;
 	m3h_cy = row;
-	Uint16 cpos = col+(row*m3h_fbw);
+	uint16_t cpos = col+(row*m3h_fbw);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCH,cpos>>8);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCL,cpos);
 }
-static void m3h_fbmovecursor( Sint32 cols, Sint32 rows )
+static void m3h_fbmovecursor( int32_t cols, int32_t rows )
 {
-	Sint32 px, py;
+	int32_t px, py;
 	px = m3h_cx+cols;
 	py = m3h_cy+rows;
 	while ( px >= m3h_fbw )
@@ -435,14 +435,14 @@ static void m3h_fbmovecursor( Sint32 cols, Sint32 rows )
 		py += m3h_fbh;
 	m3h_cx = px;
 	m3h_cy = py;
-	Uint16 cpos = m3h_cx+(m3h_cy*m3h_fbw);
+	uint16_t cpos = m3h_cx+(m3h_cy*m3h_fbw);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCH,cpos>>8);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCL,cpos);
 }
-static void m3h_fbcursorvis( Uint8 on )
+static void m3h_fbcursorvis( uint8_t on )
 {
 	m3h_cv = on&1;
-	Uint8 reg;
+	uint8_t reg;
 	if ( m3h_cv )
 	{
 		reg = getvgareg(VGA_CRTC,VGA_CRTC_CSRSTR)&~(1<<5);
@@ -481,7 +481,7 @@ static void m3h_fbputc( char c )
 		m3h_vscroll(-1);
 		m3h_cy--;
 	}
-	Uint16 cpos = m3h_cx+(m3h_cy*m3h_fbw);
+	uint16_t cpos = m3h_cx+(m3h_cy*m3h_fbw);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCH,cpos>>8);
 	setvgareg(VGA_CRTC,VGA_CRTC_CSRLCL,cpos);
 }
@@ -498,12 +498,12 @@ static void m3h_fbwputs( wchar *s )
 {
 	return;	/* not supported */
 }
-static Uint32 m3h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
+static uint32_t m3h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg, uint8_t oex )
 {
 	char *os = s;
-	Uint8 col = obg;
-	Uint8 nex = oex;
-	Uint8 sh = 0;
+	uint8_t col = obg;
+	uint8_t nex = oex;
+	uint8_t sh = 0;
 	if ( ((*s >= '0') && (*s <= '9')) || ((*s >= 'A') && (*s <= 'F'))
 		 || (*s == '-') )
 	{
@@ -535,14 +535,14 @@ static Uint32 m3h_vafbprintf_sattr( char *s, Uint8 ofg, Uint8 obg, Uint8 oex )
 		sh++;
 	}
 	m3h_fbsetattr(col&0x0F,(col>>4)&0x0F,nex);
-	return (Uint32)s-(Uint32)os;
+	return (uint32_t)s-(uint32_t)os;
 }
-static Uint32 m3h_vafbprintf_curmv( char *s )
+static uint32_t m3h_vafbprintf_curmv( char *s )
 {
 	char *os = s;
-	Uint8 neg = 0;
-	Sint32 x = 0;
-	Sint32 y = 0;
+	uint8_t neg = 0;
+	int32_t x = 0;
+	int32_t y = 0;
 	if ( *s == '-' )
 	{
 		neg = 1;
@@ -567,13 +567,13 @@ static Uint32 m3h_vafbprintf_curmv( char *s )
 			y *= -1;
 	}
 	m3h_fbmovecursor(x,y);
-	return (Uint32)s-(Uint32)os;
+	return (uint32_t)s-(uint32_t)os;
 }
-static Uint32 m3h_vafbprintf_curset( char *s, Sint32 y )
+static uint32_t m3h_vafbprintf_curset( char *s, int32_t y )
 {
 	char *os = s;
-	Uint8 neg = 0;
-	Sint32 x = 0;
+	uint8_t neg = 0;
+	int32_t x = 0;
 	if ( *s == '-' )
 	{
 		neg = 1;
@@ -599,14 +599,14 @@ static Uint32 m3h_vafbprintf_curset( char *s, Sint32 y )
 			y *= -1;
 	}
 	m3h_fbsetcursor(x,y);
-	return (Uint32)s-(Uint32)os;
+	return (uint32_t)s-(uint32_t)os;
 }
-static void m3h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
+static void m3h_fbputu( uint32_t val, uint16_t width, uint8_t zeropad )
 {
 	if ( !width )
 	{
 		char c[10];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -619,7 +619,7 @@ static void m3h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -632,14 +632,14 @@ static void m3h_fbputu( Uint32 val, Uint16 width, Uint8 zeropad )
 			m3h_fbputc(c[--i]);
 	}
 }
-static void m3h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
+static void m3h_fbputd( int32_t val, uint16_t width, uint8_t zeropad )
 {
-	Uint8 isneg = (val<0);
+	uint8_t isneg = (val<0);
 	val = abs(val);
 	if ( !width )
 	{
 		char c[10];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -654,7 +654,7 @@ static void m3h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+val%10;
@@ -669,12 +669,12 @@ static void m3h_fbputd( Sint32 val, Uint16 width, Uint8 zeropad )
 			m3h_fbputc(c[--i]);
 	}
 }
-static void m3h_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
+static void m3h_fbputh( uint32_t val, uint16_t width, uint8_t zeropad )
 {
 	if ( !width )
 	{
 		char c[8];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A)
@@ -688,7 +688,7 @@ static void m3h_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = ((val&0x0F)>0x09)?('A'+(val&0x0F)-0x0A)
@@ -702,12 +702,12 @@ static void m3h_fbputh( Uint32 val, Uint16 width, Uint8 zeropad )
 			m3h_fbputc(c[--i]);
 	}
 }
-static void m3h_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
+static void m3h_fbputo( uint32_t val, uint16_t width, uint8_t zeropad )
 {
 	if ( !width )
 	{
 		char c[11];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+(val&0x07);
@@ -720,7 +720,7 @@ static void m3h_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
 	else
 	{
 		char c[width];
-		Sint32 i = 0;
+		int32_t i = 0;
 		do
 		{
 			c[i++] = '0'+(val&0x07);
@@ -735,11 +735,11 @@ static void m3h_fbputo( Uint32 val, Uint16 width, Uint8 zeropad )
 }
 static void m3h_vafbprintf( char *s, va_list args )
 {
-	Uint8 fg, bg, ex;
-	Sint32 x, y;
-	Uint8 alt;
-	Uint8 zp;
-	Uint16 wide;
+	uint8_t fg, bg, ex;
+	int32_t x, y;
+	uint8_t alt;
+	uint8_t zp;
+	uint16_t wide;
 	/* base loop */
 	while ( *s )
 	{
@@ -797,19 +797,19 @@ static void m3h_vafbprintf( char *s, va_list args )
 		}
 		if ( *s == '[' ) /* attribute change */
 		{
-			Uint32 skip = m3h_vafbprintf_sattr(++s,fg,bg,ex);
+			uint32_t skip = m3h_vafbprintf_sattr(++s,fg,bg,ex);
 			s += skip;
 			continue;
 		}
 		if ( *s == '(' ) /* cursor move */
 		{
-			Uint32 skip = m3h_vafbprintf_curmv(++s);
+			uint32_t skip = m3h_vafbprintf_curmv(++s);
 			s += skip;
 			continue;
 		}
 		if ( *s == '{' ) /* cursor set */
 		{
-			Uint32 skip = m3h_vafbprintf_curset(++s,y);
+			uint32_t skip = m3h_vafbprintf_curset(++s,y);
 			s += skip;
 			continue;
 		}
@@ -817,13 +817,13 @@ static void m3h_vafbprintf( char *s, va_list args )
 			wide = wide*10+(*(s++)-'0');
 		if ( *s == 'd' ) /* signed base 10 integer */
 		{
-			m3h_fbputd((Sint32)va_arg(args,Sint32),wide,zp);
+			m3h_fbputd((int32_t)va_arg(args,int32_t),wide,zp);
 			s++;
 			continue;
 		}
 		if ( *s == 'u' ) /* unsigned base 10 integer */
 		{
-			m3h_fbputu((Uint32)va_arg(args,Uint32),wide,zp);
+			m3h_fbputu((uint32_t)va_arg(args,uint32_t),wide,zp);
 			s++;
 			continue;
 		}
@@ -831,7 +831,7 @@ static void m3h_vafbprintf( char *s, va_list args )
 		{
 			if ( alt )
 				m3h_fbputs("0x");
-			m3h_fbputh((Uint32)va_arg(args,Uint32),wide,zp);
+			m3h_fbputh((uint32_t)va_arg(args,uint32_t),wide,zp);
 			s++;
 			continue;
 		}
@@ -839,7 +839,7 @@ static void m3h_vafbprintf( char *s, va_list args )
 		{
 			if ( alt )
 				m3h_fbputc('0');
-			m3h_fbputo((Uint32)va_arg(args,Uint32),wide,zp);
+			m3h_fbputo((uint32_t)va_arg(args,uint32_t),wide,zp);
 			s++;
 			continue;
 		}
@@ -858,13 +858,13 @@ static void m3h_fbwprintf( wchar *s, ... )
 {
 	return;	/* not supported */
 }
-static void m3h_fbsetattr( Uint8 fg, Uint8 bg, Uint8 ex )
+static void m3h_fbsetattr( uint8_t fg, uint8_t bg, uint8_t ex )
 {
 	m3h_attrs[0] = fg;
 	m3h_attrs[1] = bg;
 	m3h_attrs[2] = ex;
 }
-static void m3h_fbgetattr( Uint8 *fg, Uint8 *bg, Uint8 *ex )
+static void m3h_fbgetattr( uint8_t *fg, uint8_t *bg, uint8_t *ex )
 {
 	*fg = m3h_attrs[0];
 	*bg = m3h_attrs[1];

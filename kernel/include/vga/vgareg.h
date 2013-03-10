@@ -94,6 +94,6 @@
 #define VGA_INSTAT0 0x3C2 /* 0 */
 #define VGA_INSTAT1 0x3DA /* 1 */
 /* set the value of a VGA register, return previous value */
-Uint8 setvgareg( Uint16 port, Uint8 index, Uint8 value );
+uint8_t setvgareg( uint16_t port, uint8_t index, uint8_t value );
 /* get the value of a VGA register */
-Uint8 getvgareg( Uint16 port, Uint8 index );
+uint8_t getvgareg( uint16_t port, uint8_t index );

@@ -11,7 +11,7 @@
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 /* panic in the style of a nokinan machine basic error response printer */
-void berp( const char *message, const char *file, Uint32 line )
+void berp( const char *message, const char *file, uint32_t line )
 {
 	int_disable();
 	/* fall back to text mode */

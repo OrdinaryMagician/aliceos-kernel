@@ -6,9 +6,9 @@
 */
 #include <sys/cmos.h>
 #include <sys/port.h>
-void cmos_dump( Uint8 *here )
+void cmos_dump( uint8_t *here )
 {
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<128; i++ )
 	{
 		outport_b(0x70,i);

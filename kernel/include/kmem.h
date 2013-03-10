@@ -8,21 +8,21 @@
 #define KMEM_H
 #include <sys/types.h>
 /* memory allocation functions */
-Uint32 kmalloc_global( Uint32 sz, Uint8 alg, Uint32 *phys );
-Uint32 kmalloc_a( Uint32 sz );
-Uint32 kmalloc_ap( Uint32 sz, Uint32 *phys );
-Uint32 kmalloc_p( Uint32 sz, Uint32 *phys );
-Uint32 kmalloc( Uint32 sz );
-Uint32 krealloc_global( Uint32 prev, Uint32 sz, Uint8 alg, Uint32 *phys );
-Uint32 krealloc_a( Uint32 prev, Uint32 sz );
-Uint32 krealloc_ap( Uint32 prev, Uint32 sz, Uint32 *phys );
-Uint32 krealloc_p( Uint32 prev, Uint32 sz, Uint32 *phys );
-Uint32 krealloc( Uint32 prev, Uint32 sz );
-void kfree( Uint32 a );
+void *kmalloc_global( uint32_t sz, uint8_t alg, uint32_t *phys );
+void *kmalloc_a( uint32_t sz );
+void *kmalloc_ap( uint32_t sz, uint32_t *phys );
+void *kmalloc_p( uint32_t sz, uint32_t *phys );
+void *kmalloc( uint32_t sz );
+void *krealloc_global( void *prev, uint32_t sz, uint8_t alg, uint32_t *phys );
+void *krealloc_a( void *prev, uint32_t sz );
+void *krealloc_ap( void *prev, uint32_t sz, uint32_t *phys );
+void *krealloc_p( void *prev, uint32_t sz, uint32_t *phys );
+void *krealloc( void *prev, uint32_t sz );
+void kfree( void *a );
 /* initialize the memory manager */
-void init_kmem( Uint32 iaddr, Uint32 eaddr );
+void init_kmem( uint32_t iaddr, uint32_t eaddr );
 /* add a memory gap to skip */
-void kmem_addgap( Uint32 start, Uint32 end );
+void kmem_addgap( uint32_t start, uint32_t end );
 /* current addr variables values */
-void kmem_addrs( Uint32 *pai, Uint32 *pa, Uint32 *ma );
+void kmem_addrs( uint32_t *pai, uint32_t *pa, uint32_t *ma );
 #endif

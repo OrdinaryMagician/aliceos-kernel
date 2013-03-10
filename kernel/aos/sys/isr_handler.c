@@ -13,14 +13,14 @@
 /* handler listing */
 static isr_handler_t isr_handlers[32];
 /* register an ISR handler function */
-void register_isr_handler( Uint8 n, isr_handler_t handler )
+void register_isr_handler( uint8_t n, isr_handler_t handler )
 {
 	isr_handlers[n] = handler;
 }
 /* clear ISR handlers */
 void isr_clearhandlers( void )
 {
-	memset((Uint8*)&isr_handlers[0],0,sizeof(isr_handler_t)*32);
+	memset((uint8_t*)&isr_handlers[0],0,sizeof(isr_handler_t)*32);
 }
 /* the handler itself */
 void isr_handler( regs_t *regs )

@@ -72,29 +72,31 @@ void demo_kdmem( void )
 	char *test2;
 	char *test3;
 	char *test4;
-	Uint32 delay;
-	Uint32 addrs[1024];
-	Uint32 i;
+	uint32_t delay;
+	char *addrs[1024];
+	uint32_t i;
 	/* we already assume we're in mode 3h since boot */
 	mode_3h.fbprintf("%[0FCorrectness test\n");
 	mode_3h.fbprintf("%[07 allocate test1 (4)\n");
-	test1 = (char*)kdalloc(4);
-	mode_3h.fbprintf("%[08  test1 %#08x\n",(Uint32)test1);
+	test1 = kdalloc(4);
+	mode_3h.fbprintf("%[08  test1 %#08x\n",(uint32_t)test1);
 	mode_3h.fbprintf("%[07 allocate test2 (8)\n");
-	test2 = (char*)kdalloc(8);
-	mode_3h.fbprintf("%[08  test2 %#08x\n",(Uint32)test2);
+	test2 = kdalloc(8);
+	mode_3h.fbprintf("%[08  test2 %#08x\n",(uint32_t)test2);
 	mode_3h.fbprintf("%[07 allocate test3 (16)\n");
-	test3 = (char*)kdalloc(16);
-	mode_3h.fbprintf("%[08  test3 %#08x\n",(Uint32)test3);
+	test3 = kdalloc(16);
+	mode_3h.fbprintf("%[08  test3 %#08x\n",(uint32_t)test3);
 	mode_3h.fbprintf("%[07 free test2\n");
-	kdfree((Uint32)test2);
+	kdfree(test2);
 	mode_3h.fbprintf("%[07 reallocate test1 (32)\n");
-	test1 = (char*)kdrealloc((Uint32)test1,32);
-	mode_3h.fbprintf("%[08  test1 %#08x\n",(Uint32)test1);
+	test1 = kdrealloc(test1,32);
+	mode_3h.fbprintf("%[08  test1 %#08x\n",(uint32_t)test1);
 	mode_3h.fbprintf("%[07 allocate test4 (12)\n");
-	test4 = (char*)kdalloc(12);
-	mode_3h.fbprintf("%[08  test4 %#08x\n",(Uint32)test4);
-	kdfree((Uint32)test1);
+	test4 = kdalloc(12);
+	mode_3h.fbprintf("%[08  test4 %#08x\n",(uint32_t)test4);
+	kdfree(test1);
+	kdfree(test3);
+	kdfree(test4);
 	mode_3h.fbprintf("%[0FSpeed test\n");
 	delay = get_ticks();
 	for ( i=0; i<1024; i++ )
@@ -111,7 +113,7 @@ void demo_kdmem( void )
 void dt_updateheader( void )
 {
 	/* pretty print time and date */
-	Uint8 cmosval[128];
+	uint8_t cmosval[128];
 	cmos_dump(&cmosval[0]);
 	char weekdays[7][4] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 	mode_3h.fbsetcursor(0,0);
@@ -123,13 +125,13 @@ void dt_updateheader( void )
 			cmosval[0]);
 }
 /* bottom animation */
-Uint8 base_angle = 0;
+uint8_t base_angle = 0;
 void dt_wave( void )
 {
 	mode_3h.fbsetcursor(0,24);
 	char wave[8] = {0x20, 0xB0, 0xB1, 0xB2, 0xDB, 0xB2, 0xB1, 0xB0};
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<80; i++ )
 		mode_3h.drawchar(i,24,wave[(i+base_angle)%8]);
 	base_angle++;
@@ -137,8 +139,8 @@ void dt_wave( void )
 		base_angle = 0;
 }
 /* bouncing ball */
-Sint16 ball_x, ball_y;
-Sint16 vel_x, vel_y;
+int16_t ball_x, ball_y;
+int16_t vel_x, vel_y;
 void dt_bounce( void )
 {
 	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_LIGHTGRAY);
@@ -178,7 +180,7 @@ void demo_timers( void )
 	ball_y = 8;
 	vel_x = 1;
 	vel_y = 1;
-	Uint8 i;
+	uint8_t i;
 	for ( i=0; i<80; i++ )
 	{
 		mode_3h.drawchar(i,0,' ');
@@ -201,13 +203,13 @@ void demo_cmap( void )
 {
 	/* no startup code, we already assume we're in mode 3h since boot */
 	mode_3h.fbsetattr(15,0,0);
-	Uint16 i;
-	Sint32 cx, cy;
-	Uint16 rx, ry;
+	uint16_t i;
+	int32_t cx, cy;
+	uint16_t rx, ry;
 	mode_3h.fbgetcursor(&cx,&cy);
 	mode_3h.fbgetres(&rx,&ry);
-	Uint16 x = 0;
-	Uint16 y = cy;
+	uint16_t x = 0;
+	uint16_t y = cy;
 	for ( i=0; i<256; i++ )
 	{
 		mode_3h.drawchar(x,y,i);
@@ -224,7 +226,7 @@ void demo_cmap( void )
 /* 80x50 graphics demo */
 void demo_blockgfx( void )
 {
-	Uint32 delay = get_ticks();
+	uint32_t delay = get_ticks();
 	/* no startup code, we already assume we're in mode 3h since boot */
 	mode_3h.fbcursorvis(0);
 	mode_3h.fbsetattr(15,0,EXATTR_NOSCR);
@@ -234,7 +236,7 @@ void demo_blockgfx( void )
 	mode_3h.clear();
 	/* image */
 	mode_3h.drawimg(&aliceimg,30,0,0,0,50,50,0);
-	Uint16 x,y;
+	uint16_t x,y;
 	int i = 0;
 	/* 16 color set */
 	x = 4;
@@ -275,9 +277,9 @@ void demo_blockgfx( void )
 /* Bochs/QEMU BGA demo */
 void demo_bochsgfx( void )
 {
-	Uint32 delay = get_ticks();
-	Uint16 rx = 1280;
-	Uint16 ry = 800;
+	uint32_t delay = get_ticks();
+	uint16_t rx = 1280;
+	uint16_t ry = 800;
 	if ( bga_drv.setmode(rx,ry) )
 		BERP("could not set video mode");
 	fnt_t font8;
@@ -288,7 +290,7 @@ void demo_bochsgfx( void )
 		BERP("error loading fbfont16.fnt");
 	bga_drv.setfont(&font16);
 	bga_drv.setpal(&alicepalfc[0]);
-	Uint16 x,y;
+	uint16_t x,y;
 	int i = 0;
 	/* 16 color set */
 	x = 8;
@@ -399,7 +401,7 @@ void demo_bochsgfx( void )
 	y = 640;
 	while ( (x < 264 ) && (y < 704 ) )
 	{
-		Uint8 rval = krand();
+		uint8_t rval = krand();
 		bga_drv.putpixel(x,y,COLOR_GRAY(rval));
 		if ( ++x < 264 )
 			continue;
@@ -473,7 +475,7 @@ void demo_bochsgfx( void )
 /* mode 13h graphics demo */
 void demo_realgfx( void )
 {
-	Uint32 delay = get_ticks();
+	uint32_t delay = get_ticks();
 	mode_13h.setmode();
 	/* needed for special "masking" */
 	alicepal256[765] = 0;
@@ -484,7 +486,7 @@ void demo_realgfx( void )
 	if ( loadfnt(&font8,"fbfont8.fnt") )
 		BERP("error loading fbfont8.fnt");
 	mode_13h.setfont(&font8);
-	Uint16 x,y;
+	uint16_t x,y;
 	int i = 0;
 	/* 16 color set */
 	x = 8;
@@ -553,7 +555,7 @@ void demo_realgfx( void )
 		y++;
 	}
 	/* draw some gradients using the 64 color subpalettes */
-	Uint32 val;
+	uint32_t val;
 	val = 0;
 	x = 152;
 	y = 8;
