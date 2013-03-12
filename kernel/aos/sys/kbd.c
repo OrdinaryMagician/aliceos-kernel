@@ -283,8 +283,7 @@ static void kbd_basehandler( regs_t *regs )
 /* turn on keyboard driver */
 void kbd_on( void )
 {
-	memset((uint8_t*)&kbd_handler[0],0,
-		sizeof(kbd_handler_t)*KBD_MAX_HANDLERS);
+	memset(&kbd_handler[0],0,sizeof(kbd_handler_t)*KBD_MAX_HANDLERS);
 	kbd_handlers = 0;
 	register_irq_handler(KBD_IRQ,kbd_basehandler);
 }
@@ -307,7 +306,7 @@ uint8_t kbd_addhandler( kbd_handler_t hnd )
 }
 static void kbd_rmhandlerid( uint8_t id )
 {
-	memmove((uint8_t*)&kbd_handler[id],(uint8_t*)&kbd_handler[id+1],
+	memmove(&kbd_handler[id],&kbd_handler[id+1],
 		sizeof(kbd_handler_t)*(kbd_handlers-id));
 	kbd_handlers--;
 }

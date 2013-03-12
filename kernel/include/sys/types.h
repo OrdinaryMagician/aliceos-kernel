@@ -11,12 +11,12 @@
 /* more comfortable this way */
 typedef unsigned char uint8_t;
 typedef signed char int8_t;
-typedef unsigned short int uint16_t;
-typedef signed short int int16_t;
-typedef unsigned int uint32_t;
-typedef signed int int32_t;
+typedef unsigned short uint16_t;
+typedef signed short int16_t;
+typedef unsigned uint32_t;
+typedef signed int32_t;
 /* unicode (wide) char */
-typedef unsigned int wchar;
+typedef unsigned wchar;
 /* limits */
 #define SINT8_MAX 127
 #define SINT16_MAX 32767

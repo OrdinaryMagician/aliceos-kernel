@@ -8,12 +8,13 @@
 #include <demos.h>
 #include <vga/mode3h.h>
 #include <strops.h>
-#include <sys/timer.h>
+#include <sys/pci.h>
 /* prototypes */
 static cmd_t sh_help;
 static cmd_t sh_listdemos;
 static cmd_t sh_rundemo;
 static cmd_t sh_clear;
+static cmd_t sh_lspci;
 /* the supported commands */
 cmd_t* sh_cmds[SH_NUMCMDS] =
 {
@@ -21,6 +22,7 @@ cmd_t* sh_cmds[SH_NUMCMDS] =
 	&sh_listdemos,
 	&sh_rundemo,
 	&sh_clear,
+	&sh_lspci,
 };
 /* functions and their cmd_t structs */
 static uint32_t cmd_help( uint32_t argc, char **argv )
@@ -101,4 +103,77 @@ static cmd_t sh_clear =
 	.help = "usage: %s\n"
 		"clears whole screen\n",
 	.run  = cmd_clear,
+};
+static void lspci_level2( uint8_t bus, uint8_t slot )
+{
+	uint16_t i;
+	for ( i=slot+1; i<8; i++ )
+	{
+		if ( !pci_exists(bus,slot,i) )
+			continue;
+		pci_regs_t regs;
+		pci_gethead(bus,slot,i,&regs);
+		mode_3h.fbprintf("  %s %s %s (Rev %02x) ",
+			pci_vendor(regs.h.vendorid),
+			pci_device(regs.h.vendorid,regs.h.deviceid),
+			pci_class(regs.h.classcode,regs.h.subclass,
+			regs.h.prog_if),regs.h.revisionid);
+		mode_3h.fbprintf("[%04x,%04x,%02x,%02x,%02x,%02x]\n",
+			regs.h.vendorid,regs.h.deviceid,regs.h.classcode,
+			regs.h.subclass,regs.h.prog_if,regs.h.revisionid);
+	}
+}
+static void lspci_level1( uint8_t bus )
+{
+	uint16_t i;
+	for ( i=bus+1; i<32; i++ )
+	{
+		if ( !pci_exists(bus,i,0) )
+			continue;
+		pci_regs_t regs;
+		pci_gethead(bus,i,0,&regs);
+		mode_3h.fbprintf(" %s %s %s (Rev %02x) ",
+			pci_vendor(regs.h.vendorid),
+			pci_device(regs.h.vendorid,regs.h.deviceid),
+			pci_class(regs.h.classcode,regs.h.subclass,
+			regs.h.prog_if),regs.h.revisionid);
+		mode_3h.fbprintf("[%04x,%04x,%02x,%02x,%02x,%02x]\n",
+			regs.h.vendorid,regs.h.deviceid,regs.h.classcode,
+			regs.h.subclass,regs.h.prog_if,regs.h.revisionid);
+		if ( regs.h.classcode == 0x06 ) /* a bridge, stuff inside */
+			lspci_level2(bus,i);
+	}
+}
+static void lspci_level0( void )
+{
+	uint16_t i;
+	for ( i=0; i<256; i++ )
+	{
+		if ( !pci_exists(i,0,0) )
+			continue;
+		pci_regs_t regs;
+		pci_gethead(i,0,0,&regs);
+		mode_3h.fbprintf("%s %s %s (Rev %02x) ",
+			pci_vendor(regs.h.vendorid),
+			pci_device(regs.h.vendorid,regs.h.deviceid),
+			pci_class(regs.h.classcode,regs.h.subclass,
+			regs.h.prog_if),regs.h.revisionid);
+		mode_3h.fbprintf("[%04x,%04x,%02x,%02x,%02x,%02x]\n",
+			regs.h.vendorid,regs.h.deviceid,regs.h.classcode,
+			regs.h.subclass,regs.h.prog_if,regs.h.revisionid);
+		if ( regs.h.classcode == 0x06 ) /* a bridge, stuff inside */
+			lspci_level1(i);
+	}
+}
+static uint32_t cmd_lspci( uint32_t argc, char **argv )
+{
+	lspci_level0();
+	return 0;
+}
+static cmd_t sh_lspci =
+{
+	.name = "lspci",
+	.help = "usage: %s\n"
+		"prints a tree of pci devices\n",
+	.run  = cmd_lspci,
 };

@@ -94,10 +94,10 @@ void init_paging( void )
 {
 	nframes = m_addr/0x1000;
 	frames = kmalloc(nframes/0x20);
-	memset((uint8_t*)frames,0,nframes/0x20);
+	memset(frames,0,nframes/0x20);
 	/* a page directory for the kernel */
 	kernel_directory = kmalloc_a(sizeof(pdir_t));
-	memset((uint8_t*)kernel_directory,0,sizeof(pdir_t));
+	memset(kernel_directory,0,sizeof(pdir_t));
 	current_directory = kernel_directory;
 	uint32_t i;
 	/* dynamic allocator frames, pass 1 */
@@ -138,7 +138,7 @@ page_t *get_page( uint32_t addr, uint8_t make, pdir_t *dir )
 	{
 		uint32_t tmp;
 		dir->tables[tidx] = kmalloc_ap(sizeof(ptbl_t),&tmp);
-		memset((uint8_t*)dir->tables[tidx],0,sizeof(ptbl_t));
+		memset(dir->tables[tidx],0,sizeof(ptbl_t));
 		dir->tablesPhysical[tidx] = tmp|7; /* present, rw, user */
 		return &dir->tables[tidx]->pages[addr%0x400];
 	}
@@ -149,7 +149,7 @@ static void page_fault( regs_t *regs )
 {
 	/* save registers just in case */
 	regs_t srg;
-	memcpy((uint8_t*)&srg,(uint8_t*)regs,sizeof(regs_t));
+	memcpy(&srg,regs,sizeof(regs_t));
 	/* get the faulting address */
 	uint32_t fault_addr = getfaultaddr();
 	char pfmesg[256];

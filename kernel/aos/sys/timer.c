@@ -84,7 +84,7 @@ static void timer_callback( regs_t *regs )
 void init_timer( uint32_t hz )
 {
 	timer_tasks = 0;
-	memset((uint8_t*)&timer_tasklist[0],0,sizeof(ttasklist_t)*TTASKLIST_SZ);
+	memset(&timer_tasklist[0],0,sizeof(ttasklist_t)*TTASKLIST_SZ);
 	register_irq_handler(0,&timer_callback);
 	uint32_t divisor = 1193180/hz;
 	thz = (divisor*hz*hz)/1193180;
@@ -109,7 +109,7 @@ uint8_t timer_addtask( ttask_t task, uint32_t interval, uint8_t oneshot )
 /* rearrange the task array, removing a specific task in the process */
 static void timer_rmtaskid( uint8_t id )
 {
-	memmove((uint8_t*)&timer_tasklist[id],(uint8_t*)&timer_tasklist[id+1],
+	memmove(&timer_tasklist[id],&timer_tasklist[id+1],
 		sizeof(ttasklist_t)*(timer_tasks-id));
 	timer_tasks--;
 }

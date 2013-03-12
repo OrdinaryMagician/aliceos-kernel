@@ -61,7 +61,7 @@ static void sh_parsecmd( void )
 		argc++;
 	/* generate parameter array for command */
 	argv = kmalloc((argc+1)*sizeof(char*));
-	memset((uint8_t*)argv,0,(argc+1)*sizeof(char*));
+	memset(argv,0,(argc+1)*sizeof(char*));
 	tk = sh_cmdline;
 	i = 0;
 	while ( *tk && (i<256) )
@@ -145,9 +145,9 @@ static void sh_getkey( key_t *key )
 static void sh_init( void )
 {
 	sh_cmdline = kmalloc(256);
-	memset((uint8_t*)sh_cmdline,0,256);
+	memset(sh_cmdline,0,256);
 	sh_lcmdline = kmalloc(256);
-	memset((uint8_t*)sh_lcmdline,0,256);
+	memset(sh_lcmdline,0,256);
 	sh_returned = 0;
 	sh_enabled = 0;
 	sh_executing = 0;

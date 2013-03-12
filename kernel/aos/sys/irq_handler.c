@@ -44,5 +44,5 @@ void irq_handler( regs_t *regs )
 /* clear IRQ handlers */
 void irq_clearhandlers( void )
 {
-	memset((uint8_t*)&irq_handlers[0],0,sizeof(irq_handler_t)*16);
+	memset(&irq_handlers[0],0,sizeof(irq_handler_t)*16);
 }

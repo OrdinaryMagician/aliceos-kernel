@@ -32,13 +32,13 @@ typedef struct
 memgap_t a_skip[32];
 uint8_t n_skip = 0;
 /* global allocation function */
-void *kmalloc_global( uint32_t sz, uint8_t algn, uint32_t *phys )
+void *kmalloc_global( uint32_t sz, uint8_t alg, uint32_t *phys )
 {
 	if ( kdmem_enabled )
-		return kdalloc_global(sz,algn,phys);
+		return kdalloc_global(sz,alg,phys);
 	uint32_t p_addr_veryold = p_addr;
 	/* page-align address in case it's not already */
-	if ( algn && p_addr&(0xFFFFF000) )
+	if ( alg && p_addr&(0xFFFFF000) )
 		p_addr = (p_addr&0xFFFFF000)+0x1000;
 	/* skip any gaps */
 	uint8_t i;
@@ -47,13 +47,14 @@ void *kmalloc_global( uint32_t sz, uint8_t algn, uint32_t *phys )
 		if ( (p_addr >= a_skip[i].start) && (p_addr <= a_skip[i].end) )
 			p_addr = a_skip[i].end+1;
 		/* check if we need to realign */
-		if ( algn && p_addr&(0xFFFFF000) )
+		if ( alg && p_addr&(0xFFFFF000) )
 			p_addr = (p_addr&0xFFFFF000)+0x1000;
 	}
 	if ( p_addr+sz >= m_addr )
 	{
 		printk("Could not allocate %u bytes\n",sz);
-		BERP("Out of memory");
+		/* if the placement allocator can't work, it's all over */
+		BERP("Placement allocator out of memory");
 	}
 	if ( phys )
 	{
@@ -92,11 +93,11 @@ void *kmalloc( uint32_t sz )
 	return kmalloc_global(sz,0,0);
 }
 /* global reallocation function */
-void *krealloc_global( void *prev, uint32_t sz, uint8_t algn, uint32_t *phys )
+void *krealloc_global( void *prev, uint32_t sz, uint8_t alg, uint32_t *phys )
 {
 	if ( kdmem_enabled )
-		return kdrealloc_global(prev,sz,algn,phys);
-	return kmalloc_global(sz,algn,phys);
+		return kdrealloc_global(prev,sz,alg,phys);
+	return kmalloc_global(sz,alg,phys);
 }
 /* page-aligned krealloc */
 void *krealloc_a( void *prev, uint32_t sz )

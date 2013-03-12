@@ -270,7 +270,8 @@ void demo_blockgfx( void )
 	mode_3h.drawhline(0,49,80,7);
 	mode_3h.drawvline(0,0,50,7);
 	mode_3h.drawvline(79,0,50,7);
-	delay = (get_ticks()-delay);
+	/* performance report */
+	delay = get_ticks()-delay;
 	demo_wait();
 	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }
@@ -467,7 +468,7 @@ void demo_bochsgfx( void )
 	bga_drv.drawvline(rx-4,3,ry-6,COLOR_GRAY(96));
 	bga_drv.drawvline(rx-5,4,ry-8,COLOR_GRAY(64));
 	/* performance report */
-	delay = (get_ticks()-delay);
+	delay = get_ticks()-delay;
 	demo_wait();
 	setbgareg(BGA_REG_ENABLE,BGA_DISABLED);
 	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
@@ -640,7 +641,7 @@ void demo_realgfx( void )
 	mode_13h.drawvline(316,3,194,7);
 	mode_13h.drawvline(315,4,192,8);
 	/* performance report */
-	delay = (get_ticks()-delay);
+	delay = get_ticks()-delay;
 	demo_wait();
 	mode_3h.fbprintf("Drawing took %u ticks\n",delay);
 }

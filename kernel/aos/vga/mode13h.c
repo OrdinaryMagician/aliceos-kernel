@@ -29,11 +29,13 @@ static void m13h_hscroll( int32_t offset );
 static void m13h_vscroll( int32_t offset );
 static void m13h_putpixel( uint16_t x, uint16_t y, uint8_t c );
 static uint8_t m13h_getpixel( uint16_t x, uint16_t y );
-static void m13h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c );
+static void m13h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			   uint8_t c );
 static void m13h_drawhline( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
 static void m13h_drawvline( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
 static void m13h_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
-			 uint16_t oy, uint16_t w, uint16_t h, uint16_t palshift );
+			 uint16_t oy, uint16_t w, uint16_t h,
+			 uint16_t palshift );
 static void m13h_drawchar( uint16_t x, uint16_t y, char c );
 static void m13h_drawwchar( uint16_t x, uint16_t y, wchar c );
 static void m13h_drawstring( uint16_t x, uint16_t y, char *s );
@@ -60,7 +62,7 @@ vga_mode_t mode_13h =
 	.h = 200,
 	.layout = LAYOUT_LINEAR,
 	.depth = DEPTH_256COLOR,
-	.mem = (uint8_t*)0xA0000,
+	.mem = (void*)0xA0000,
 	.setmode = m13h_setmode,
 	.setpal = m13h_setpal,
 	.getpal = m13h_setpal,
@@ -256,7 +258,8 @@ static uint8_t m13h_getpixel( uint16_t x, uint16_t y )
 	y %= 200;
 	return m13h_mem[x+y*320];
 }
-static void m13h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c )
+static void m13h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			   uint8_t c )
 {
 	uint16_t px, py;
 	uint16_t lx, ly;
@@ -292,7 +295,8 @@ static void m13h_drawvline( uint16_t x, uint16_t y, uint16_t l, uint8_t c )
 		m13h_mem[x+(py++)*320] = c;
 }
 static void m13h_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
-			 uint16_t oy, uint16_t w, uint16_t h, uint16_t palshift )
+			 uint16_t oy, uint16_t w, uint16_t h,
+			 uint16_t palshift )
 {
 	if ( (img->depth < IMG_DP_16COL) || (img->depth > IMG_DP_256COL) )
 	{
@@ -488,7 +492,8 @@ static void m13h_fbwputs( wchar *s )
 {
 	return;	/* not yet implemented */
 }
-static uint32_t m13h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg, uint8_t oex )
+static uint32_t m13h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg,
+				       uint8_t oex )
 {
 	char *os = s;
 	uint8_t col = obg;

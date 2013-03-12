@@ -33,13 +33,13 @@ void *kdalloc_ap( uint32_t sz, uint32_t *phys );
 /* generic */
 void *kdrealloc_global( void *prev, uint32_t sz, uint8_t alg, uint32_t *phys );
 /* vanilla */
-void *kdrealloc( void *prev, uint32_t newsz );
+void *kdrealloc( void *prev, uint32_t sz );
 /* page-aligned */
-void *kdrealloc_a( void *prev, uint32_t newsz );
+void *kdrealloc_a( void *prev, uint32_t sz );
 /* return physical address */
-void *kdrealloc_p( void *prev, uint32_t newsz, uint32_t *phys );
+void *kdrealloc_p( void *prev, uint32_t sz, uint32_t *phys );
 /* page-aligned and return physical address */
-void *kdrealloc_ap( void *prev, uint32_t newsz, uint32_t *phys );
+void *kdrealloc_ap( void *prev, uint32_t sz, uint32_t *phys );
 /* free a memory area */
 void kdfree( void *a );
 /* retrieve used blocks */

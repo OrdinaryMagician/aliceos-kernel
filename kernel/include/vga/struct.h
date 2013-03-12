@@ -1,5 +1,5 @@
 /*
-	struct.h : Struct-based operation with graphic modes (should be more comfortable).
+	struct.h : Struct-based operation with graphic modes.
 	(C)2012-2013 Marisa Kirisame, UnSX Team.
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
@@ -41,7 +41,7 @@ typedef struct
 	uint16_t w, h; /* resolution */
 	uint8_t layout; /* memory access layout (linear or planar) */
 	uint8_t depth; /* number of colors */
-	uint8_t *mem; /* pointer to buffer memory */
+	void *mem; /* pointer to buffer memory */
 	/* mode setting */
 	void (*setmode)( void );
 	/* palette setting */
@@ -59,11 +59,13 @@ typedef struct
 	void (*putpixel)( uint16_t x, uint16_t y, uint8_t c );
 	uint8_t (*getpixel)( uint16_t x, uint16_t y );
 	/* primitive drawing functions (rect, line, bitmap, char, etc.) */
-	void (*drawrect)( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c );
+	void (*drawrect)( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			  uint8_t c );
 	void (*drawhline)( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
 	void (*drawvline)( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
-	void (*drawimg)( img_t *img, uint16_t x, uint16_t y, uint16_t ox, uint16_t oy,
-			 uint16_t w, uint16_t h, uint16_t palshift );
+	void (*drawimg)( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
+			 uint16_t oy, uint16_t w, uint16_t h,
+			 uint16_t palshift );
 	void (*drawchar)( uint16_t x, uint16_t y, char c );
 	void (*drawwchar)( uint16_t x, uint16_t y, wchar c );
 	void (*drawstring)( uint16_t x, uint16_t y, char *s );

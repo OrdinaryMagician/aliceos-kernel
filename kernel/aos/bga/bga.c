@@ -16,7 +16,7 @@
 #include <sys/helpers.h>
 #include <kmem.h>
 /* bga variables */
-static uint8_t *bga_mem = (uint8_t*)0; /* buffer memory area */
+static uint8_t *bga_mem = NULL; /* buffer memory area */
 static fnt_t bga_fnt; /* font (currently empty) */
 static int32_t bga_cx = 0, bga_cy = 0; /* cursor position for text */
 static uint8_t bga_cv = 1; /* cursor visibility for text */
@@ -52,11 +52,12 @@ static void bga_hscroll( int32_t offset );
 static void bga_vscroll( int32_t offset );
 static void bga_putpixel( uint16_t x, uint16_t y, color_t c );
 static color_t bga_getpixel( uint16_t x, uint16_t y );
-static void bga_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, color_t c );
+static void bga_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			  color_t c );
 static void bga_drawhline( uint16_t x, uint16_t y, uint16_t l, color_t c );
 static void bga_drawvline( uint16_t x, uint16_t y, uint16_t l, color_t c );
-static void bga_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox, uint16_t oy,
-			 uint16_t w, uint16_t h );
+static void bga_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
+			 uint16_t oy, uint16_t w, uint16_t h );
 static void bga_drawchar( uint16_t x, uint16_t y, char c );
 static void bga_drawwchar( uint16_t x, uint16_t y, wchar c );
 static void bga_drawstring( uint16_t x, uint16_t y, char *s );
@@ -81,7 +82,7 @@ bga_driver_t bga_drv =
 	.name = "Bochs/QEMU BGA",
 	.w = 0,
 	.h = 0,
-	.mem = (uint8_t*)0,
+	.mem = NULL,
 	.setmode = bga_setmode,
 	.setpal = bga_setpal,
 	.getpal = bga_getpal,
@@ -148,15 +149,15 @@ static uint8_t bga_setmode( uint16_t w, uint16_t h )
 }
 static void bga_setpal( color_t* pal )
 {
-	memcpy((uint8_t*)&bga_fbpal,(uint8_t*)pal,sizeof(color_t)*16);
+	memcpy(&bga_fbpal,pal,sizeof(color_t)*16);
 }
 static void bga_getpal( color_t* pal )
 {
-	memcpy((uint8_t*)pal,(uint8_t*)&bga_fbpal,sizeof(color_t)*16);
+	memcpy(pal,&bga_fbpal,sizeof(color_t)*16);
 }
 static void bga_setfont( fnt_t* fnt )
 {
-	memcpy((uint8_t*)&bga_fnt,(uint8_t*)fnt,sizeof(fnt_t));
+	memcpy(&bga_fnt,fnt,sizeof(fnt_t));
 	/* update framebuffer res */
 	bga_fbw = bga_drv.w/bga_fnt.w;
 	bga_fbh = bga_drv.h/bga_fnt.h;
@@ -275,7 +276,8 @@ static color_t bga_getpixel( uint16_t x, uint16_t y )
 	got.a = bga_mem[off];
 	return got;
 }
-static void bga_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, color_t c )
+static void bga_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			  color_t c )
 {
 	uint16_t px, py;
 	uint16_t lx, ly;
@@ -310,8 +312,8 @@ static void bga_drawvline( uint16_t x, uint16_t y, uint16_t l, color_t c )
 	while ( py < ly )
 		bga_putpixel(x,py++,c);
 }
-static void bga_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox, uint16_t oy,
-			 uint16_t w, uint16_t h )
+static void bga_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
+			 uint16_t oy, uint16_t w, uint16_t h )
 {
 	uint8_t sk = 4;
 	uint8_t usealpha = 1;
@@ -546,7 +548,8 @@ static void bga_fbwputs( wchar *s )
 	while ( *s )
 		bga_fbwputc(*(s++));
 }
-static uint32_t bga_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg, uint8_t oex )
+static uint32_t bga_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg,
+				      uint8_t oex )
 {
 	char *os = s;
 	uint8_t col = obg;

@@ -11,6 +11,7 @@
 #include <memops.h>
 #include <sys/helpers.h>
 #include <sys/irq_handlers.h>
+#include <sys/isr_handlers.h>
 /* Write the actual GDT pointer */
 extern void gdt_flush( uint32_t ptr );
 /* Write the actual IDT pointer */
@@ -70,8 +71,9 @@ static void init_idt( void )
 	idt_ptr.limit = sizeof(idt_entry_t)*256-1;
 	idt_ptr.base = (uint32_t)&idt_ents;
 	/* we have to zero everything out */
-	memset((uint8_t*)&idt_ents[0],0,sizeof(idt_entry_t)*256);
+	memset(&idt_ents[0],0,sizeof(idt_entry_t)*256);
 	irq_clearhandlers();
+	isr_clearhandlers();
 	/* remap PICs so IRQs use IDT gates 32-47 */
 	/* this code will look confusing, sorry for the inconvenience */
 	outport_b(0x20,0x11);

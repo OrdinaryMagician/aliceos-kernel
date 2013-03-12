@@ -6,156 +6,147 @@
 */
 #include <memops.h>
 /* copy byte blocks */
-uint8_t *memcpy( uint8_t *dest, const uint8_t *src, uint32_t count )
+void *memcpy( void *dest, const void *src, uint32_t count )
 {
-	uint32_t i;
-	for ( i=0; i<count; i++ )
-		dest[i] = src[i];
+	uint8_t *_dest = (uint8_t*)dest, *_src = (uint8_t*)src;
+	while ( count-- )
+		*(_dest++) = *(_src++);
 	return dest;
 }
 /* copy byte blocks checking for possible overlap */
-uint8_t *memmove( uint8_t *dest, const uint8_t *src, uint32_t count )
+void *memmove( void *dest, const void *src, uint32_t count )
 {
-	uint32_t i;
-	if ( dest == src )
+	uint8_t *_dest = (uint8_t*)dest, *_src = (uint8_t*)src;
+	if ( _dest == _src )
 		return dest;
-	if ( (src+count <= dest) || (dest+count <= src) )
+	if ( (_src+count <= _dest) || (_dest+count <= _src) )
 	{
-		for ( i=0; i<count; i++ )
-			dest[i] = src[i];
+		while ( count-- )
+			*(_dest++) = *(_src++);
 		return dest;
 	}
-	if ( dest > src )
+	if ( _dest > _src )
 	{
-		i = count;
-		while ( i-- )
-			dest[i] = src[i];
+		_dest += count-1;
+		_src += count-1;
+		while ( count-- )
+			*(_dest--) = *(_src--);
 		return dest;
 	}
-	for ( i=0; i<count; i++ )
-		dest[i] = src[i];
+	while ( count-- )
+		*(_dest++) = *(_src++);
 	return dest;
 }
 /* copy word blocks */
 uint16_t *memcpyw( uint16_t *dest, const uint16_t *src, uint32_t count )
 {
-	uint32_t i;
-	for ( i=0; i<count; i++ )
-		dest[i] = src[i];
+	uint16_t *_dest = dest, *_src = (uint16_t*)src;
+	while ( count-- )
+		*(_dest++) = *(_src++);
 	return dest;
 }
 /* copy word blocks checking for possible overlap */
 uint16_t *memmovew( uint16_t *dest, const uint16_t *src, uint32_t count )
 {
-	uint32_t i;
-	if ( dest == src )
+	uint16_t *_dest = dest, *_src = (uint16_t*)src;
+	if ( _dest == _src )
 		return dest;
-	if ( (src+count <= dest) || (dest+count <= src) )
+	if ( (_src+count <= _dest) || (_dest+count <= _src) )
 	{
-		for ( i=0; i<count; i++ )
-			dest[i] = src[i];
+		while ( count-- )
+			*(_dest++) = *(_src++);
 		return dest;
 	}
-	if ( dest > src )
+	if ( _dest > _src )
 	{
-		i = count;
-		while ( i-- )
-			dest[i] = src[i];
+		_dest += count-1;
+		_src += count-1;
+		while ( count-- )
+			*(_dest--) = *(_src--);
 		return dest;
 	}
-	for ( i=0; i<count; i++ )
-		dest[i] = src[i];
+	while ( count-- )
+		*(_dest++) = *(_src++);
 	return dest;
 }
 /* fill an entire memory block with a repeating byte */
-uint8_t *memset( uint8_t *dest, uint8_t val, uint32_t count )
+void *memset( void *dest, uint8_t val, uint32_t count )
 {
-	uint32_t i = 0;
-	while ( i < count )
-		dest[i++] = val;
+	uint8_t *_dest = (uint8_t*)dest;
+	while ( count-- )
+		*(_dest++) = val;
 	return dest;
 }
 /* fill an entire memory block with a repeating word */
 uint16_t *memsetw( uint16_t *dest, uint16_t val, uint32_t count )
 {
-	uint32_t i = 0;
-	while ( i < count )
-		dest[i++] = val;
+	uint16_t *_dest = dest;
+	while ( count-- )
+		*(_dest++) = val;
 	return dest;
 }
 /* compare memory blocks, returns 0 if equal, 1 if different */
-uint8_t memcmp( uint8_t *a, uint8_t *b, uint32_t count )
+uint8_t memcmp( void *a, void *b, uint32_t count )
 {
-	uint32_t i = 0;
-	while ( i < count )
+	uint8_t *_a = (uint8_t*)a, *_b = (uint8_t*)b;
+	while ( count-- )
 	{
-		if ( a[i] != b[i] )
+		if ( *(_a++) != *(_b++) )
 			return 1;
-		i++;
 	}
 	return 0;
 }
 /* compare memory blocks by words, returns 0 if equal, 1 if different */
 uint8_t memcmpw( uint16_t *a, uint16_t *b, uint32_t count )
 {
-	uint32_t i = 0;
-	while ( i < count )
+	uint16_t *_a = (uint16_t*)a, *_b = (uint16_t*)b;
+	while ( count-- )
 	{
-		if ( a[i] != b[i] )
+		if ( *(_a++) != *(_b++) )
 			return 1;
-		i++;
 	}
 	return 0;
 }
 /* reverse a memory block */
-uint8_t *memrev( uint8_t *dest, uint32_t count )
+void *memrev( void *dest, uint32_t count )
 {
-	uint32_t i = 0;
-	uint32_t j = count-1;
-	uint8_t tmp;
-	while ( i < j )
+	uint8_t *a = (uint8_t*)dest;
+	uint8_t *b = a+count-1;
+	while ( a<b )
 	{
-		tmp = dest[i];
-		dest[i++] = dest[j];
-		dest[j--] = tmp;
+		*a ^= *b;
+		*b ^= *a;
+		*(a++) ^= *(b--);
 	}
 	return dest;
 }
 /* reverse a memory block by words */
 uint16_t *memrevw( uint16_t *dest, uint32_t count )
 {
-	uint32_t i = 0;
-	uint32_t j = count-1;
-	uint16_t tmp;
-	while ( i < j )
+	uint16_t *a = (uint16_t*)dest;
+	uint16_t *b = a+count-1;
+	while ( a<b )
 	{
-		tmp = dest[i];
-		dest[i++] = dest[j];
-		dest[j--] = tmp;
+		*a ^= *b;
+		*b ^= *a;
+		*(a++) ^= *(b--);
 	}
 	return dest;
 }
 /* find first occurence of a specific byte in a memory block */
-/* return 0 if not found, or the offset plus one if found */
-uint32_t memb( uint8_t *in, uint8_t b, uint32_t count )
+void *memb( void *in, uint8_t b, uint32_t count )
 {
-	uint32_t i = 0;
-	while ( i < count )
-	{
-		if ( in[i++] == b )
-			return i;
-	}
-	return 0;
+	uint8_t *_in = (uint8_t*)in;
+	while ( count-- )
+		if ( *(_in++) == b )
+			return (_in-1);
+	return NULL;
 }
 /* find first occurence of a specific word in a memory block */
-/* return 0 if not found, or the offset plus one if found */
-uint32_t memw( uint16_t *in, uint16_t w, uint32_t count )
+uint16_t *memw( uint16_t *in, uint16_t w, uint32_t count )
 {
-	uint32_t i = 0;
-	while ( i < count )
-	{
-		if ( in[i++] == w )
-			return i;
-	}
-	return 0;
+	while ( count-- )
+		if ( *(in++) == w )
+			return (in-1);
+	return NULL;
 }

@@ -93,7 +93,7 @@ typedef struct
 {
 	uint16_t vendorid;     /* vendor ID (0xFFFF if unexistent) */
 	uint16_t deviceid;     /* device ID */
-	uint16_t command;      /* what command to use (0 is always disconnect) */
+	uint16_t command;      /* what command to use (0 is disconnect) */
 	uint16_t status;       /* status information for device */
 	uint8_t revisionid;    /* revision ID */
 	uint8_t prog_if;       /* specifies a programming interface (if any) */
@@ -104,7 +104,7 @@ typedef struct
 	uint8_t header_type;   /* layout of the rest of the header */
 	uint8_t bist;          /* built-in self test stuff */
 } attribute((packed)) pci_dev_t;
-/* if header type is 00 (general device) */
+/* if header type is 0 (general device) */
 typedef struct
 {
 	uint32_t bar0;         /* base address 0 */
@@ -129,8 +129,9 @@ typedef struct
 	uint8_t int_pin;       /* Interrupt pin used (0x00 for none) */
 	uint8_t min_grant;     /* burst period length (1/4usec units) */
 	uint8_t max_latency;   /* access interval to PCI bus (1/4usec units) */
-} attribute((packed)) pci_dev00_t;
-/* if header type is 01 (PCI to PCI bridge) */
+	uint32_t filler[48];  /* filler so it all fits in 256 bytes */
+} attribute((packed)) pci_dev0_t;
+/* if header type is 1 (PCI to PCI bridge) */
 typedef struct
 {
 	uint32_t bar0;          /* base address 0 */
@@ -157,8 +158,9 @@ typedef struct
 	uint8_t int_line;       /* IRQ device is connected to (0xFF if none) */
 	uint8_t int_pin;        /* Interrupt pin used (0x00 for none) */
 	uint16_t bridgectl;     /* bridge control */
-} attribute((packed)) pci_dev01_t;
-/* if header type is 02 (PCI to CardBus bridge) */
+	uint32_t filler[49];   /* filler so it all fits in 256 bytes */
+} attribute((packed)) pci_dev1_t;
+/* if header type is 2 (PCI to CardBus bridge) */
 typedef struct
 {
 	uint32_t cb_addr;     /* CardBus Socket/ExCa base address */
@@ -183,9 +185,33 @@ typedef struct
 	uint16_t ss_vendorid; /* subsystem vendor ID */
 	uint16_t ss_id;       /* subsystem ID */
 	uint32_t legacy_base; /* 16-bit PC Card legacy mode base address */
-} attribute((packed)) pci_dev02_t;
+	uint32_t filler[46];  /* filler so it all fits in 256 bytes */
+} attribute((packed)) pci_dev2_t;
+/* composite header */
+#define PCI_HEADER_SZ 256
+typedef struct
+{
+	pci_dev_t h;
+	union
+	{
+		pci_dev0_t h0;
+		pci_dev1_t h1;
+		pci_dev2_t h2;
+	} s;
+} attribute((packed)) pci_regs_t;
+/* retrieve certain values from string tables */
+char *pci_class( uint8_t cls, uint8_t sub, uint8_t pif );
+char *pci_vendor( uint16_t vid );
+char *pci_device( uint16_t vid, uint16_t did );
 /* pci configuration (read) */
 uint16_t pci_cfg_r( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off );
 /* pci configuration (write) */
-void pci_cfg_w( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off, uint8_t data );
+void pci_cfg_w( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off,
+		uint8_t data );
+/* check if a device exists (vendor id not 0xFFFF) */
+uint8_t pci_exists( uint8_t bus, uint8_t slot, uint8_t fn );
+/* get the header for a specific device, assumes it exists */
+void pci_gethead( uint8_t bus, uint8_t slot, uint8_t fn, void *to );
+/* enumerate pci devices */
+void init_pci( void );
 #endif

@@ -35,7 +35,7 @@ typedef struct
 	uint16_t id; /* identificative number */
 	char name[256]; /* identificative name */
 	uint16_t w, h; /* resolution */
-	uint8_t *mem; /* pointer to framebuffer memory */
+	void *mem; /* pointer to framebuffer memory */
 	/* mode setting */
 	uint8_t (*setmode)( uint16_t w, uint16_t h );
 	/* palette setting */
@@ -53,11 +53,12 @@ typedef struct
 	void (*putpixel)( uint16_t x, uint16_t y, color_t c );
 	color_t (*getpixel)( uint16_t x, uint16_t y );
 	/* primitive drawing functions (rect, line, bitmap, char, etc.) */
-	void (*drawrect)( uint16_t x, uint16_t y, uint16_t w, uint16_t h, color_t c );
+	void (*drawrect)( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			  color_t c );
 	void (*drawhline)( uint16_t x, uint16_t y, uint16_t l, color_t c );
 	void (*drawvline)( uint16_t x, uint16_t y, uint16_t l, color_t c );
-	void (*drawimg)( img_t *img, uint16_t x, uint16_t y, uint16_t ox, uint16_t oy,
-			 uint16_t w, uint16_t h );
+	void (*drawimg)( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
+			 uint16_t oy, uint16_t w, uint16_t h );
 	void (*drawchar)( uint16_t x, uint16_t y, char c );
 	void (*drawwchar)( uint16_t x, uint16_t y, wchar c );
 	void (*drawstring)( uint16_t x, uint16_t y, char *s );

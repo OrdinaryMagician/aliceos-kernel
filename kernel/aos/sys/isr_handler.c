@@ -20,7 +20,7 @@ void register_isr_handler( uint8_t n, isr_handler_t handler )
 /* clear ISR handlers */
 void isr_clearhandlers( void )
 {
-	memset((uint8_t*)&isr_handlers[0],0,sizeof(isr_handler_t)*32);
+	memset(&isr_handlers[0],0,sizeof(isr_handler_t)*32);
 }
 /* the handler itself */
 void isr_handler( regs_t *regs )

@@ -11,10 +11,8 @@
 /* plane switch */
 void planeswitch( uint8_t p )
 {
-	uint8_t pmask;
-	pmask = 1<<(p&3);
 	setvgareg(VGA_GC,VGA_GC_RDMSEL,p);
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,pmask);
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,1<<(p&3));
 }
 /* blank screen */
 void vgablank( void )

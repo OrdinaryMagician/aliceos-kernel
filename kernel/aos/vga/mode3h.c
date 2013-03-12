@@ -30,11 +30,13 @@ static void m3h_hscroll( int32_t offset );
 static void m3h_vscroll( int32_t offset );
 static void m3h_putpixel( uint16_t x, uint16_t y, uint8_t c );
 static uint8_t m3h_getpixel( uint16_t x, uint16_t y );
-static void m3h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c );
+static void m3h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			  uint8_t c );
 static void m3h_drawhline( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
 static void m3h_drawvline( uint16_t x, uint16_t y, uint16_t l, uint8_t c );
 static void m3h_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
-			 uint16_t oy, uint16_t w, uint16_t h, uint16_t palshift );
+			 uint16_t oy, uint16_t w, uint16_t h,
+			 uint16_t palshift );
 static void m3h_drawchar( uint16_t x, uint16_t y, char c );
 static void m3h_drawwchar( uint16_t x, uint16_t y, wchar c );
 static void m3h_drawstring( uint16_t x, uint16_t y, char *s );
@@ -61,7 +63,7 @@ vga_mode_t mode_3h =
 	.h = 50,
 	.layout = LAYOUT_TEXT,
 	.depth = DEPTH_16COLOR,
-	.mem = (uint8_t*)0xB8000,
+	.mem = (void*)0xB8000,
 	.setmode = m3h_setmode,
 	.setpal = m3h_setpal,
 	.getpal = m3h_setpal,
@@ -287,7 +289,8 @@ static uint8_t m3h_getpixel( uint16_t x, uint16_t y )
 	else
 		return ((*pair)&0x0F00)>>8;
 }
-static void m3h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t c )
+static void m3h_drawrect( uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+			  uint8_t c )
 {
 	uint16_t px, py;
 	uint16_t lx, ly;
@@ -323,7 +326,8 @@ static void m3h_drawvline( uint16_t x, uint16_t y, uint16_t l, uint8_t c )
 		m3h_putpixel(x,py++,c);
 }
 static void m3h_drawimg( img_t *img, uint16_t x, uint16_t y, uint16_t ox,
-			 uint16_t oy, uint16_t w, uint16_t h, uint16_t palshift )
+			 uint16_t oy, uint16_t w, uint16_t h,
+			 uint16_t palshift )
 {
 	if ( img->depth != IMG_DP_16COL )
 	{
@@ -498,7 +502,8 @@ static void m3h_fbwputs( wchar *s )
 {
 	return;	/* not supported */
 }
-static uint32_t m3h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg, uint8_t oex )
+static uint32_t m3h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg,
+				      uint8_t oex )
 {
 	char *os = s;
 	uint8_t col = obg;

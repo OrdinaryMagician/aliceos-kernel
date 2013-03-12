@@ -23,6 +23,7 @@
 #include <berp.h>
 #include <strops.h>
 #include <kmem.h>
+#include <sys/pci.h>
 /* initial stack pointer */
 uint32_t *initial_esp;
 /* location of certain parts of the kernel */
@@ -35,6 +36,16 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 {
 	/* set the initial stack pointer */
 	initial_esp = esp;
+	/* initialize some vga settings */
+	mode_3h.setmode();
+	disableblink();
+	initfont();
+	mode_3h.setpal(&alicepal[0]);
+	/* pretty screen fill */
+	mode_3h.clear();
+	mode_3h.fbcursorvis(1);
+	mode_3h.fbsetcursor(0,0);
+	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 	/* stuff to save */
 	char kfname[32];
 	char kargs[KCMDLINE_MAX];
@@ -93,25 +104,14 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 		if ( mmapent->type != 1 )
 		{
 			kmem_addgap(gap_st,gap_en);
-			eaddr = gap_en;	/* the last mmap entry defines limit */
+			/* the highest mmap entry defines memory limit */
+			eaddr = (gap_en>eaddr)?gap_en:eaddr;
 		}
 		off += mmapent->size+4;
 		mmapent = (mmap_entry_t*)(mboot->mmap_addr+off);
 	}
 	/* finally, initialize the manager */
 	init_kmem(paddr,eaddr);
-	/* mode 3h console */
-	printk("%sConsole output\n",left);
-	/* initialize some vga settings */
-	mode_3h.setmode();
-	disableblink();
-	initfont();
-	mode_3h.setpal(&alicepal[0]);
-	/* pretty screen fill */
-	mode_3h.clear();
-	mode_3h.fbcursorvis(1);
-	mode_3h.fbsetcursor(0,0);
-	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 	/* descriptor tables and interrupts */
 	printk("%sDescriptor tables\n",left);
 	init_descriptor_tables();
@@ -126,6 +126,9 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	/* keyboard input */
 	printk("%sPS/2 keyboard input driver\n",left);
 	kbd_on();
+	/* PCI stuff */
+	printk("%sEnumerating PCI devices\n",left);
+	init_pci();
 	/* set up ramdisk access */
 	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
 		BERP("Ramdisk initialization failed");

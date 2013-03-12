@@ -9,31 +9,30 @@
 #include <kmem.h>
 #include <berp.h>
 #include <memops.h>
+/*
+
+The used memory is managed in a list of blocks.
+
+Every time there's an allocation, the manager checks if there's any unused gaps
+inside kdmem_range where the requested amount of space can fit.
+The new block is inserted into the list and becomes used memory.
+If the new block is going to be inserted between already existing entries,
+everything above its new index is pushed forward.
+If there's no space available the allocation function returns 0.
+
+Every time a memory block is freed, said block is deleted and any blocks above
+it are pushed down.
+
+This is probably not every efficient. It slows down a lot after thousands of
+allocations (exponentially, even).
+
+Expanding and shrinking of the memory area not implemented yet.
+
+*/
 /* in sys/paging.c */
 extern pdir_t *kernel_directory;
 /* in sys/pagingasm.s */
 extern uint8_t pagingenabled( void );
-/*
-	How this memory model works:
-
-	The used memory is managed in a list of blocks.
-
-	Every time there's an allocation, the manager checks
-	if there's any unused gaps inside kdmem_range where the
-	requested amount of space can fit. The new block is
-	inserted into the list and becomes used memory. If the
-	new block is going to be inserted between already existing
-	entries, everything above its new index is pushed forward.
-	If there's no space available the allocation function returns 0.
-
-	Every time a memory block is freed, said block is deleted
-	and any blocks above it are pushed down.
-
-	This is probably not every efficient. It slows down a lot after
-	thousands of allocations (exponentially, even).
-
-	Expanding and shrinking of the memory area not implemented yet.
-*/
 /* memory block list */
 static memblk_t *kdmem_list = NULL;
 /* total (virtual) memory range available for allocation */
@@ -103,7 +102,7 @@ static uint8_t mblk_add( uint32_t idx, uint32_t start, uint32_t end )
 	if ( kdmem_psize >= kdmem_psize_max )
 		return 0;
 	if ( idx < kdmem_psize ) /* push everything above */
-		memmove((uint8_t*)(kdmem_list+idx+1),(uint8_t*)(kdmem_list+idx),
+		memmove(kdmem_list+idx+1,kdmem_list+idx,
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	/* put it on the list */
 	kdmem_list[idx].start = start;
@@ -121,9 +120,9 @@ static uint8_t mblk_rm( uint32_t idx )
 	if ( idx >= kdmem_psize )
 		return 0;
 	/* zero out this block entry */
-	memset((uint8_t*)(kdmem_list+idx),0,sizeof(memblk_t));
+	memset(kdmem_list+idx,0,sizeof(memblk_t));
 	if ( idx < --kdmem_psize ) /* push back anything on top if needed */
-		memmove((uint8_t*)(kdmem_list+idx),(uint8_t*)(kdmem_list+idx+1),
+		memmove(kdmem_list+idx,kdmem_list+idx+1,
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	return 1;
 }
@@ -137,10 +136,11 @@ static uint32_t mblk_find( uint32_t addr )
 	return UINT32_MAX;
 }
 /* reserve a memory area */
-void *kdalloc_global( uint32_t sz, uint8_t algn, uint32_t *phys ) /* global */
+/* global */
+void *kdalloc_global( uint32_t sz, uint8_t alg, uint32_t *phys )
 {
 	uint32_t idx = 0;
-	uint32_t addr = mblk_findgap(sz,algn,&idx);
+	uint32_t addr = mblk_findgap(sz,alg,&idx);
 	if ( !addr )
 		return 0; /* no space available */
 	if ( !mblk_add(idx,addr,addr+sz) )
@@ -178,7 +178,8 @@ void *kdalloc_ap( uint32_t sz, uint32_t *phys )
 	return kdalloc_global(sz,1,phys);
 }
 /* reallocate (resize) a memory area */
-void *kdrealloc_global( void *prev, uint32_t newsz, uint8_t algn, uint32_t *phys ) /* generic */
+/* global */
+void *kdrealloc_global( void *prev, uint32_t sz, uint8_t alg, uint32_t *phys )
 {
 	uint32_t blk = mblk_find((uint32_t)prev);
 	if ( blk == UINT32_MAX )
@@ -186,31 +187,31 @@ void *kdrealloc_global( void *prev, uint32_t newsz, uint8_t algn, uint32_t *phys
 	uint32_t osz = kdmem_list[blk].end-kdmem_list[blk].start;
 	if ( !mblk_rm(blk) )
 		return 0;
-	void *naddr = kdalloc_global(newsz,algn,phys);
+	void *naddr = kdalloc_global(sz,alg,phys);
 	if ( !naddr )
 		return 0;
-	memmove((uint8_t*)naddr,(uint8_t*)prev,osz);
+	memmove(naddr,prev,osz);
 	return naddr;
 }
 /* vanilla */
-void *kdrealloc( void *prev, uint32_t newsz )
+void *kdrealloc( void *prev, uint32_t sz )
 {
-	return kdrealloc_global(prev,newsz,0,NULL);
+	return kdrealloc_global(prev,sz,0,NULL);
 }
 /* page-aligned */
-void *kdrealloc_a( void *prev, uint32_t newsz )
+void *kdrealloc_a( void *prev, uint32_t sz )
 {
-	return kdrealloc_global(prev,newsz,1,NULL);
+	return kdrealloc_global(prev,sz,1,NULL);
 }
 /* return physical address */
-void *kdrealloc_p( void *prev, uint32_t newsz, uint32_t *phys )
+void *kdrealloc_p( void *prev, uint32_t sz, uint32_t *phys )
 {
-	return kdrealloc_global(prev,newsz,0,phys);
+	return kdrealloc_global(prev,sz,0,phys);
 }
 /* page-aligned and return physical address */
-void *kdrealloc_ap( void *prev, uint32_t newsz, uint32_t *phys )
+void *kdrealloc_ap( void *prev, uint32_t sz, uint32_t *phys )
 {
-	return kdrealloc_global(prev,newsz,1,phys);
+	return kdrealloc_global(prev,sz,1,phys);
 }
 /* free a memory area */
 void kdfree( void *a )
@@ -249,7 +250,7 @@ void kdmem_init( uint32_t start, uint32_t size, uint32_t psize )
 	/* list is located at the start, followed by the memory area */
 	kdmem_list = (memblk_t*)start;
 	/* will not check if there is enough space available for it */
-	memset((uint8_t*)kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
+	memset(kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
 	kdmem_psize = 0;
 	kdmem_enabled = 1;
 }

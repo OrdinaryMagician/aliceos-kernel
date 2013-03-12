@@ -13,5 +13,5 @@ typedef void (*isr_handler_t)( regs_t *regs );
 /* register an ISR handler function */
 void register_isr_handler( uint8_t n, isr_handler_t handler );
 /* clear ISR handlers */
-void irsr_clearhandlers( void );
+void isr_clearhandlers( void );
 #endif

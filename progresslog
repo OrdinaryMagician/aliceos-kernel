@@ -25,13 +25,15 @@ Shanghai phase:
   X GDT, IDT...
   X IRQs
   X PIT
-  P Fix generic VGA drivers to work on real hardware (very hard)
+  P Fix generic VGA drivers to work on real hardware
   X PS/2 Keyboard input
+  - Fix PS/2 Keyboard issues in VMWare and in real hardware
   - PS/2 Mouse input
   P Internal shell
   P Dynamic memory (kalloc/krealloc/kfree)
+  - Proper RAM detection
   X Paging
-  - Basic PCI/PCI-e support (required for more drivers)
+  P Basic PCI/PCI-e support (required for more drivers)
   - VMWare graphics driver
   - BGA linear framebuffer
   - ACPI interface
