@@ -251,7 +251,6 @@ static void m13h_putpixel( uint16_t x, uint16_t y, uint8_t c )
 	y %= 200;
 	m13h_mem[x+y*320] = c;
 }
-
 static uint8_t m13h_getpixel( uint16_t x, uint16_t y )
 {
 	x %= 320;

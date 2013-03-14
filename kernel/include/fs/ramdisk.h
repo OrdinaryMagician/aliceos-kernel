@@ -9,7 +9,6 @@
 #include <sys/types.h>
 /*
 Layout of an AOS simple ramdisk
-
 ********
 *HEADER*
 ********
@@ -27,7 +26,6 @@ xRAWDATAx
 xxxxxxxxx
 .TRAILER.
 .........
-
 Every ramdisk starts with a header, which contains:
  - a magic number, 0xFEEDCAFE (don't feed the ramdisk cafe, even if it asks)
  - the number of entries in the disk

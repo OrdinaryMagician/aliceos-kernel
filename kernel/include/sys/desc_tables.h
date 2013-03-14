@@ -20,14 +20,11 @@ typedef struct
 } attribute((packed)) gdt_entry_t;
 /*
 	GDT access byte format:
-
 	0-3 Segment type
 	4 Descriptor type
 	5-6 Descriptor privilege level (Ring 0-3)
 	7 Present?
-
 	GDT granularity byte format:
-
 	0-3 Segment length
 	4 Always zero (available for system use)
 	5 Always zero
@@ -51,7 +48,6 @@ typedef struct
 } attribute((packed)) idt_entry_t;
 /*
 	IDT flags byte format:
-
 	0-4 Always 00110
 	5-6 Privilege level
 	7 Present?

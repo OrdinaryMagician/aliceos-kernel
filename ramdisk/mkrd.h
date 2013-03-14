@@ -4,19 +4,9 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <stdint.h>
-
 /*
-
 Layout of an AOS simple ramdisk
-
 ********
 *HEADER*
 ********
@@ -34,7 +24,6 @@ xRAWDATAx
 xxxxxxxxx
 .TRAILER.
 .........
-
 Every ramdisk starts with a header, which contains:
  - a magic number, 0xFEEDCAFE (don't feed the ramdisk cafe, even if it asks)
  - the number of entries in the disk
@@ -48,17 +37,19 @@ As a safeguard, at the end of the whole thing there's a trailer composed of:
  - a magic number, 0xADEADBED (beds can die too)
  - the null-terminated string "The Doll Maker of Bucuresti" (don't ask)
 */
-
-const uint32_t aosrd_hdmagic = 0xFEEDCAFE;
-const uint32_t aosrd_trmagic = 0xADEADBED;
-const char aosrd_trsig[28] = "The Doll Maker of Bucuresti";
-
+/* magic and signatures */
+#define AOSRD_HDMAGIC 0xFEEDCAFE
+#define AOSRD_TRMAGIC 0xADEADBED
+#define AOSRD_TRSIG "The Doll Maker of Bucuresti"
+/* header */
+#define RDHEAD_SIZ 8
 typedef struct
 {
 	uint32_t magic;
 	uint32_t numents;
 } rd_header_t;
-
+/* entry */
+#define RDENT_SIZ 264
 typedef struct
 {
 	char name[256];

@@ -37,7 +37,6 @@ fpu_floor:
 	fld long [esp+4]
 	mov al, 0x07
 	jmp rnd_common
-
 [GLOBAL fpu_sqrt]
 fpu_sqrt:
 	fld long [esp+4]

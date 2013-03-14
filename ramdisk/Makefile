@@ -1,7 +1,13 @@
 CFLAGS := -std=c99 -O2 -pipe -Wall -Wextra -Werror -pedantic -funsigned-char
+SOURCES := $(patsubst %.c,%,$(wildcard *.c))
 .PHONY: clean
-mkrd:
-	clang $(CFLAGS) -o bin/mkrd mkrd.c
-	clang $(CFLAGS) -o bin/dmprd dmprd.c
+all: $(SOURCES)
+.c:
+	@echo -e "\e[1;32m[CLANG]\e[0m `basename ${<}` -> `basename ${@}`"
+	@clang $(CFLAGS) -o bin/$@ $<
 clean:
-	rm -f bin/*
+	@$(foreach F,$(SOURCES),\
+		if [[ -e bin/$F ]]; then\
+		  echo -e "\e[1;32m[RM]\e[0m `basename ${F}`";\
+		  rm -f bin/$F;\
+		fi;)

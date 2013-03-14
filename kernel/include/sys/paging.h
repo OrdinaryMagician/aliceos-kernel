@@ -8,10 +8,7 @@
 #define PAGING_H
 #include <sys/types.h>
 /*
-	Page structure
-
-	32 bits
-
+	Page structure (32 bits)
 	0     Present
 	1     Read/Write
 	2     User/Supervisor

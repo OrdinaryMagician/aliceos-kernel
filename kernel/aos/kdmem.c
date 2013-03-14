@@ -10,24 +10,18 @@
 #include <berp.h>
 #include <memops.h>
 /*
-
 The used memory is managed in a list of blocks.
-
 Every time there's an allocation, the manager checks if there's any unused gaps
 inside kdmem_range where the requested amount of space can fit.
 The new block is inserted into the list and becomes used memory.
 If the new block is going to be inserted between already existing entries,
 everything above its new index is pushed forward.
 If there's no space available the allocation function returns 0.
-
 Every time a memory block is freed, said block is deleted and any blocks above
 it are pushed down.
-
 This is probably not every efficient. It slows down a lot after thousands of
 allocations (exponentially, even).
-
 Expanding and shrinking of the memory area not implemented yet.
-
 */
 /* in sys/paging.c */
 extern pdir_t *kernel_directory;
