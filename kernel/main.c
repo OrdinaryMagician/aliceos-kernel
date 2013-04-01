@@ -12,6 +12,7 @@
 #include <sys/timer.h>
 #include <sys/paging.h>
 #include <sys/kbd.h>
+#include <sys/task.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 #include <vga/vgamisc.h>
@@ -123,12 +124,15 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	init_timer(TIMER_HZ);
 	int32_t error = TIMER_HZ-get_hz();
 	printk(" (~%uhz error)\n",abs(error));
+	/* multitasking */
+	printk("%sMultitasking\n",left);
+	init_tasking();
 	/* keyboard input */
-	printk("%sPS/2 keyboard input driver\n",left);
-	kbd_on();
+	//printk("%sPS/2 keyboard input driver\n",left);
+	//kbd_on();
 	/* PCI stuff */
-	printk("%sEnumerating PCI devices\n",left);
-	init_pci();
+	//printk("%sEnumerating PCI devices\n",left);
+	//init_pci();
 	/* set up ramdisk access */
 	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
 		BERP("Ramdisk initialization failed");
@@ -152,7 +156,15 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	}
 	printk("Total RAM: %u %sB\n",cmem,suf[mult]);
 	/* call internal shell */
-	shell.init();
-	shell.enable();
+	/*if ( fork() )
+	{
+		printk("Started shell with PID %u\n",getpid());
+		shell.init();
+		shell.enable();
+		return EXIT_SUCCESS;
+	}*/
+	/*int ret;
+	ret = fork();
+	printk("fork() returned %u, getpid() returns %u\n",ret,getpid());*/
 	return EXIT_SUCCESS;
 }

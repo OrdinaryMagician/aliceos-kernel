@@ -43,7 +43,7 @@ typedef struct
 	/* pointers to each table */
 	ptbl_t *tables[1024];
 	/* physical addresses of each table */
-	uint32_t tablesPhysical[1024];
+	uint32_t tblPhys[1024];
 	/* the physical address of the array above */
 	uint32_t physAddr;
 } pdir_t;
@@ -57,4 +57,6 @@ void init_paging( void );
 void switch_pdir( pdir_t *newdir );
 /* get a specific page, if make isn't zero, create it if it doesn't exist */
 page_t *get_page( uint32_t addr, uint8_t make, pdir_t *dir );
+/* clone a page directory */
+pdir_t *clone_directory( pdir_t *src );
 #endif

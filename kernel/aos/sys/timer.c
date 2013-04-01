@@ -8,6 +8,7 @@
 #include <sys/irq_handlers.h>
 #include <sys/helpers.h>
 #include <sys/port.h>
+#include <printk.h>
 #include <memops.h>
 /* internal counter */
 static uint32_t ticker = 0;

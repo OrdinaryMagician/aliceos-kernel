@@ -98,7 +98,7 @@ uint8_t strcmp( char *a, char *b )
 		if ( (!(*a) && *b) || (*a && !(*b)) )
 			return 1;
 	}
-	while ( *(++a) && *(++b) );
+	while ( *(a++) && *(b++) );
 	return 0;
 }
 /* case insensitive version of strcmp */
@@ -111,7 +111,7 @@ uint8_t strcasecmp( char *a, char *b )
 		if ( (!(*a) && *b) || (*a && !(*b)) )
 			return 1;
 	}
-	while ( *(++a) && *(++b) );
+	while ( *(a++) && *(b++) );
 	return 0;
 }
 /* overwrite one string with another */
@@ -233,7 +233,7 @@ uint8_t strncmp( char *a, char *b, uint32_t count )
 		if ( (!(*a) && *b) || (*a && !(*b)) )
 			return 1;
 	}
-	while ( *(++a) && *(++b) && count-- );
+	while ( *(a++) && *(b++) && count-- );
 	return 0;
 }
 /* case insensitive version of strncasecmp */
@@ -246,7 +246,7 @@ uint8_t strncasecmp( char *a, char *b, uint32_t count )
 		if ( (!(*a) && *b) || (*a && !(*b)) )
 			return 1;
 	}
-	while ( *(++a) && *(++b) && count-- );
+	while ( *(a++) && *(b++) && count-- );
 	return 0;
 }
 /* overwrite one string with a number of characters from another */

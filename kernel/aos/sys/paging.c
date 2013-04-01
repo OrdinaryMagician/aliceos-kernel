@@ -98,23 +98,26 @@ void init_paging( void )
 	/* a page directory for the kernel */
 	kernel_directory = kmalloc_a(sizeof(pdir_t));
 	memset(kernel_directory,0,sizeof(pdir_t));
-	current_directory = kernel_directory;
+	kernel_directory->physAddr = (uint32_t)kernel_directory->tblPhys;
 	uint32_t i;
 	/* dynamic allocator frames, pass 1 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		get_page(i,1,kernel_directory);
 	/* kernel frames */
-	for ( i=0; i<p_addr+0x3000; i+=0x1000 )
-		alloc_frame(get_page(i,1,kernel_directory),0,0);
+	for ( i=0; i<p_addr+0x1000; i+=0x1000 )
+		alloc_frame(get_page(i,1,kernel_directory),0,1);
 	/* dynamic allocator frames, pass 2 */
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
-		alloc_frame(get_page(i,0,kernel_directory),0,0);
+		alloc_frame(get_page(i,0,kernel_directory),0,1);
 	/* register our custom page fault handler */
 	register_isr_handler(14,page_fault);
 	/* finally enable paging */
 	switch_pdir(kernel_directory);
 	/* initialize the dynamic allocator */
 	kdmem_init(KDMEM_ST,KDMEM_SIZ,KDMEM_RESV);
+	/* set dir */
+	current_directory = clone_directory(kernel_directory);
+	switch_pdir(current_directory);
 }
 /* these functions are in pagingasm.s */
 extern void loadcr3( uint32_t phys );
@@ -124,7 +127,7 @@ extern uint32_t getfaultaddr( void );
 void switch_pdir( pdir_t *newdir )
 {
 	current_directory = newdir;
-	loadcr3((uint32_t)&newdir->tablesPhysical);
+	loadcr3(newdir->physAddr);
 	enablepaging();
 }
 /* get a specific page, if make isn't zero, create it if it doesn't exist */
@@ -139,10 +142,61 @@ page_t *get_page( uint32_t addr, uint8_t make, pdir_t *dir )
 		uint32_t tmp;
 		dir->tables[tidx] = kmalloc_ap(sizeof(ptbl_t),&tmp);
 		memset(dir->tables[tidx],0,sizeof(ptbl_t));
-		dir->tablesPhysical[tidx] = tmp|7; /* present, rw, user */
+		dir->tblPhys[tidx] = tmp|7; /* present, rw, user */
 		return &dir->tables[tidx]->pages[addr%0x400];
 	}
 	return 0;
+}
+/* copy the contents of one frame into another */
+extern void copy_page_physical( uint32_t src, uint32_t dest );
+/* clone a page table */
+static ptbl_t *clone_table( ptbl_t *src, uint32_t *physAddr )
+{
+	ptbl_t *tbl = kmalloc_p(sizeof(ptbl_t),physAddr);
+	memset(tbl,0,sizeof(ptbl_t));
+	uint16_t i;
+	for ( i=0; i<1024; i++ )
+	{
+		if ( !src->pages[i].frame )
+			continue;
+		alloc_frame(&tbl->pages[i],0,0);
+		tbl->pages[i].present = src->pages[i].present;
+		tbl->pages[i].rw = src->pages[i].rw;
+		tbl->pages[i].user = src->pages[i].user;
+		tbl->pages[i].accessed = src->pages[i].accessed;
+		tbl->pages[i].dirty = src->pages[i].dirty;
+		copy_page_physical(src->pages[i].frame*0x1000,
+					tbl->pages[i].frame*0x1000);
+	}
+	return tbl;
+	
+}
+/* clone a page directory */
+pdir_t *clone_directory( pdir_t *src )
+{
+	uint32_t phys;
+	pdir_t *dir = kmalloc_ap(sizeof(pdir_t),&phys);
+	memset(dir,0,sizeof(pdir_t));
+	uint32_t offset = (uint32_t)dir->tblPhys-(uint32_t)dir;
+	dir->physAddr = phys+offset;
+	uint16_t i;
+	for ( i=0; i<1024; i++ )
+	{
+		if ( !src->tables[i] )
+			continue;
+		if ( kernel_directory->tables[i] == src->tables[i] )
+		{
+			dir->tables[i] = src->tables[i];
+			dir->tblPhys[i] = src->tblPhys[i];
+		}
+		else
+		{
+			uint32_t phys;
+			dir->tables[i] = clone_table(src->tables[i],&phys);
+			dir->tblPhys[i] = phys|0x07;
+		}
+	}
+	return dir;
 }
 /* slightly customized page fault handler */
 static void page_fault( regs_t *regs )
