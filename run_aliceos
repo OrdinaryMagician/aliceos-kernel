@@ -20,10 +20,14 @@ fi
 if [[ ! -e initramfs-aliceos.img ]]; then
   ./makerd
 fi
+QEMU="qemu-system-i386"
+AOSKRNL="vmaliceos"
+AOSRD="initramfs-aliceos.img"
+QEMU_ARGS="-smp 1 -soundhw all -m 128M -serial stdio -vga vmware"
 if [[ ! -n $* ]]; then
   echo "running aliceos with no commandline"
-  qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img
+  $QEMU $QEMU_ARGS -kernel $AOSKRNL -initrd $AOSRD
 else
   echo "running aliceos with commandline \"$@\""
-  qemu-system-i386 -kernel vmaliceos -serial stdio -vga std -initrd initramfs-aliceos.img -append "$@"
+  $QEMU $QEMU_ARGS -kernel $AOSKRNL -initrd $AOSRD -append "$@"
 fi
