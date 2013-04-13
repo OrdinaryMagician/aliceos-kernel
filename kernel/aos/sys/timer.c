@@ -84,17 +84,22 @@ static void timer_callback( regs_t *regs )
 /* initialize the timer */
 void init_timer( uint32_t hz )
 {
+	printk("Setting timer to %u hz\n",hz);
 	timer_tasks = 0;
 	memset(&timer_tasklist[0],0,sizeof(ttasklist_t)*TTASKLIST_SZ);
+	printk(" Registering base IRQ%u handler\n",0);
 	register_irq_handler(0,&timer_callback);
 	uint32_t divisor = 1193180/hz;
+	printk(" PIT frequency divisor: %u\n",divisor);
 	thz = (divisor*hz*hz)/1193180;
+	int32_t error = hz-thz;
 	tscale = 1000000000/thz;
 	outport_b(0x43,0x36); /* repeating mode */
 	uint8_t l = (uint8_t)(divisor&0xFF);
 	uint8_t h = (uint8_t)((divisor>>8)&0xFF);
 	outport_b(0x40,l);
 	outport_b(0x40,h);
+	printk(" Timer set with ~%u hz error\n",abs(error));
 }
 /* register a timer task, return 1 on error, 0 otherwise */
 uint8_t timer_addtask( ttask_t task, uint32_t interval, uint8_t oneshot )

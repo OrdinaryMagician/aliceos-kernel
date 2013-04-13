@@ -12,6 +12,7 @@
 #include <sys/helpers.h>
 #include <sys/irq_handlers.h>
 #include <sys/isr_handlers.h>
+#include <printk.h>
 /* Write the actual GDT pointer */
 extern void gdt_flush( uint32_t ptr );
 /* Write the actual IDT pointer */
@@ -34,10 +35,13 @@ static idt_ptr_t idt_ptr;
 void init_descriptor_tables( void )
 {
 	/* global descriptor table */
+	printk("Initializing GDT\n");
 	init_gdt();
 	/* interrupt descriptor table */
+	printk("Initializing IDT\n");
 	init_idt();
 	/* now we can start interrupts */
+	printk("Enabling interrupts\n");
 	int_enable();
 }
 /* start up GDT */
@@ -46,18 +50,21 @@ static void init_gdt( void )
 	gdt_ptr.limit = (sizeof(gdt_entry_t)*5)-1;
 	gdt_ptr.base = (uint32_t)&gdt_ents;
 	/* segments (null, code, data, user mode code, user mode data) */
+	printk(" Segment descriptors\n");
 	gdt_setgate(0,0,0x00000000,0x00,0x00);
 	gdt_setgate(1,0,0xFFFFFFFF,0x9A,0xCF);
 	gdt_setgate(2,0,0xFFFFFFFF,0x92,0xCF);
 	gdt_setgate(3,0,0xFFFFFFFF,0xFA,0xCF);
 	gdt_setgate(4,0,0xFFFFFFFF,0xF2,0xCF);
 	/* flush~ */
+	printk(" Flushing GDT\n");
 	gdt_flush((uint32_t)&gdt_ptr);
 }
 /* set the values of a GDT entry */
 static void gdt_setgate( int32_t num, uint32_t bas, uint32_t lim, uint8_t acc,
 			 uint8_t grn )
 {
+	printk("  %1d [%#08x-%#08x,%#02x,%#02x]\n",num,bas,lim,acc,grn);
 	gdt_ents[num].base_l = (bas&0xFFFF);
 	gdt_ents[num].base_m = (bas>>16)&0xFF;
 	gdt_ents[num].base_h = (bas>>24)&0xFF;
@@ -76,6 +83,7 @@ static void init_idt( void )
 	isr_clearhandlers();
 	/* remap PICs so IRQs use IDT gates 32-47 */
 	/* this code will look confusing, sorry for the inconvenience */
+	printk(" Remapping PIC (IRQs on IDT gates 32-47)\n");
 	outport_b(0x20,0x11);
 	outport_b(0xA0,0x11);
 	outport_b(0x21,0x20);
@@ -88,6 +96,7 @@ static void init_idt( void )
 	outport_b(0xA1,0x00);
 	/* setting up gates */
 	/* ISRs */
+	printk(" Interrupt Service Routines\n");
 	idt_setgate(0,(uint32_t)isr0,0x08,0x8E);
 	idt_setgate(1,(uint32_t)isr1,0x08,0x8E);
 	idt_setgate(2,(uint32_t)isr2,0x08,0x8E);
@@ -121,6 +130,7 @@ static void init_idt( void )
 	idt_setgate(30,(uint32_t)isr30,0x08,0x8E);
 	idt_setgate(31,(uint32_t)isr31,0x08,0x8E);
 	/* IRQs */
+	printk(" Interrupt Requests\n");
 	idt_setgate(32,(uint32_t)irq0,0x08,0x8E);
 	idt_setgate(33,(uint32_t)irq1,0x08,0x8E);
 	idt_setgate(34,(uint32_t)irq2,0x08,0x8E);
@@ -138,11 +148,13 @@ static void init_idt( void )
 	idt_setgate(46,(uint32_t)irq14,0x08,0x8E);
 	idt_setgate(47,(uint32_t)irq15,0x08,0x8E);
 	/* flush~ */
+	printk(" Flushing IDT\n");
 	idt_flush((uint32_t)&idt_ptr);
 }
 /* set the values of a IDT entry */
 static void idt_setgate( uint8_t num, uint32_t bas, uint16_t sel, uint8_t flg )
 {
+	printk("  %3d [%#08x,%#04x,%#02x]\n",num,bas,sel,flg);
 	idt_ents[num].base_l = bas&0xFFFF;
 	idt_ents[num].base_h = (bas>>16)&0xFFFF;
 	idt_ents[num].sel = sel;

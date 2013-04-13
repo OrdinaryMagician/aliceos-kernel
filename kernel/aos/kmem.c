@@ -129,6 +129,7 @@ void kfree( void *a )
 void init_kmem( uint32_t iaddr, uint32_t eaddr )
 {
 	/* skip any gaps */
+	printk("Initiating placement allocator\n");
 	uint8_t i;
 	for ( i=0; i<n_skip; i++ )
 		if ( (iaddr >= a_skip[i].start) && (iaddr <= a_skip[i].end) )
@@ -136,6 +137,9 @@ void init_kmem( uint32_t iaddr, uint32_t eaddr )
 	p_addr_init = iaddr;
 	p_addr = p_addr_init;
 	m_addr = eaddr;
+	printk(" Placement range: %#08x-%#08x (%u bytes)\n",p_addr,m_addr,
+		m_addr-p_addr);
+	printk(" Unusable gap count: %u\n",n_skip);
 }
 /* add a memory gap to skip */
 void kmem_addgap( uint32_t start, uint32_t end )

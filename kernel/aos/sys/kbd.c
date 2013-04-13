@@ -283,8 +283,12 @@ static void kbd_basehandler( regs_t *regs )
 /* turn on keyboard driver */
 void kbd_on( void )
 {
+	printk("Initializing keyboard driver\n");
+	printk(" Resetting keyboard\n");
+	kbd_reset();
 	memset(&kbd_handler[0],0,sizeof(kbd_handler_t)*KBD_MAX_HANDLERS);
 	kbd_handlers = 0;
+	printk(" Registering base IRQ%u handler\n",KBD_IRQ);
 	register_irq_handler(KBD_IRQ,kbd_basehandler);
 }
 /* reset keyboard */

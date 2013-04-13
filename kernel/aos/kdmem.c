@@ -9,6 +9,7 @@
 #include <kmem.h>
 #include <berp.h>
 #include <memops.h>
+#include <printk.h>
 /*
 The used memory is managed in a list of blocks.
 Every time there's an allocation, the manager checks if there's any unused gaps
@@ -233,18 +234,24 @@ uint32_t kdmem_amount( void )
 void kdmem_init( uint32_t start, uint32_t size, uint32_t psize )
 {
 	/* sanity checks */
+	printk("Initializing dynamic allocator\n");
 	if ( !size )
-		BERP("Zero allication area");
+		BERP("Zero allocation area");
 	if ( psize < sizeof(memblk_t) )
 		BERP("Pile size is too small");
 	kdmem_range[0] = start+psize;
 	kdmem_range[1] = start+psize+size;
+	printk(" Memory range: %#08x-%#08x (%u bytes)\n",
+		kdmem_range[0],kdmem_range[1],kdmem_range[1]-kdmem_range[0]);
 	/* list */
 	kdmem_psize_max = psize/sizeof(memblk_t);
 	/* list is located at the start, followed by the memory area */
 	kdmem_list = (memblk_t*)start;
 	/* will not check if there is enough space available for it */
 	memset(kdmem_list,0,kdmem_psize_max*sizeof(memblk_t));
+	printk(" Block list at %#08x, %u entries max\n",kdmem_list,
+		kdmem_psize_max);
 	kdmem_psize = 0;
 	kdmem_enabled = 1;
+	printk(" Dynamic memory management is enabled\n");
 }

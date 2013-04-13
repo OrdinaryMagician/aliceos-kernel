@@ -13,6 +13,7 @@
 #include <sys/paging.h>
 #include <sys/kbd.h>
 #include <sys/task.h>
+#include <sys/pci.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 #include <vga/vgamisc.h>
@@ -24,7 +25,6 @@
 #include <berp.h>
 #include <strops.h>
 #include <kmem.h>
-#include <sys/pci.h>
 /* initial stack pointer */
 uint32_t *initial_esp;
 /* location of certain parts of the kernel */
@@ -64,7 +64,7 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 		strncpy(kramdisk,(char*)rdisk->cmdline,31);
 	}
 	/* for pretty-printing */
-	char *left = " \033[1;37m>\033[1;36m>\033[0;36m>\033[0m ";
+	char *left = "\033[1;37m>\033[1;36m>\033[0;36m>\033[0m ";
 	/* kernel signature is located right at the very beginning */
 	char *ksig = (char*)&code;
 	/* serial logging */
@@ -86,44 +86,47 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	/* loading "modules" */
 	printk("Starting up...\n");
 	/* memory */
-	printk("%sMemory manager\n",left);
+	printk("%sStatic memory manager (placement allocator)\n",left);
 	/* extra gap for the memory allocator */
 	uint32_t gap_st = 0;
 	uint32_t gap_en = (rdisk)?rdisk->mod_end:(uint32_t)&end;
 	kmem_addgap(gap_st,gap_en);
 	/* placement address and memory end */
 	uint32_t paddr = gap_en;
-	uint32_t eaddr = 0x1000000;	/* 16MiB by default */
+	/* memory end is basically upper memory plus 1MiB */
+	uint32_t eaddr = (mboot->mem_upper+1024)*1024; /* convert to bytes */
 	/* add mmap entries too */
 	mmap_entry_t *mmapent = (mmap_entry_t*)mboot->mmap_addr;
 	uint32_t off = 0;
 	uint32_t offmax = mboot->mmap_length;
+	printk("Memory map\n");
 	while ( off < offmax )
 	{
 		gap_st = mmapent->addr_l;
 		gap_en = mmapent->addr_l+mmapent->len_l;
 		if ( mmapent->type != 1 )
 		{
+			printk(" [%#08x-%#08x] reserved\n",gap_st,gap_en);
 			kmem_addgap(gap_st,gap_en);
-			/* the highest mmap entry defines memory limit */
-			eaddr = (gap_en>eaddr)?gap_en:eaddr;
 		}
+		else
+			printk(" [%#08x-%#08x] usable\n",gap_st,gap_en);
 		off += mmapent->size+4;
 		mmapent = (mmap_entry_t*)(mboot->mmap_addr+off);
 	}
 	/* finally, initialize the manager */
 	init_kmem(paddr,eaddr);
 	/* descriptor tables and interrupts */
-	printk("%sDescriptor tables\n",left);
+	printk("%sDescriptor tables and interrupts\n",left);
 	init_descriptor_tables();
-	/* paging */
-	printk("%sPaging and dynamic memory allocation\n",left);
-	init_paging();
 	/* internal timer */
-	printk("%sInternal timer at %uhz",left,TIMER_HZ);
+	printk("%sSystem timer\n",left);
 	init_timer(TIMER_HZ);
 	int32_t error = TIMER_HZ-get_hz();
 	printk(" (~%uhz error)\n",abs(error));
+	/* paging */
+	printk("%sPaging and dynamic memory management\n",left);
+	init_paging();
 	/* multitasking */
 	printk("%sMultitasking\n",left);
 	init_tasking();
@@ -155,6 +158,11 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 		mult++;
 	}
 	printk("Total RAM: %u %sB\n",cmem,suf[mult]);
+	/* Boot time counter */
+	uint32_t time_ms = (get_timescale()*get_ticks())/1000000;
+	uint32_t time_s = time_ms/1000;
+	time_ms %= 1000;
+	printk("Booting took approximately %u.%03u seconds\n",time_s,time_ms);
 	/* call internal shell */
 	/*if ( fork() )
 	{

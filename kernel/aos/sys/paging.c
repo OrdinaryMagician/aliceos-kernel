@@ -92,26 +92,33 @@ void free_frame( page_t *page )
 /* initialize paging */
 void init_paging( void )
 {
+	printk("Reserving frame bitset\n");
 	nframes = m_addr/0x1000;
+	printk(" %u frames total\n",nframes);
 	frames = kmalloc(nframes/0x20);
 	memset(frames,0,nframes/0x20);
 	/* a page directory for the kernel */
+	printk("Creating kernel page directory\n");
 	kernel_directory = kmalloc_a(sizeof(pdir_t));
 	memset(kernel_directory,0,sizeof(pdir_t));
 	kernel_directory->physAddr = (uint32_t)kernel_directory->tblPhys;
 	uint32_t i;
 	/* dynamic allocator frames, pass 1 */
+	printk(" Dynamic memory manager frames (pass 1)\n");
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		get_page(i,1,kernel_directory);
 	/* kernel frames */
-	for ( i=0; i<p_addr+0x1000; i+=0x1000 )
+	printk(" Kernel frames\n");
+	for ( i=0; i<p_addr+0x3000; i+=0x1000 )
 		alloc_frame(get_page(i,1,kernel_directory),0,1);
 	/* dynamic allocator frames, pass 2 */
+	printk(" Dynamic memory manager frames (pass 2)\n");
 	for ( i=KDMEM_ST; i<KDMEM_ST+KDMEM_SIZ+KDMEM_RESV; i+=0x1000 )
 		alloc_frame(get_page(i,0,kernel_directory),0,1);
 	/* register our custom page fault handler */
 	register_isr_handler(14,page_fault);
 	/* finally enable paging */
+	printk("Enabling paging\n");
 	switch_pdir(kernel_directory);
 	/* initialize the dynamic allocator */
 	kdmem_init(KDMEM_ST,KDMEM_SIZ,KDMEM_RESV);
