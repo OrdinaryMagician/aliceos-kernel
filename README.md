@@ -32,7 +32,7 @@ Everything is meant to be built and linked and whatever with ABSOLUTELY NO GNU S
 
 ## Who?
 
-Just me. I might ask for help if I get stuck on something, anyway, but only I will do the whole development. I wouldn't learn anything otherwise.
+Mostly me, with help from other people. For a list of contributors, check the CONTRIBUTORS file.
 
 ## You are insane
 
