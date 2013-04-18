@@ -128,14 +128,14 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	printk("%sPaging and dynamic memory management\n",left);
 	init_paging();
 	/* multitasking */
-	printk("%sMultitasking\n",left);
-	init_tasking();
+	//printk("%sMultitasking\n",left);
+	//init_tasking();
 	/* keyboard input */
-	//printk("%sPS/2 keyboard input driver\n",left);
-	//kbd_on();
+	printk("%sPS/2 keyboard input driver\n",left);
+	kbd_on();
 	/* PCI stuff */
-	//printk("%sEnumerating PCI devices\n",left);
-	//init_pci();
+	printk("%sEnumerating PCI devices\n",left);
+	init_pci();
 	/* set up ramdisk access */
 	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
 		BERP("Ramdisk initialization failed");
@@ -170,9 +170,12 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 		shell.init();
 		shell.enable();
 		return EXIT_SUCCESS;
-	}*/
-	/*int ret;
+	}
+	int ret;
 	ret = fork();
-	printk("fork() returned %u, getpid() returns %u\n",ret,getpid());*/
+	printk("fork() returned %u, getpid() returns %u\n",ret,getpid());
+	return EXIT_SUCCESS;*/
+	shell.init();
+	shell.enable();
 	return EXIT_SUCCESS;
 }
