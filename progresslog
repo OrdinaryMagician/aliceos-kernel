@@ -39,10 +39,14 @@ Shanghai phase:
   - BGA linear framebuffer
   - ACPI interface
   C Multitasking
-  - Executable loader (last step, very very important to reach Hourai phase)
+  - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
   - Loadable kernel modules
   - Move drivers to individual modules
+  - In-kernel scripting
+     - Doll scripting language (Dollscript)
+     - Dollscript module loader
+     - Dollscript executable loader
 France:
   - Generic PATA/SATA drivers
   - Generic USB drivers
@@ -76,6 +80,8 @@ Holland:
      - Intel
      - ATI
   - OpenGL implementation
+     - Software
+     - Hardware
 Tibet:
   - AOS C Library
   - Dynamic linking support
@@ -98,16 +104,16 @@ London:
 Russia:
   - x86_64 port
   - ARM port (Raspberry Pi)
-  - Nokinan Low Level Virtual Machine
+  - Low Level Nokinan Virtual Machine
      - 1.x (64-bit)
      - 2.x (128-bit)
      - 3.x (256-bit)
      - 4.x (512-bit, optional)
   - Nokinan-styled devfs/sysfs
-     - Device as block
-     - Device as queue
-     - Device as stack
-     - Device as task
+     - Device as block (Linear memory)
+     - Device as queue (FIFO)
+     - Device as stack (FILO)
+     - Device as process (signals)
 Orleans:
   - Fix bugs
   - Proper documentation

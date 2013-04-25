@@ -8,7 +8,7 @@ This list is subject to change, lots of change.
  - Tibet: Au integration, C library.
  - Kyoto: Networking.
  - London: Some other hardware support stuff.
- - Russia: Attempt to port to x86_64.
+ - Russia: Multiplatform code, LLNVM.
  - Orleans: Feature freeze, bugfixing.
  - Bucuresti: Release candidates.
  - Dollmaker: Finished product, no more codenames afterwards.
