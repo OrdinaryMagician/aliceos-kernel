@@ -2,11 +2,11 @@
 ; (C)2012-2013 Marisa Kirisame, UnSX Team.
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.
-[BITS 32]
-[ALIGN 4]
+BITS 32
+ALIGN 4
 ; good thing we have macros
 %macro ISR_NOERR 1
-[GLOBAL isr%1]
+GLOBAL isr%1
 isr%1:
 	cli
 	push byte 0 ; dummy error code
@@ -14,7 +14,7 @@ isr%1:
 	jmp isr_common_stub
 %endmacro
 %macro ISR_ERR 1
-[GLOBAL isr%1]
+GLOBAL isr%1
 isr%1:
 	cli
 	push byte %1
@@ -53,7 +53,7 @@ ISR_NOERR 28
 ISR_NOERR 29
 ISR_NOERR 30
 ISR_NOERR 31
-[EXTERN isr_handler]
+EXTERN isr_handler
 isr_common_stub:
 	pusha
 	push ds

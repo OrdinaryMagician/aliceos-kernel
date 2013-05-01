@@ -2,10 +2,10 @@
 ; (C)2012-2013 Marisa Kirisame, UnSX Team.
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.
-[BITS 32]
-[ALIGN 4]
+BITS 32
+ALIGN 4
 ; read/write bytes
-[GLOBAL inport_b]
+GLOBAL inport_b
 inport_b:
 	push ebp
 	mov ebp, esp
@@ -14,7 +14,7 @@ inport_b:
 	in al, dx
 	pop ebp
 	ret
-[GLOBAL outport_b]
+GLOBAL outport_b
 outport_b:
 	push ebp
 	mov ebp, esp
@@ -24,7 +24,7 @@ outport_b:
 	pop ebp
 	ret
 ; read/write words
-[GLOBAL inport_w]
+GLOBAL inport_w
 inport_w:
 	push ebp
 	mov ebp, esp
@@ -33,7 +33,7 @@ inport_w:
 	in ax, dx
 	pop ebp
 	ret
-[GLOBAL outport_w]
+GLOBAL outport_w
 outport_w:
 	push ebp
 	mov ebp, esp
@@ -43,7 +43,7 @@ outport_w:
 	pop ebp
 	ret
 ; read/write "longs"
-[GLOBAL inport_l]
+GLOBAL inport_l
 inport_l:
 	push ebp
 	mov ebp, esp
@@ -52,7 +52,7 @@ inport_l:
 	in eax, dx
 	pop ebp
 	ret
-[GLOBAL outport_l]
+GLOBAL outport_l
 outport_l:
 	push ebp
 	mov ebp, esp

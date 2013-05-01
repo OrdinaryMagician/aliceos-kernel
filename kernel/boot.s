@@ -2,8 +2,8 @@
 ; (C)2012-2013 Marisa Kirisame, UnSX Team.
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.
-[ALIGN 4]
-[BITS 32] ; we're going to target i386, anyway
+ALIGN 4
+BITS 32 ; we're going to target i386, anyway
 ; Multiboot flags
 MULTIBOOT_PAGE_ALIGN	equ 1<<0 ; page alignment pls
 MULTIBOOT_MEMORY_INFO	equ 1<<1 ; mem info too
@@ -13,9 +13,9 @@ MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
 ; Ketchu- checksum, I mean
 MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 ; these things are defined in the linker script
-[EXTERN code,data,bss,end]
+EXTERN code,data,bss,end
 ; don't mind me, I got bored
-[GLOBAL signature]
+GLOBAL signature
 signature:
 	; 64-byte 2-part kernel signature
 	; UTF-8 string, should be located 4096 bytes into the file
@@ -29,14 +29,14 @@ signature:
 	db 0xE9,0x9B,0xA8,0x20,0xE9,0xAD,0x94,0xE7
 	db 0x90,0x86,0xE6,0xB2,0x99,0x00,0x00,0x00
 ; putting all them datas in the kernel img
-[GLOBAL mboot]
+GLOBAL mboot
 mboot:
 	dd MULTIBOOT_HEADER_MAGIC
 	dd MULTIBOOT_HEADER_FLAGS
 	dd MULTIBOOT_CHECKSUM
 ; getting started~
-[GLOBAL start]
-[EXTERN kmain]
+GLOBAL start
+EXTERN kmain
 start:
 	; no interrupts pls
 	cli
