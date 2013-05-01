@@ -43,8 +43,8 @@ link:
 	@echo -e "\e[1;32m[LD]\e[0m ${KERNEL}"
 	@ld $(LDFLAGS) -o $(KERNEL) $(SOURCES)
 .s.o:
-	@echo -e "\e[1;32m[YASM]\e[0m `basename ${<}` -> `basename ${@}`"
-	@yasm $(ASFLAGS) -o $@ $<
+	@echo -e "\e[1;32m[NASM]\e[0m `basename ${<}` -> `basename ${@}`"
+	@nasm $(ASFLAGS) -o $@ $<
 .c.o:
 	@echo -e "\e[1;32m[CLANG]\e[0m `basename ${<}` -> `basename ${@}`"
 	@clang $(CFLAGS) -c -o $@ $<
