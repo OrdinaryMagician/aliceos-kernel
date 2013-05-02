@@ -97,7 +97,8 @@ static uint8_t mblk_add( uint32_t idx, uint32_t start, uint32_t end )
 	if ( kdmem_psize >= kdmem_psize_max )
 		return 0;
 	if ( idx < kdmem_psize ) /* push everything above */
-		memmove(kdmem_list+idx+1,kdmem_list+idx,
+		memmove(&kdmem_list[idx+1],
+			&kdmem_list[idx],
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	/* put it on the list */
 	kdmem_list[idx].start = start;
@@ -115,9 +116,10 @@ static uint8_t mblk_rm( uint32_t idx )
 	if ( idx >= kdmem_psize )
 		return 0;
 	/* zero out this block entry */
-	memset(kdmem_list+idx,0,sizeof(memblk_t));
+	memset(&kdmem_list[idx],0,sizeof(memblk_t));
 	if ( idx < --kdmem_psize ) /* push back anything on top if needed */
-		memmove(kdmem_list+idx,kdmem_list+idx+1,
+		memmove(&kdmem_list[idx],
+			&kdmem_list[idx+1],
 			sizeof(memblk_t)*(kdmem_psize-idx));
 	return 1;
 }
