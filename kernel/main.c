@@ -128,8 +128,8 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	printk("%sPaging and dynamic memory management\n",left);
 	init_paging();
 	/* multitasking */
-	//printk("%sMultitasking\n",left);
-	//init_tasking();
+	printk("%sMultitasking\n",left);
+	init_tasking();
 	/* keyboard input */
 	printk("%sPS/2 keyboard input driver\n",left);
 	kbd_on();
@@ -164,18 +164,13 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	time_ms %= 1000;
 	printk("Booting took approximately %u.%03u seconds\n",time_s,time_ms);
 	/* call internal shell */
-	/*if ( fork() )
+	printk("Kernel core with PID %u\n",getpid());
+	if ( !fork() )
 	{
 		printk("Started shell with PID %u\n",getpid());
 		shell.init();
 		shell.enable();
 		return EXIT_SUCCESS;
 	}
-	int ret;
-	ret = fork();
-	printk("fork() returned %u, getpid() returns %u\n",ret,getpid());
-	return EXIT_SUCCESS;*/
-	shell.init();
-	shell.enable();
 	return EXIT_SUCCESS;
 }

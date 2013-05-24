@@ -9,6 +9,12 @@ loadcr3:
 	mov eax, [esp+4]
 	mov cr3, eax
 	ret
+GLOBAL disablepaging
+disablepaging:
+	mov eax, cr0
+	and eax, 0x7FFFFFFF
+	mov cr0, eax
+	ret
 GLOBAL enablepaging
 enablepaging:
 	mov eax, cr0

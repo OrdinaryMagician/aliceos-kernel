@@ -128,6 +128,7 @@ void init_paging( void )
 }
 /* these functions are in pagingasm.s */
 extern void loadcr3( uint32_t phys );
+extern void disablepaging( void );
 extern void enablepaging( void );
 extern uint32_t getfaultaddr( void );
 /* loads the specified page directory in CR3 */

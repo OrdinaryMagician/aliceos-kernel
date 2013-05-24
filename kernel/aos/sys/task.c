@@ -65,7 +65,7 @@ extern uint32_t read_eip( void );
 static void switch_task( void )
 {
 	/* no tasking yet */
-	if ( !ctask )
+	if ( !ctask || (next_pid == 2) )
 		return;
 	int_disable();
 	uint32_t esp, ebp, eip;
@@ -84,23 +84,26 @@ static void switch_task( void )
 		ctask = task_q;
 	esp = ctask->esp;
 	ebp = ctask->ebp;
+	switch_pdir(current_directory);
+	printk("Switch to task %u\n",ctask->pid);
 	/* disgusting inline asm */
-	asm volatile("	mov %0,%%ecx;\
+	asm volatile("	mov %0,%%ebx;\
 			mov %1,%%esp;\
 			mov %2,%%ebp;\
 			mov %3,%%cr3;\
 			mov $0x12345,%%eax;\
 			sti;\
-			jmp *%%ecx"
+			jmp *%%ebx"
 			::"r"(eip),"r"(esp),"r"(ebp),
-			"r"(current_directory->physAddr));
+			"r"(current_directory->physAddr)
+			:"%ebx","%esp","%eax");
 }
 /* init tasking subsystem */
 void init_tasking( void )
 {
 	/* add task switcher */
-	timer_addtask(switch_task,10,0);
 	int_disable();
+	timer_addtask(switch_task,10,0);
 	move_stack((void*)0xE0000000,0x2000);
 	ctask = task_q = kmalloc(sizeof(task_t));
 	ctask->pid = next_pid++;
