@@ -39,6 +39,7 @@ Shanghai phase:
   - BGA linear framebuffer
   - ACPI interface
   C Multitasking
+  P Syscalls
   - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
   - Loadable kernel modules

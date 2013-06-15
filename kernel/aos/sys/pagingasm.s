@@ -6,20 +6,20 @@ BITS 32
 ALIGN 4
 GLOBAL loadcr3
 loadcr3:
-	mov eax, [esp+4]
-	mov cr3, eax
+	mov edx, [esp+4]
+	mov cr3, edx
 	ret
 GLOBAL disablepaging
 disablepaging:
-	mov eax, cr0
-	and eax, 0x7FFFFFFF
-	mov cr0, eax
+	mov edx, cr0
+	and edx, 0x7FFFFFFF
+	mov cr0, edx
 	ret
 GLOBAL enablepaging
 enablepaging:
-	mov eax, cr0
-	or eax, 0x80000000
-	mov cr0, eax
+	mov edx, cr0
+	or edx, 0x80000000
+	mov cr0, edx
 	ret
 GLOBAL getfaultaddr
 getfaultaddr:

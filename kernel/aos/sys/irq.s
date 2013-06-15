@@ -2,10 +2,11 @@
 ; (C)2012-2013 Marisa Kirisame, UnSX Team.
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.
-[BITS 32]
+BITS 32
+ALIGN 4
 ; oh macros~
 %macro IRQ 2
-[GLOBAL irq%1]
+GLOBAL irq%1
 irq%1:
 	cli
 	push byte 0
@@ -29,7 +30,7 @@ IRQ 12, 44
 IRQ 13, 45
 IRQ 14, 46
 IRQ 15, 47
-[EXTERN irq_handler]
+EXTERN irq_handler
 irq_common_stub:
 	pusha
 	push ds

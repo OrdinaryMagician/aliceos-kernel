@@ -9,15 +9,15 @@ ALIGN 4
 GLOBAL isr%1
 isr%1:
 	cli
-	push byte 0 ; dummy error code
-	push byte %1
+	push 0 ; dummy error code
+	push %1
 	jmp isr_common_stub
 %endmacro
 %macro ISR_ERR 1
 GLOBAL isr%1
 isr%1:
 	cli
-	push byte %1
+	push %1
 	jmp isr_common_stub
 %endmacro
 ; here come the interrupts
@@ -53,6 +53,7 @@ ISR_NOERR 28
 ISR_NOERR 29
 ISR_NOERR 30
 ISR_NOERR 31
+ISR_NOERR 128
 EXTERN isr_handler
 isr_common_stub:
 	pusha

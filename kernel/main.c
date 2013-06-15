@@ -163,14 +163,9 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	uint32_t time_s = time_ms/1000;
 	time_ms %= 1000;
 	printk("Booting took approximately %u.%03u seconds\n",time_s,time_ms);
-	/* call internal shell */
 	printk("Kernel core with PID %u\n",getpid());
-	if ( !fork() )
-	{
-		printk("Started shell with PID %u\n",getpid());
-		shell.init();
-		shell.enable();
-		return EXIT_SUCCESS;
-	}
+	/* call internal shell */
+	shell.init();
+	shell.enable();
 	return EXIT_SUCCESS;
 }

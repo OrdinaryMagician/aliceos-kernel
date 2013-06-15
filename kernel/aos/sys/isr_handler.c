@@ -8,6 +8,7 @@
 #include <sys/regs.h>
 #include <sys/types.h>
 #include <sys/helpers.h>
+#include <sys/syscall.h>
 #include <memops.h>
 #include <hcf.h>
 /* handler listing */
@@ -25,6 +26,7 @@ void isr_clearhandlers( void )
 /* the handler itself */
 void isr_handler( regs_t *regs )
 {
+	uint32_t ret = regs->eax;
 	int_disable();
 	/* call a specific handler if available */
 	if ( (regs->intno < 32) && isr_handlers[regs->intno] )
@@ -110,21 +112,14 @@ void isr_handler( regs_t *regs )
 	case 31:
 		OHSHI(HCF_RESV,regs);
 		break;
-	/* syscall handlers, not yet implemented */
-	/*
-	case 80:
-		aos_syscall0(regs);
+	/* syscall */
+	case 128:
+		ret = syscall(regs);
 		break;
-	case 81:
-		aos_syscall1(regs);
-		break;
-	case 82:
-		aos_syscall2(regs);
-		break;
-	*/
 	default: /* Unhandled */
 		OHSHI(HCF_UNHANDLEDINT,regs);
 		break;
 	}
+	regs->eax = ret;
 	int_enable();
 }
