@@ -7,14 +7,19 @@
 #ifndef TIMER_H
 #define TIMER_H
 #include <sys/types.h>
-/* timer task */
-typedef void (*ttask_t)( void );
+#include <sys/regs.h>
+/* size of timer list */
+#define TIMERS_SZ 16
+/* IRQ number for the timer */
+#define PIT_IRQ 0
+/* timer */
+typedef void (*timerfn_t)( regs_t* );
 typedef struct
 {
-	ttask_t task;    /* task function */
+	timerfn_t fn;    /* associated function */
 	uint32_t interval; /* call interval */
 	uint8_t oneshot;   /* disabled after first call */
-} ttasklist_t;
+} timer_t;
 /* get current ticks passed */
 uint32_t get_ticks( void );
 /* get current nanoseconds/tick */
@@ -25,10 +30,10 @@ uint32_t get_hz( void );
 uint32_t timer_sec( uint32_t s );
 uint32_t timer_msec( uint32_t m );
 uint32_t timer_usec( uint32_t u );
-/* initialize the timer */
+/* initialize the base timer */
 void init_timer( uint32_t hz );
-/* register a timer task, return 1 on error, 0 otherwise */
-uint8_t timer_addtask( ttask_t task, uint32_t interval, uint8_t oneshot );
-/* unregister a timer task, return 1 on error, 0 otherwise */
-uint8_t timer_rmtask( ttask_t task );
+/* register a timer, return 1 on error, 0 otherwise */
+uint8_t timer_add( timerfn_t fn, uint32_t interval, uint8_t oneshot );
+/* unregister a timer, return 1 on error, 0 otherwise */
+uint8_t timer_rm( timerfn_t fn );
 #endif

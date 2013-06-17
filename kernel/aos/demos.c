@@ -7,6 +7,10 @@
 #include <demos.h>
 #include <sys/types.h>
 #include <sys/helpers.h>
+#include <sys/timer.h>
+#include <sys/cmos.h>
+#include <sys/regs.h>
+#include <sys/kbd.h>
 #include <kdefs.h>
 #include <krand.h>
 #include <printk.h>
@@ -23,10 +27,7 @@
 #include <video/fcpalette.h>
 #include <bga/bga.h>
 #include <bga/bochsvbe.h>
-#include <sys/timer.h>
-#include <sys/cmos.h>
 #include <kdmem.h>
-#include <sys/kbd.h>
 demo_t demos[DEMO_COUNT] =
 {
 	{"blockgfx", "80x50 16-color block graphics demo", demo_blockgfx},
@@ -110,7 +111,7 @@ void demo_kdmem( void )
 	mode_3h.fbprintf("%[07 1024 deallocations took %u ticks\n",delay);
 }
 /* update the header clock every second */
-void dt_updateheader( void )
+void dt_updateheader( regs_t* regs )
 {
 	/* pretty print time and date */
 	uint8_t cmosval[128];
@@ -126,7 +127,7 @@ void dt_updateheader( void )
 }
 /* bottom animation */
 uint8_t base_angle = 0;
-void dt_wave( void )
+void dt_wave( regs_t* regs )
 {
 	mode_3h.fbsetcursor(0,24);
 	char wave[8] = {0x20, 0xB0, 0xB1, 0xB2, 0xDB, 0xB2, 0xB1, 0xB0};
@@ -141,7 +142,7 @@ void dt_wave( void )
 /* bouncing ball */
 int16_t ball_x, ball_y;
 int16_t vel_x, vel_y;
-void dt_bounce( void )
+void dt_bounce( regs_t* regs )
 {
 	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_LIGHTGRAY);
 	ball_x += vel_x;
@@ -187,16 +188,16 @@ void demo_timers( void )
 		mode_3h.drawchar(i,24,' ');
 	}
 	/* register the tasks */
-	if ( timer_addtask(dt_updateheader,timer_msec(100),0) )
+	if ( timer_add(dt_updateheader,timer_msec(100),0) )
 		BERP("Couldn't add task");
-	if ( timer_addtask(dt_wave,timer_msec(100),0) )
+	if ( timer_add(dt_wave,timer_msec(100),0) )
 		BERP("Couldn't add task");
-	if ( timer_addtask(dt_bounce,timer_msec(50),0) )
+	if ( timer_add(dt_bounce,timer_msec(50),0) )
 		BERP("Couldn't add task");
 	demo_wait();
-	timer_rmtask(dt_bounce);
-	timer_rmtask(dt_wave);
-	timer_rmtask(dt_updateheader);
+	timer_rm(dt_bounce);
+	timer_rm(dt_wave);
+	timer_rm(dt_updateheader);
 }
 /* Character map */
 void demo_cmap( void )

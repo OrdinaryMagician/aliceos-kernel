@@ -15,8 +15,9 @@ char chrlcaps( char c )
 char *strlcaps( char *s )
 {
 	char *ret = s;
-	while ( *s )
-		*(s) = chrlcaps(*(s++));
+	do
+		*(s) = chrlcaps(*(s));
+	while ( *(++s) );
 	return ret;
 }
 /* return CAPSLOCK'd character */
@@ -28,8 +29,9 @@ char chrcaps( char c )
 char *strcaps( char *s )
 {
 	char *ret = s;
-	while ( *s )
-		*(s) = chrcaps(*(s++));
+	do
+		*(s) = chrcaps(*(s));
+	while ( *(++s) );
 	return ret;
 }
 /* append one string to the end of another */

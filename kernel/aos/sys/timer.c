@@ -16,10 +16,9 @@ static uint32_t ticker = 0;
 static uint32_t tscale = 0;
 /* system time frequency */
 static uint32_t thz = 0;
-/* task list */
-#define TTASKLIST_SZ 16
-static ttasklist_t timer_tasklist[TTASKLIST_SZ];
-static uint8_t timer_tasks = 0;
+/* timer list */
+static timer_t timer[TIMERS_SZ];
+static uint8_t timers = 0;
 /* get current ticks passed */
 uint32_t get_ticks( void )
 {
@@ -49,46 +48,46 @@ uint32_t timer_usec( uint32_t u )
 	return (u*1000)/tscale;
 }
 /* calls a timer task if specific conditions are met */
-static void timer_calltask( ttasklist_t tl )
+static void timer_call( timer_t t, regs_t *regs )
 {
-	if ( !(uint32_t)tl.task ) /* no task function set */
+	if ( !(uint32_t)t.fn ) /* no function set */
 		return;
-	if ( tl.oneshot ) /* one-shot tasks are handled differently */
+	if ( t.oneshot ) /* one-shot tasks are handled differently */
 	{
-		if ( !tl.interval )
+		if ( !t.interval )
 		{
-			tl.task();
-			timer_rmtask(tl.task);
+			t.fn(regs);
+			timer_rm(t.fn);
 			return;
 		}
-		tl.interval--;
+		t.interval--;
 		return;
 	}
-	if ( !tl.interval ) /* zero interval */
+	if ( !t.interval ) /* zero interval */
 		return;
-	if ( ticker%tl.interval ) /* not the right time */
+	if ( ticker%t.interval ) /* not the right time */
 		return;
 	/* if all is ok, call the task */
-	tl.task();
+	t.fn(regs);
 }
 /* function to increment ticker and call all registered tasks */
 static void timer_callback( regs_t *regs )
 {
 	ticker++;
 	uint8_t i;
-	for ( i=0; i<timer_tasks; i++ )
-		timer_calltask(timer_tasklist[i]);
+	for ( i=0; i<timers; i++ )
+		timer_call(timer[i],regs);
+	irq_eoi(PIT_IRQ);
 	int_enable();
-	irq_eoi(0);
 }
-/* initialize the timer */
+/* initialize the base timer */
 void init_timer( uint32_t hz )
 {
-	printk("Setting timer to %u hz\n",hz);
-	timer_tasks = 0;
-	memset(&timer_tasklist[0],0,sizeof(ttasklist_t)*TTASKLIST_SZ);
-	printk(" Registering base IRQ%u handler\n",0);
-	register_irq_handler(0,&timer_callback);
+	printk("Setting base timer to %u hz\n",hz);
+	timers = 0;
+	memset(&timer[0],0,sizeof(timer_t)*TIMERS_SZ);
+	printk(" Registering base IRQ%u handler\n",PIT_IRQ);
+	register_irq_handler(PIT_IRQ,&timer_callback);
 	uint32_t divisor = 1193180/hz;
 	printk(" PIT frequency divisor: %u\n",divisor);
 	thz = (divisor*hz*hz)/1193180;
@@ -99,35 +98,35 @@ void init_timer( uint32_t hz )
 	uint8_t h = (uint8_t)((divisor>>8)&0xFF);
 	outport_b(0x40,l);
 	outport_b(0x40,h);
-	printk(" Timer set with ~%u hz error\n",abs(error));
+	printk(" Base timer set with ~%u hz error\n",abs(error));
 }
-/* register a timer task, return 1 on error, 0 otherwise */
-uint8_t timer_addtask( ttask_t task, uint32_t interval, uint8_t oneshot )
+/* register a timer, return 1 on error, 0 otherwise */
+uint8_t timer_add( timerfn_t fn, uint32_t interval, uint8_t oneshot )
 {
-	if ( timer_tasks == TTASKLIST_SZ ) /* tasklist full */
+	if ( timers == TIMERS_SZ ) /* list full */
 		return 1;
-	timer_tasklist[timer_tasks].task = task;
-	timer_tasklist[timer_tasks].interval = interval;
-	timer_tasklist[timer_tasks].oneshot = oneshot;
-	timer_tasks++;
+	timer[timers].fn = fn;
+	timer[timers].interval = interval;
+	timer[timers].oneshot = oneshot;
+	timers++;
 	return 0;
 }
-/* rearrange the task array, removing a specific task in the process */
-static void timer_rmtaskid( uint8_t id )
+/* rearrange the timer array, removing a specific timer in the process */
+static void timer_rmid( uint8_t id )
 {
-	memmove(&timer_tasklist[id],&timer_tasklist[id+1],
-		sizeof(ttasklist_t)*(timer_tasks-id));
-	timer_tasks--;
+	memmove(&timer[id],&timer[id+1],
+		sizeof(timer_t)*(timers-id));
+	timers--;
 }
-/* unregister a timer task, return 1 on error, 0 otherwise */
-uint8_t timer_rmtask( ttask_t task )
+/* unregister a timer, return 1 on error, 0 otherwise */
+uint8_t timer_rm( timerfn_t fn )
 {
 	uint8_t i;
-	for ( i=0; i<timer_tasks; i++ )
+	for ( i=0; i<timers; i++ )
 	{
-		if ( timer_tasklist[i].task != task )
+		if ( timer[i].fn != fn )
 			continue;
-		timer_rmtaskid(i);
+		timer_rmid(i);
 		return 0;
 	}
 	return 1;
