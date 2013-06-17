@@ -38,8 +38,8 @@ void irq_handler( regs_t *regs )
 		hnd(regs);
 		return;
 	}
-	int_enable();
 	irq_eoi(irq);
+	int_enable();
 }
 /* clear IRQ handlers */
 void irq_clearhandlers( void )

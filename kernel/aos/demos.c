@@ -116,11 +116,11 @@ void dt_updateheader( regs_t* regs )
 	/* pretty print time and date */
 	uint8_t cmosval[128];
 	cmos_dump(&cmosval[0]);
-	char weekdays[7][4] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+	const char *weekdays = "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
 	mode_3h.fbsetcursor(0,0);
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
 	mode_3h.fbprintf("%{1,0%s %02x/%02x/20%02x",
-			weekdays[clamp(cmosval[6],1,7)-1],cmosval[7],
+			weekdays+(4*clamp(cmosval[6],1,7)-1),cmosval[7],
 			cmosval[8],cmosval[9]);
 	mode_3h.fbprintf("%{-9,0%02x:%02x:%02x",cmosval[4],cmosval[2],
 			cmosval[0]);
@@ -283,7 +283,10 @@ void demo_bochsgfx( void )
 	uint16_t rx = 1280;
 	uint16_t ry = 800;
 	if ( bga_drv.setmode(rx,ry) )
-		BERP("could not set video mode");
+	{
+		mode_3h.fbputs("Could not set BGA video mode");
+		return;
+	}
 	fnt_t font8;
 	if ( loadfnt(&font8,"fbfont8.fnt") )
 		BERP("error loading fbfont8.fnt");

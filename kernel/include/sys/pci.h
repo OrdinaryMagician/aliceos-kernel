@@ -103,7 +103,7 @@ typedef struct
 	uint8_t latency_timer; /* latency timer in PCI bus clock units */
 	uint8_t header_type;   /* layout of the rest of the header */
 	uint8_t bist;          /* built-in self test stuff */
-} attribute((packed)) pci_dev_t;
+} pci_dev_t;
 /* if header type is 0 (general device) */
 typedef struct
 {
@@ -130,7 +130,7 @@ typedef struct
 	uint8_t min_grant;     /* burst period length (1/4usec units) */
 	uint8_t max_latency;   /* access interval to PCI bus (1/4usec units) */
 	uint32_t filler[48];  /* filler so it all fits in 256 bytes */
-} attribute((packed)) pci_dev0_t;
+} pci_dev0_t;
 /* if header type is 1 (PCI to PCI bridge) */
 typedef struct
 {
@@ -159,7 +159,7 @@ typedef struct
 	uint8_t int_pin;        /* Interrupt pin used (0x00 for none) */
 	uint16_t bridgectl;     /* bridge control */
 	uint32_t filler[49];   /* filler so it all fits in 256 bytes */
-} attribute((packed)) pci_dev1_t;
+} pci_dev1_t;
 /* if header type is 2 (PCI to CardBus bridge) */
 typedef struct
 {
@@ -186,7 +186,7 @@ typedef struct
 	uint16_t ss_id;       /* subsystem ID */
 	uint32_t legacy_base; /* 16-bit PC Card legacy mode base address */
 	uint32_t filler[46];  /* filler so it all fits in 256 bytes */
-} attribute((packed)) pci_dev2_t;
+} pci_dev2_t;
 /* composite header */
 #define PCI_HEADER_SZ 256
 typedef struct
@@ -198,7 +198,7 @@ typedef struct
 		pci_dev1_t h1;
 		pci_dev2_t h2;
 	} s;
-} attribute((packed)) pci_regs_t;
+} pci_regs_t;
 /* retrieve certain values from string tables */
 char *pci_class( uint8_t cls, uint8_t sub, uint8_t pif );
 char *pci_vendor( uint16_t vid );

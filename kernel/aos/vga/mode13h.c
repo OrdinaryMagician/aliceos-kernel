@@ -179,7 +179,7 @@ static void m13h_getpal( uint8_t* pal )
 }
 static void m13h_setfont( fnt_t* fnt )
 {
-	m13h_fnt = *fnt;
+	memcpy(&m13h_fnt,fnt,sizeof(fnt_t));
 }
 static fnt_t* m13h_getfont( void )
 {

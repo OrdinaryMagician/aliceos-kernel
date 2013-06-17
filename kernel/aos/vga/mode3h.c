@@ -184,7 +184,7 @@ static void m3h_getpal( uint8_t* pal )
 }
 static void m3h_setfont( fnt_t* fnt )
 {
-	m3h_fnt = *fnt;
+	memcpy(&m3h_fnt,fnt,sizeof(fnt_t));
 	setfont_256(m3h_fnt.data);
 }
 static fnt_t* m3h_getfont( void )

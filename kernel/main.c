@@ -122,8 +122,6 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	/* internal timer */
 	printk("%sSystem timer\n",left);
 	init_timer(TIMER_HZ);
-	int32_t error = TIMER_HZ-get_hz();
-	printk(" (~%uhz error)\n",abs(error));
 	/* paging */
 	printk("%sPaging and dynamic memory management\n",left);
 	init_paging();
@@ -146,23 +144,13 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 			_kver_suf,_kbuild_date,_kbuild_time,_karch,_kosname);
 	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
 	/* RAM amount */
-	uint8_t mult = 0;
-	char suf[7][3] = {"","Ki","Mi","Gi","Ti","Pi","Ei"};
-	uint32_t cmem = eaddr;
-	while ( mult<7 )
-	{
-		cmem = eaddr;
-		eaddr >>= 10;
-		if ( !eaddr )
-			break;
-		mult++;
-	}
-	printk("Total RAM: %u %sB\n",cmem,suf[mult]);
+	printk("Total RAM: %u Bytes\n",eaddr);
 	/* Boot time counter */
-	uint32_t time_ms = (get_timescale()*get_ticks())/1000000;
-	uint32_t time_s = time_ms/1000;
-	time_ms %= 1000;
-	printk("Booting took approximately %u.%03u seconds\n",time_s,time_ms);
+	uint32_t tt = get_ticks();
+	uint32_t tms = (get_timescale()*tt)/1000000;
+	uint32_t ts = tms/1000;
+	tms %= 1000;
+	printk("Booting took %u.%03u seconds (%u ticks)\n",ts,tms,tt);
 	printk("Kernel core with PID %u\n",getpid());
 	/* call internal shell */
 	shell.init();

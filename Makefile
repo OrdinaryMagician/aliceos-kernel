@@ -1,6 +1,7 @@
-CFLAGS := -m32 -std=c99 -O0 -pipe -Wall -Wextra -Werror -pedantic -nostdlib\
+CFLAGS := -m32 -std=c99 -Os -pipe -Wall -Wextra -Werror -pedantic -nostdlib\
 	  -nostdinc -fno-stack-protector -finline-functions -ffreestanding\
-	  -funsigned-char -Wno-unused-function -Wno-unused-parameter\
+	  -funsigned-char -fpack-struct -Wno-unused-function\
+	  -Wno-unused-parameter\
 	  -Ikernel/include
 ASFLAGS := -felf32
 LDFLAGS := -melf_i386 -Tkernel/link.ld

@@ -17,7 +17,7 @@ typedef struct
 	uint8_t access;
 	uint8_t granularity;
 	uint8_t base_h;
-} attribute((packed)) gdt_entry_t;
+} gdt_entry_t;
 /*
 	GDT access byte format:
 	0-3 Segment type
@@ -36,7 +36,7 @@ typedef struct
 {
 	uint16_t limit;
 	uint32_t base;
-} attribute((packed)) gdt_ptr_t;
+} gdt_ptr_t;
 /* IDT entry struct */
 typedef struct
 {
@@ -45,7 +45,7 @@ typedef struct
 	uint8_t zero;
 	uint8_t flags;
 	uint16_t base_h;
-} attribute((packed)) idt_entry_t;
+} idt_entry_t;
 /*
 	IDT flags byte format:
 	0-4 Always 00110
@@ -57,7 +57,7 @@ typedef struct
 {
 	uint16_t limit;
 	uint32_t base;
-} attribute((packed)) idt_ptr_t;
+} idt_ptr_t;
 /* Initialize descriptor tables (duh) */
 void init_descriptor_tables( void );
 #endif

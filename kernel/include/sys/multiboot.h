@@ -31,28 +31,28 @@ typedef struct
 	uint32_t len_l;
 	uint32_t len_h;
 	uint32_t type;
-} attribute((packed)) mmap_entry_t;
+} mmap_entry_t;
 typedef struct
 {
 	uint32_t mod_start;
 	uint32_t mod_end;
 	uint32_t cmdline;
 	uint32_t pad;
-} attribute((packed)) mbootmod_t;
+} mbootmod_t;
 typedef struct
 {
 	uint32_t tabsize;
 	uint32_t strsize;
 	uint32_t addr;
 	uint32_t reserved;
-} attribute((packed)) aout_syms_t;
+} aout_syms_t;
 typedef struct
 {
 	uint32_t num;
 	uint32_t size;
 	uint32_t addr;
 	uint32_t shndx;
-} attribute((packed)) elf_hdr_t;
+} elf_hdr_t;
 typedef struct
 {
 	uint32_t size;
@@ -62,7 +62,7 @@ typedef struct
 	uint8_t drive_heads;
 	uint8_t drive_sectors;
 	uint8_t *drive_ports;
-} attribute((packed)) drive_t;
+} drive_t;
 typedef struct
 {
 	uint16_t version;
@@ -74,7 +74,7 @@ typedef struct
 	uint16_t cseg_len;
 	uint16_t cseg_16_len;
 	uint16_t dseg_len;
-} attribute((packed)) apm_table_t;
+} apm_table_t;
 typedef struct
 {
 	uint16_t attributes;
@@ -96,7 +96,7 @@ typedef struct
 	uint32_t physbase;
 	uint32_t reserved1;
 	uint16_t reserved2;
-} attribute((packed)) vbe_info_t;
+} vbe_info_t;
 typedef struct
 {
 	uint32_t flags;
@@ -124,5 +124,5 @@ typedef struct
 	uint32_t vbe_interface_seg;
 	uint32_t vbe_interface_off;
 	uint32_t vbe_interface_len;
-} attribute((packed)) multiboot_t;
+} multiboot_t;
 #endif
