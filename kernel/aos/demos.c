@@ -120,7 +120,7 @@ void dt_updateheader( regs_t* regs )
 	mode_3h.fbsetcursor(0,0);
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,0);
 	mode_3h.fbprintf("%{1,0%s %02x/%02x/20%02x",
-			weekdays+(4*clamp(cmosval[6],1,7)-1),cmosval[7],
+			weekdays+(4*(clamp(cmosval[6],1,7)-1)),cmosval[7],
 			cmosval[8],cmosval[9]);
 	mode_3h.fbprintf("%{-9,0%02x:%02x:%02x",cmosval[4],cmosval[2],
 			cmosval[0]);
