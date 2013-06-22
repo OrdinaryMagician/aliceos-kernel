@@ -1,33 +1,39 @@
-#!/bin/bash
-if [[ ! -e vmaliceos ]]; then
+#!/bin/zsh
+if [[ ! -e vmaliceos ]]
+ then
   echo -n "building aliceos kernel... "
-  if ( ! which clang >/dev/null ); then
+  if ( ! which clang >/dev/null )
+   then
     echo "you don't have clang, install it or go away"
     exit 1
   fi
-  if ( ! which nasm >/dev/null ); then
+  if ( ! which nasm >/dev/null )
+   then
     echo "you don't have nasm, please install it"
     exit 1
   fi
-  make >/dev/null
-  if [ $? != 0 ]; then
+  ./build
+  if [[ $? != 0 ]]
+   then
     echo "error"
     exit 1
   else
     echo "done"
   fi
 fi
-if [[ ! -e initramfs-aliceos.img ]]; then
+if [[ ! -e initramfs-aliceos.img ]]
+ then
   ./makerd
 fi
 QEMU="qemu-system-i386"
 AOSKRNL="vmaliceos"
 AOSRD="initramfs-aliceos.img"
-QEMU_ARGS="-smp 1 -soundhw all -m 128M -serial stdio -vga vmware"
-if [[ ! -n $* ]]; then
+QEMU_ARGS="-cpu 486 -m 128M -serial stdio -vga std"
+if [[ ! -n $* ]]
+ then
   echo "running aliceos with no commandline"
-  $QEMU $QEMU_ARGS -kernel $AOSKRNL -initrd $AOSRD
+  $QEMU ${=QEMU_ARGS} -kernel $AOSKRNL -initrd $AOSRD
 else
   echo "running aliceos with commandline \"$@\""
-  $QEMU $QEMU_ARGS -kernel $AOSKRNL -initrd $AOSRD -append "$@"
+  $QEMU ${=QEMU_ARGS} -kernel $AOSKRNL -initrd $AOSRD -append "$@"
 fi

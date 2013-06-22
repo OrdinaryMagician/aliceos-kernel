@@ -1,43 +1,37 @@
 # AliceOS kernel
 
-## What?
+## About
 
-Yes, I want to write a kernel. Any problem with that?
-
-## How?
-
-Lowest level parts of the kernel are done in x86 assembly (nasm), everything else is pure C.
-
+The AliceOS kernel is a project to build a kernel according to AOS standards (more on this later).
+Most of the code is C to make portability easier, other parts are assembly for either x86, x86_64, arm or mips (only the first currently used).
 I'm not very experienced but I try to learn from other projects.
 
-## Why?
+## Purpose
 
-Why not?
+The project was started for multiple reasons.
 
-I like to learn new things. I like to study all kinds of things about software development, so why not learn about kernels?
+First, I like to learn new things. I like to study all kinds of things about software development, so why not learn about kernels?
 
-After being introduced to the whole OSDev scene this caught my curiosity. So I wanted to try it too.
+Second, a mere dislike for anything GNU-related. I don't like software being used as some sort of weapon in some crazy revolution.
+I'd give less of a damn about the "free software movement". I prefer to side with open source because heck, it's practical.
 
-This project called ToAruOS (https://github.com/klange/osdev) inspired me. It looks nice and I want to try making something similar.
+Third, I just want to make something that might at least give me a chance to be remembered in history. I'm not asking too much, am I?
 
-## When?
+## Requirements
 
-I first need to finish my coreutils and other related projects before I can make an entire system.
+Building and linking requires the following:
+ - Clang (NCSA)
+ - NASM (New BSD)
+ - Zsh (MIT-like)
+ - GNU binutils (GPLv2) (just for ld)
+I'm still looking for an alternative to that last one.
 
-AliceOS is going to be made of this kernel, plus Au as the userland.
+To test, you can install QEMU and use the included run_aliceos script.
 
-Everything is meant to be built and linked and whatever with ABSOLUTELY NO GNU SOFTWARE OR LIBRARIES (after all this is the main purpose of the project).
-
-Note that this also includes software released under the GPL (or similar) license.
-
-(Currently I can't find a linker that is not part of GNU binutils, what a shame)
-
-(I just noticed some parts of yasm were (L)GPL, so I stopped using it, I've also been told it's a dead project)
-
-## Who?
+## Development team
 
 Mostly me, with help from other people. For a list of contributors, check the CONTRIBUTORS file.
 
-## You are insane
+## Complaints
 
-Whatever.
+Redirected to /dev/null if they're not valuable, especially if they come from raging defenders of free software.

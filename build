@@ -1,0 +1,53 @@
+#!/bin/zsh
+CFLAGS="-m32 -march=i486 -DAOSX86 -std=c99 -Os -pipe -Wall -Wextra -Werror \
+	-pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions \
+	-ffreestanding -funsigned-char -fpack-struct \
+	-Wno-unused-function -Wno-unused-parameter -Ikernel/include"
+ASFLAGS="-felf32"
+LDFLAGS="-melf_i386 -Tkernel/link.ld"
+KERNEL="vmaliceos"
+RDISK="initramfs-aliceos.img"
+BINFILES=( ${KERNEL} ${RDISK} )
+SOURCES=( kernel/*.{s,c} kernel/aos/**/*.{s,c} )
+SOURCESO=${SOURCES//%.(s|c)/.o}
+case $1 in
+ veryclean)
+  for f in ${BINFILES}
+   do
+    if [[ -e ${f} ]]
+     then
+      echo -e "\e[1;32m[RM]\e[0m $(basename ${f})"
+      rm ${f}
+    fi
+   done
+  $0 clean
+  ;;
+ clean)
+  for f in ${SOURCES}
+   do
+    f2=${f/%.(s|c)/.o}
+    if [[ -e "${f2}" ]]
+     then
+      echo -e "\e[1;32m[RM]\e[0m $(basename ${f2})"
+      rm ${f2}
+    fi
+   done
+  ;;
+ *)
+   for f in ${SOURCES}
+    do
+     f2=${f/%.(s|c)/.o}
+     if [[ -z "${f#*.s}" ]]
+      then
+       echo -e "\e[1;32m[NASM]\e[0m $(basename ${f}) -> $(basename ${f2})"
+       nasm ${=ASFLAGS} -o ${f2} ${f}
+      else
+       echo -e "\e[1;32m[CLANG]\e[0m $(basename ${f}) -> $(basename ${f2})"
+       clang ${=CFLAGS} -c -o ${f2} ${f}
+     fi
+    done
+   echo -e "\e[1;32m[LD]\e[0m ${KERNEL}"
+   ld ${=LDFLAGS} -o ${KERNEL} ${=SOURCESO}
+  ;;
+esac
+exit 0

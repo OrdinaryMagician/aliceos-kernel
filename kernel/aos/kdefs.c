@@ -13,7 +13,17 @@ const char *_kver_min = "0";
 const char *_kver_low = "3";
 const char *_kver_suf = "a";
 const char *_kver_code = "Shanghai";
-const char *_karch = "i686";
+#if AOSX86
+const char *_karch = "i486";
+#elif AOSX64
+const char *_karch = "x86_64";
+#elif AOSRPI
+const char *_karch = "ARM";
+#elif AOSDS2
+const char *_karch = "MIPS";
+#else
+const char *_karch = "Unknown";
+#endif
 const char *_kbuild_date = __DATE__;
 const char *_kbuild_time = __TIME__;
 const char *_kosname = "AOS";
