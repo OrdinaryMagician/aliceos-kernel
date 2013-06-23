@@ -4,7 +4,7 @@ CFLAGS="-m32 -march=i486 -DAOSX86 -std=c99 -Os -pipe -Wall -Wextra -Werror \
 	-ffreestanding -funsigned-char -fpack-struct \
 	-Wno-unused-function -Wno-unused-parameter -Ikernel/include"
 ASFLAGS="-felf32"
-LDFLAGS="-melf_i386 -Tkernel/link.ld"
+LDFLAGS="-melf_i386 -Tkernel/linkx86.ld"
 KERNEL="vmaliceos"
 RDISK="initramfs-aliceos.img"
 BINFILES=( ${KERNEL} ${RDISK} )

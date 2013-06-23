@@ -8,11 +8,11 @@
 #define HELPERS_H
 #include <sys/types.h>
 /* some fundamental macros */
-#define max(a,b) ((a>b)?a:b)
-#define min(a,b) ((a<b)?a:b)
-#define clamp(a,b,c) ((a<b)?b:(a>c)?c:a)
-#define abs(a) ((a>0)?a:(a*(-1)))
-#define bcdtodec(val) ((val/0x10)*0x0F)+(val&0x0F))
+#define max(a,b) (((a)>(b))?(a):(b))
+#define min(a,b) (((a)<(b))?(a):(b))
+#define clamp(a,b,c) (((a)<(b))?(b):((a)>(c))?(c):(a))
+#define abs(a) (((a)>0)?(a):((a)*(-1)))
+#define bcdtodec(val) (((val)/0x10)*0x0F)+((val)&0x0F))
 /* some little asm helpers */
 /* cli */
 extern void int_enable( void );

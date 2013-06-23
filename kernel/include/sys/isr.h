@@ -40,7 +40,4 @@ extern void isr29( void );
 extern void isr30( void );
 extern void isr31( void );
 extern void isr128( void );
-extern void isr129( void );
-extern void isr130( void );
-extern void isr131( void );
 #endif

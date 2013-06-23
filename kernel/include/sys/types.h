@@ -9,24 +9,26 @@
 /* nul~ */
 #define NULL ((void*)0)
 /* more comfortable this way */
-typedef unsigned char uint8_t;
-typedef signed char int8_t;
-typedef unsigned short uint16_t;
-typedef signed short int16_t;
-typedef unsigned uint32_t;
-typedef signed int32_t;
+typedef unsigned __INT8_TYPE__  uint8_t;
+typedef signed   __INT8_TYPE__  int8_t;
+typedef unsigned __INT16_TYPE__ uint16_t;
+typedef signed   __INT16_TYPE__ int16_t;
+typedef unsigned __INT32_TYPE__ uint32_t;
+typedef signed   __INT32_TYPE__ int32_t;
+typedef unsigned __INT64_TYPE__ uint64_t;
+typedef signed   __INT64_TYPE__ int64_t;
 /* unicode (wide) char */
-typedef unsigned wchar;
+typedef uint32_t wchar;
 /* limits */
 #define SINT8_MAX 127
 #define SINT16_MAX 32767
-#define SINT32_MAX 2147483647
+#define SINT32_MAX 2147483647L
 #define SINT8_MIN -128
 #define SINT16_MIN -32768
-#define SINT32_MIN -2147483648
+#define SINT32_MIN -2147483648L
 #define UINT8_MAX 255U
 #define UINT16_MAX 65535U
-#define UINT32_MAX 4294967295U
+#define UINT32_MAX 4294967295UL
 /* maximum number of characters needed for representing types */
 /* signs are included for signed types */
 #define UINT8LEN 3

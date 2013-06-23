@@ -8,5 +8,5 @@
 #define BERP_H
 #include <sys/types.h>
 #define BERP(msg) berp(msg,__FILE__,__LINE__);
-extern void berp( const char *message, const char *file, uint32_t line );
+void berp( const char *message, const char *file, uint32_t line );
 #endif

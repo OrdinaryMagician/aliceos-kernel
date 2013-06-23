@@ -40,6 +40,7 @@ Shanghai phase:
   - ACPI interface
   C Multitasking
   P Syscalls
+  - Rewrite paging
   - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
   - Loadable kernel modules

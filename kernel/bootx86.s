@@ -1,4 +1,4 @@
-; boot.s : Multiboot-compatible ASM start point for the kernel.
+; bootx86.s : Multiboot-compatible ASM start point for the kernel.
 ; (C)2012-2013 Marisa Kirisame, UnSX Team.
 ; Part of AliceOS, the Alice Operating System.
 ; Released under the MIT License.

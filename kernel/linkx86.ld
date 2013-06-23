@@ -1,5 +1,5 @@
 /* The linker script for AliceOS kernel */
-OUTPUT_FORMAT(elf32-i386) /* I don't know how to x86_64 so deal w/ it */
+OUTPUT_FORMAT(elf32-i386) /* This one's x86 */
 ENTRY(start)
 phys = 0x00100000;
 SECTIONS

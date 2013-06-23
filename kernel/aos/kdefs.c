@@ -10,7 +10,7 @@ const char *_kname = "AliceOS kernel";
 const char *_kver_fmt = "%d.%d.%d%s";
 const char *_kver_maj = "0";
 const char *_kver_min = "0";
-const char *_kver_low = "3";
+const char *_kver_low = "4";
 const char *_kver_suf = "a";
 const char *_kver_code = "Shanghai";
 #if AOSX86
