@@ -12,7 +12,7 @@ if [[ ! -e vmaliceos ]]
     echo "you don't have nasm, please install it"
     exit 1
   fi
-  ./build
+  ./build >/dev/null
   if [[ $? != 0 ]]
    then
     echo "error"
