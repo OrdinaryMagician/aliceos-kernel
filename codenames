@@ -5,7 +5,7 @@ This list is subject to change, lots of change.
  - Hourai: Base kernel finished, modular development stages.
  - France: Fundamental hardware modules (disk, video, input, filesystems...).
  - Holland: Support for modern GPUs, sound support.
- - Tibet: Au integration, C library.
+ - Tibet: Global AOS integration.
  - Kyoto: Networking.
  - London: Some other hardware support stuff.
  - Russia: Multiplatform code, LLNVM.

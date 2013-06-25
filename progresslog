@@ -43,6 +43,7 @@ Shanghai phase:
   - Rewrite paging
   - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
+  - Move to new project folder layout
   - Loadable kernel modules
   - Move drivers to individual modules
   - In-kernel scripting
@@ -57,15 +58,14 @@ France:
   - Virtual Filesystem
   - Filesystem modules
      - In-house
-        - AOSRD
-        - AOSRD2
+        - AOSRD1/2
         - AliceFS
         - procfs
         - devfs
         - sysfs
         - tmpfs
      - Other
-        - FAT32
+        - FAT12/16/32
         - ext2/3/4
         - ReiserFS
   - Basic NVIDIA video driver
@@ -81,18 +81,19 @@ Holland:
      - NVIDIA
      - Intel
      - ATI
-  - OpenGL implementation
+  - OpenGL (and EGL) implementation
      - Software
      - Hardware
-Tibet:
+Tibet (global AOS phase, not just kernel development):
   - AOS C Library
   - Dynamic linking support
   - Alice in Userland
-  - Cross-compilers
+  - Compiler porting
      - GCC
      - Clang
   - Miscellaneous system scripts
   - /sbin/init, init scripts
+  - Shell
   - Graphics server/compositor
   - Window manager
   - Graphical applications
@@ -106,6 +107,7 @@ London:
 Russia:
   - x86_64 port
   - ARM port (Raspberry Pi)
+  - MIPS port (DSTWO)
   - Low Level Nokinan Virtual Machine
      - 1.x (64-bit)
      - 2.x (128-bit)
