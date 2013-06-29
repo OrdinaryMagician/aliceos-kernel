@@ -28,7 +28,7 @@ fi
 QEMU="qemu-system-i386"
 AOSKRNL="vmaliceos"
 AOSRD="initramfs-aliceos.img"
-QEMU_ARGS="-cpu 486 -m 8M -serial stdio -vga std"
+QEMU_ARGS="-cpu 486 -m 128M -serial stdio -vga std"
 if [[ ! -n $* ]]
  then
   echo "running aliceos with no commandline"

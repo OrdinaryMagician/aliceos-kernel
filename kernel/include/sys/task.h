@@ -26,16 +26,10 @@
 /* savestate struct */
 typedef struct sstate
 {
-	/* general purpose registers */
-	uint32_t eax, ebx, ecx, edx;
-	/* index and pointer registers */
-	uint32_t esi, edi, ebp, eip, esp;
-	/* flags register */
-	uint32_t eflags;
+	/* register data */
+	regs_t regs;
 	/* pointer to saved stack */
 	uint32_t *stack;
-	/* size of saved stack */
-	uint32_t stacksz;
 } savestate_t;
 /* task struct */
 typedef struct task
@@ -68,5 +62,7 @@ uint32_t getpid( void );
 /* fork (internal) */
 uint32_t sc_fork( regs_t *regs );
 /* exit */
+uint32_t exit( uint32_t status );
+/* exit (internal) */
 uint32_t sc_exit( regs_t *regs );
 #endif

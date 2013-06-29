@@ -40,6 +40,8 @@ EXTERN kmain
 start:
 	; no interrupts pls
 	cli
+	; move stack
+	mov esp, stack_beg
 	; muh stack pointer
 	push esp
 	; dem headers
@@ -51,4 +53,7 @@ start:
 	jmp $
 ; BEES
 SECTION .bss
+GLOBAL stack_end,stack_beg
+stack_end:
 	resb 8192 ; reservan 8KiB of memory
+stack_beg:
