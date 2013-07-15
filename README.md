@@ -23,8 +23,8 @@ Building and linking requires the following:
  - Clang (NCSA)
  - NASM (New BSD)
  - Zsh (MIT-like)
- - GNU binutils (GPLv2) (just for ld)
-I'm still looking for an alternative to that last one.
+ - GNU binutils (GPLv2)
+GNU binutils is required for linking. The AOS standard doesn't mention anything against using GNU software for linking (only if it's for "building").
 
 To test, you can install QEMU and use the included run_aliceos script.
 
