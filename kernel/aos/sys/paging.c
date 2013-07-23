@@ -177,7 +177,6 @@ static ptbl_t *clone_table( ptbl_t *src, uint32_t *physAddr )
 					tbl->pages[i].frame*0x1000);
 	}
 	return tbl;
-	
 }
 /* clone a page directory */
 pdir_t *clone_directory( pdir_t *src )
