@@ -1,0 +1,43 @@
+#!/bin/zsh
+CFLAGS="-std=c99 -O2 -pipe -Wall -Wextra -Werror -pedantic -funsigned-char"
+NAMES=( mkrd dmprd )
+CC="clang"
+RM="rm"
+aos_build()
+{
+ [ -e "$2" ] &&
+  [ $(stat -c %Y "$1") -le $(stat -c %Y "$2") ] &&
+  return true
+ CHANGED=1
+ echo -e "\e[1;32m[CC]\e[0m" $(basename "$1") "->" $(basename "$2")
+ ${CC} ${=CFLAGS} -o "$2" "$1"
+ return $?
+}
+aos_clean()
+{
+ [ ! -e "$1" ] &&
+  return true
+ CHANGED=1
+ echo -e "\e[1;32m[RM]\e[0m" $(basename "$1")
+ ${RM} "$1"
+ return $?
+}
+CHANGED=0
+if [[ "$1" == "clean" ]]
+ then
+  for f in "${NAMES[@]}"
+   do
+    aos_clean "${f}"
+   done
+  [ ${CHANGED} -eq 0 ] &&
+   echo "\e[1;32mNothing to clean.\e[0m"
+  exit 0
+ fi
+for f in "${NAMES[@]}"
+ do
+  ! aos_build "${f}.c" "${f}" &&
+   echo -e "\e[1;31mErrors occured when building\e[0m" >&2 &&
+   exit 1
+ done
+[ ${CHANGED} -eq 0 ] &&
+ echo "\e[1;32mEverything is already up to date.\e[0m"

@@ -1,5 +1,5 @@
 #!/bin/zsh
-if [[ ! -e ramdisk/bin/mkrd ]]
+if [[ ! -e ramdisk/mkrd ]]
  then
   pushd ramdisk >/dev/null
   echo -n "building mkrd... "
@@ -31,7 +31,7 @@ else
 fi
 popd >/dev/null
 echo -n "creating ramdisk... "
-ramdisk/bin/mkrd initramfs-aliceos.img rdtemp/*
+ramdisk/mkrd initramfs-aliceos.img rdtemp/*
 if [ $? != 0 ]
  then
   echo "error"

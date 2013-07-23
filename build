@@ -3,51 +3,66 @@ CFLAGS="-m32 -march=i486 -DAOSX86 -std=c99 -Os -pipe -Wall -Wextra -Werror \
 	-pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions \
 	-ffreestanding -funsigned-char -fpack-struct \
 	-Wno-unused-function -Wno-unused-parameter -Ikernel/include"
-ASFLAGS="-felf32"
-LDFLAGS="-melf_i386 -Tkernel/linkx86.ld"
-KERNEL="vmaliceos"
-RDISK="initramfs-aliceos.img"
+AFLAGS="-felf32"
+LFLAGS="-melf_i386 -Tkernel/linkx86.ld"
+NAME="vmaliceos"
 BINFILES=( ${KERNEL} ${RDISK} )
 SOURCES=( kernel/*.{s,c} kernel/aos/**/*.{s,c} )
 SOURCESO=${SOURCES//%.(s|c)/.o}
-case $1 in
- veryclean)
-  for f in ${BINFILES}
+CC="clang"
+AS="nasm"
+LD="ld"
+RM="rm"
+aos_compile()
+{
+ [ -e "$2" ] &&
+  [ $(stat -c %Y "$1") -le $(stat -c %Y "$2") ] &&
+  return true
+ CHANGED=1
+ if [[ ! -z "${f#*.s}" ]]
+  then
+   echo -e "\e[1;32m[CC]\e[0m" $(basename "$1") "->" $(basename "$2")
+   ${CC} ${=CFLAGS} -c -o "$2" "$1"
+   return $?
+  else
+   echo -e "\e[1;32m[AS]\e[0m" $(basename "$1") "->" $(basename "$2")
+   ${AS} ${=AFLAGS} -o "$2" "$1"
+   return $?
+ fi
+}
+aos_clean()
+{
+ [ ! -e "$1" ] &&
+  return true
+ CHANGED=1
+ echo -e "\e[1;32m[RM]\e[0m" $(basename "$1")
+ ${RM} "$1"
+ return $?
+}
+aos_link()
+{
+ [ ${CHANGED} -eq 0 ] &&
+  echo "\e[1;32mEverything is already up to date.\e[0m" &&
+  exit 0
+ echo -e "\e[1;32m[LD]\e[0m" ${NAME}
+ ${LD} ${=LFLAGS} -o "${NAME}" ${=SOURCESO}
+ return $?
+}
+CHANGED=0
+if [[ "$1" == "clean" ]]
+ then
+  for f in "${SOURCES[@]}"
    do
-    if [[ -e ${f} ]]
-     then
-      echo -e "\e[1;32m[RM]\e[0m $(basename ${f})"
-      rm ${f}
-    fi
+    aos_clean "${f/%.(s|c)/.o}"
    done
-  $0 clean
-  ;;
- clean)
-  for f in ${SOURCES}
-   do
-    f2=${f/%.(s|c)/.o}
-    if [[ -e "${f2}" ]]
-     then
-      echo -e "\e[1;32m[RM]\e[0m $(basename ${f2})"
-      rm ${f2}
-    fi
-   done
-  ;;
- *)
-   for f in ${SOURCES}
-    do
-     f2=${f/%.(s|c)/.o}
-     if [[ -z "${f#*.s}" ]]
-      then
-       echo -e "\e[1;32m[NASM]\e[0m $(basename ${f}) -> $(basename ${f2})"
-       nasm ${=ASFLAGS} -o ${f2} ${f}
-      else
-       echo -e "\e[1;32m[CLANG]\e[0m $(basename ${f}) -> $(basename ${f2})"
-       clang ${=CFLAGS} -c -o ${f2} ${f}
-     fi
-    done
-   echo -e "\e[1;32m[LD]\e[0m ${KERNEL}"
-   ld ${=LDFLAGS} -o ${KERNEL} ${=SOURCESO}
-  ;;
-esac
-exit 0
+  [ ${CHANGED} -eq 0 ] &&
+   echo "\e[1;32mNothing to clean.\e[0m"
+  exit 0
+ fi
+for f in "${SOURCES[@]}"
+ do
+  ! aos_compile "${f}" "${f/%.(s|c)/.o}" &&
+   echo -e "\e[1;31mErrors occured when building\e[0m" >&2 &&
+   exit 1
+ done
+aos_link

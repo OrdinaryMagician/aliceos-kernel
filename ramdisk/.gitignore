@@ -1,6 +1,2 @@
-*
-!.gitignore
-!*.c
-!*.h
-!bin/
-!Makefile
+dmprd
+mkrd

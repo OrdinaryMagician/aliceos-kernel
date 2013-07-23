@@ -2,17 +2,17 @@ List of planned kernel codenames.
 
 Early development:
 
- 0.1.x  : "Shanghai"  (Basic development)
- 0.2.x  : "Hourai"    ("Finished" base kernel)
- 0.3.x  : "France"    (Driver writing)
- 0.4.x  : "Holland"   (GPU and sound support)
- 0.5.x  : "Tibet"     (Integration with the rest of AOS)
- 0.6.x  : "Kyoto"     (Networking)
- 0.7.x  : "London"    (Additional hardware support)
- 0.8.x  : "Russia"    (Multiplatform experiments, LLNVM)
- 0.9.x  : "Orleans"   (Feature freeze, bugfixing)
- 0.10.x : "Bucuresti" (Release candidates)
- 1.0.x  : "Dollmaker" (Gold)
+ 0.0.x : "Shanghai"  (Basic development)
+ 0.1.x : "Hourai"    ("Finished" base kernel)
+ 0.2.x : "France"    (Driver writing)
+ 0.3.x : "Holland"   (GPU and sound support)
+ 0.4.x : "Tibet"     (Integration with the rest of AOS)
+ 0.5.x : "Kyoto"     (Networking)
+ 0.6.x : "London"    (Additional hardware support)
+ 0.7.x : "Russia"    (Multiplatform experiments, LLNVM)
+ 0.8.x : "Orleans"   (Feature freeze, bugfixing)
+ 0.9.x : "Bucuresti" (Release candidates)
+ 1.0.x : "Dollmaker" (Gold)
 
 Major versions:
 
