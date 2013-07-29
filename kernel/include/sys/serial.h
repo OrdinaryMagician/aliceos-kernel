@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef SERIAL_H
-#define SERIAL_H
-#include <sys/types.h>
 /* serial ports */
 #define SERIAL_A 0x3F8
 #define SERIAL_B 0x2F8
@@ -25,4 +22,3 @@ void serial_uns( uint16_t dev, uint32_t val, uint16_t width, uint8_t zeropad );
 void serial_dec( uint16_t dev, int32_t val, uint16_t width, uint8_t zeropad );
 void serial_hex( uint16_t dev, uint32_t val, uint16_t width, uint8_t zeropad );
 void serial_oct( uint16_t dev, uint32_t val, uint16_t width, uint8_t zeropad );
-#endif

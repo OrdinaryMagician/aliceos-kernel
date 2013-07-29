@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <xstrstr.h>
+#include <sys/types.h>
 #include <strops.h>
 /* extended substring search */
 char *xstrstr_o(char *mainstr, char *searchstr, uint32_t startoff)

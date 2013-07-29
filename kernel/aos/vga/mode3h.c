@@ -4,14 +4,16 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
 #include <sys/port.h>
+#include <vga/vgareg.h>
+#include <memops.h>
+#include <vga/vgafont.h>
 #include <sys/helpers.h>
 #include <sys/va_list.h>
-#include <vga/mode13h.h>
-#include <vga/vgareg.h>
-#include <vga/vgamisc.h>
-#include <vga/vgafont.h>
-#include <memops.h>
 /* mode 3h variables */
 static uint16_t *m3h_mem = (uint16_t*)0xB8000; /* memory area */
 static fnt_t m3h_fnt; /* font (currently empty) */

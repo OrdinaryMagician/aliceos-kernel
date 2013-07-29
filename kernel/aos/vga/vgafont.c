@@ -4,9 +4,84 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/vgafont.h>
+#include <sys/types.h>
 #include <vga/vgareg.h>
+#include <vga/vgafont.h>
 #include <memops.h>
+/* change a specific glyph in the character map */
+void setglyph( uint8_t val, uint8_t *data )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i;
+	uint8_t *fntmem = (uint8_t*)0xB8000;
+	/* skip characters */
+	for ( i=0; i<val; i++ )
+		fntmem += 32;
+	for ( i=0; i<16; i++ )
+		*(fntmem++) = *(data++);
+	/* restore to defaults */
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
+}
+/* retrieve a specific glyph in the character map */
+void getglyph( uint8_t val, uint8_t *data )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i;
+	uint8_t *fntmem = (uint8_t*)0xB8000;
+	/* skip characters */
+	for ( i=0; i<val; i++ )
+		fntmem += 32;
+	for ( i=0; i<16; i++ )
+		*(data++) = *(fntmem++);
+	/* restore to defaults */
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
+}
+/* get the current font */
+void getfont( uint8_t *font )
+{
+	/* need to change some stuff, like plane to write to and stuff */
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
+	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
+	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
+	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
+	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
+	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
+	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
+	int i, j;
+	/* copy character map, skip 16 bytes of padding for each glyph */
+	uint8_t *fntmem = (uint8_t*)0xB8000;
+	for ( i=0; i<256; i++ )
+	{
+		for ( j=0; j<16; j++ )
+			*(font++) = *(fntmem++);
+		fntmem += 16;
+	}
+	/* restore to defaults */
+	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
+	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
+	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
+	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
+}
 /* apply patches to the BIOS font, save a local copy */
 void initfont( void )
 {
@@ -88,80 +163,6 @@ void setfont( uint8_t *font )
 			*(fntmem++) = *(font++);
 		fntmem += 16;
 	}
-	/* restore to defaults */
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
-	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
-	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
-	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
-}
-/* get the current font */
-void getfont( uint8_t *font )
-{
-	/* need to change some stuff, like plane to write to and stuff */
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
-	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
-	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
-	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
-	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
-	int i, j;
-	/* copy character map, skip 16 bytes of padding for each glyph */
-	uint8_t *fntmem = (uint8_t*)0xB8000;
-	for ( i=0; i<256; i++ )
-	{
-		for ( j=0; j<16; j++ )
-			*(font++) = *(fntmem++);
-		fntmem += 16;
-	}
-	/* restore to defaults */
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
-	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
-	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
-	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
-}
-/* change a specific glyph in the character map */
-void setglyph( uint8_t val, uint8_t *data )
-{
-	/* need to change some stuff, like plane to write to and stuff */
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
-	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
-	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
-	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
-	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
-	int i;
-	uint8_t *fntmem = (uint8_t*)0xB8000;
-	/* skip characters */
-	for ( i=0; i<val; i++ )
-		fntmem += 32;
-	for ( i=0; i<16; i++ )
-		*(fntmem++) = *(data++);
-	/* restore to defaults */
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
-	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);
-	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x00);
-	setvgareg(VGA_GC,VGA_GC_GFXMOD,old_gfxmod);
-}
-/* retrieve a specific glyph in the character map */
-void getglyph( uint8_t val, uint8_t *data )
-{
-	/* need to change some stuff, like plane to write to and stuff */
-	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x04);
-	setvgareg(VGA_SEQ,VGA_SEQ_CMSEL,0x00);
-	uint8_t old_smmod = getvgareg(VGA_SEQ,VGA_SEQ_SMMOD);
-	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,0x06);
-	setvgareg(VGA_GC,VGA_GC_RDMSEL,0x02);
-	uint8_t old_gfxmod = getvgareg(VGA_GC,VGA_GC_GFXMOD);
-	setvgareg(VGA_GC,VGA_GC_GFXMOD,0x00);
-	int i;
-	uint8_t *fntmem = (uint8_t*)0xB8000;
-	/* skip characters */
-	for ( i=0; i<val; i++ )
-		fntmem += 32;
-	for ( i=0; i<16; i++ )
-		*(data++) = *(fntmem++);
 	/* restore to defaults */
 	setvgareg(VGA_SEQ,VGA_SEQ_MMASK,0x03);
 	setvgareg(VGA_SEQ,VGA_SEQ_SMMOD,old_smmod);

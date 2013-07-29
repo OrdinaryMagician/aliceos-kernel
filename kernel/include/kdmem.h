@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef KDMEM_H
-#define KDMEM_H
-#include <sys/types.h>
 /* reserved list size */
 /* NOTE: 131072 allocations are possible per MiB */
 #define KDMEM_RESV 0x100000 /* 1MiB */
@@ -48,4 +45,3 @@ uint32_t kdmem_count( void );
 uint32_t kdmem_amount( void );
 /* initialize dynamic memory allocator */
 void kdmem_init( uint32_t start, uint32_t size, uint32_t psize );
-#endif

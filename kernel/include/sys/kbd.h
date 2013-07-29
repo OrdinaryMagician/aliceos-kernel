@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef KBD_H
-#define KBD_H
-#include <sys/types.h>
 /* port I/O */
 #define KBD_PORT 0x60
 /* IRQ number for PS/2 keyboard */
@@ -151,4 +148,3 @@ uint8_t kbd_addhandler( kbd_handler_t hnd );
 uint8_t kbd_rmhandler( kbd_handler_t hnd );
 /* get a key */
 void kbd_getkey( key_t *key );
-#endif

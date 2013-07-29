@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef REGS_H
-#define REGS_H
-#include <sys/types.h>
 typedef struct
 {
 	uint32_t gs, fs, es, ds;
@@ -14,4 +11,3 @@ typedef struct
 	uint32_t intno, errno;
 	uint32_t eip, cs, eflags, uesp, ss;
 } regs_t;
-#endif

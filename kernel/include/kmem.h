@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef KMEM_H
-#define KMEM_H
-#include <sys/types.h>
 /* memory allocation functions */
 void *kmalloc_global( uint32_t sz, uint8_t alg, uint32_t *phys );
 void *kmalloc_a( uint32_t sz );
@@ -25,4 +22,3 @@ void init_kmem( uint32_t iaddr, uint32_t eaddr );
 void kmem_addgap( uint32_t start, uint32_t end );
 /* current addr variables values */
 void kmem_addrs( uint32_t *pai, uint32_t *pa, uint32_t *ma );
-#endif

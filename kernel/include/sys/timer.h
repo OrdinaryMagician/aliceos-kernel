@@ -4,10 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef TIMER_H
-#define TIMER_H
-#include <sys/types.h>
-#include <sys/regs.h>
 /* size of timer list */
 #define TIMERS_SZ 16
 /* IRQ number for the timer */
@@ -36,4 +32,3 @@ void init_timer( uint32_t hz );
 uint8_t timer_add( timerfn_t fn, uint32_t interval, uint8_t oneshot );
 /* unregister a timer, return 1 on error, 0 otherwise */
 uint8_t timer_rm( timerfn_t fn );
-#endif

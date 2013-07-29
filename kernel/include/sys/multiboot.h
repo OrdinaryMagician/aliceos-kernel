@@ -4,10 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef MULTIBOOT_H
-#define MULTIBOOT_H
-#include <sys/types.h>
-#include <sys/helpers.h>
 /* defines */
 #define MULTIBOOT_MAGIC        0x1BADB002
 #define MULTIBOOT_EAX_MAGIC    0x2BADB002
@@ -125,4 +121,3 @@ typedef struct
 	uint32_t vbe_interface_off;
 	uint32_t vbe_interface_len;
 } multiboot_t;
-#endif

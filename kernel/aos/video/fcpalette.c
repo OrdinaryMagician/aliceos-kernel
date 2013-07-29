@@ -4,7 +4,8 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <video/fcpalette.h>
+#include <sys/types.h>
+#include <video/vidtypes.h>
 color_t alicepalfc[16] =
 {
 	/* low brightness */

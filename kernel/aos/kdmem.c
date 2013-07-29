@@ -4,12 +4,12 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <kdmem.h>
+#include <sys/types.h>
 #include <sys/paging.h>
-#include <kmem.h>
-#include <berp.h>
+#include <kdmem.h>
 #include <memops.h>
 #include <printk.h>
+#include <berp.h>
 /*
 The used memory is managed in a list of blocks.
 Every time there's an allocation, the manager checks if there's any unused gaps

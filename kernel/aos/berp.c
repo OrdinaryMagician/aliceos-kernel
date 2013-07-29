@@ -4,12 +4,15 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <berp.h>
+#include <sys/types.h>
 #include <sys/helpers.h>
-#include <printk.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
 #include <vga/mode3h.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
+#include <printk.h>
 /* panic in the style of a nokinan machine basic error response printer */
 void berp( const char *message, const char *file, uint32_t line )
 {

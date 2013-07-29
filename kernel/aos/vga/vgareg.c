@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/vgareg.h>
+#include <sys/types.h>
 #include <sys/port.h>
 /* set the value of a VGA register, return previous value */
 uint8_t setvgareg( uint16_t port, uint8_t index, uint8_t value )

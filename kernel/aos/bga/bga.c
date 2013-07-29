@@ -4,17 +4,16 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/port.h>
-#include <sys/helpers.h>
-#include <sys/va_list.h>
-#include <bga/bga.h>
-#include <bga/bochsvbe.h>
-#include <video/loadimg.h>
+#include <sys/types.h>
 #include <video/loadfnt.h>
+#include <video/loadimg.h>
 #include <video/vidtypes.h>
+#include <sys/port.h>
+#include <bga/bochsvbe.h>
+#include <bga/bga.h>
 #include <memops.h>
 #include <sys/helpers.h>
-#include <kmem.h>
+#include <sys/va_list.h>
 /* bga variables */
 static uint8_t *bga_mem = NULL; /* buffer memory area */
 static fnt_t bga_fnt; /* font (currently empty) */

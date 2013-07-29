@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <printk.h>
+#include <sys/types.h>
 #include <sys/va_list.h>
 #include <sys/serial.h>
 /* behind-the-scenes function */

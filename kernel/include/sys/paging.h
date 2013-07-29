@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef PAGING_H
-#define PAGING_H
-#include <sys/types.h>
 /*
 	Page structure (32 bits)
 	0     Present
@@ -59,4 +56,3 @@ void switch_pdir( pdir_t *newdir );
 page_t *get_page( uint32_t addr, uint8_t make, pdir_t *dir );
 /* clone a page directory */
 pdir_t *clone_directory( pdir_t *src );
-#endif

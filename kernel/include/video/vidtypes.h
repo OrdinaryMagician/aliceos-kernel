@@ -4,10 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef VIDTYPES_H
-#define VIDTYPES_H
-#include <sys/types.h>
-#include <sys/helpers.h>
 typedef struct
 {
 	uint8_t a, r, g, b;
@@ -27,4 +23,3 @@ typedef struct
 #define COLOR_NULL       color(0,0,0,0)
 /* easy color_t creation */
 color_t color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-#endif

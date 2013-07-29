@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <krand.h>
+#include <sys/types.h>
 static uint32_t krand_seed = 1;
 /* get next random number */
 uint32_t krand()

@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/serial.h>
+#include <sys/types.h>
 #include <sys/port.h>
 #include <sys/helpers.h>
 void serial_on( uint16_t dev )

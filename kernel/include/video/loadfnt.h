@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef LOADFNT_H
-#define LOADFNT_H
-#include <sys/types.h>
 /* formats */
 #define FNT_FMT_BNW1  0 /* 1bpp black and white */
 #define FNT_FMT_BNW8  1 /* 8bpp black and white (black if zero, else white) */
@@ -34,4 +31,3 @@ typedef struct
 } fnt_t;
 /* load a font from the ramdisk */
 uint8_t loadfnt( fnt_t *dest, char *fname );
-#endif

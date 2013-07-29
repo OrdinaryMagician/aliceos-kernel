@@ -4,12 +4,14 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
+#include <sys/regs.h>
 #include <sys/timer.h>
 #include <sys/irq_handlers.h>
 #include <sys/helpers.h>
-#include <sys/port.h>
 #include <printk.h>
 #include <memops.h>
+#include <sys/port.h>
 /* internal counter */
 static uint32_t ticker = 0;
 /* length of each tick in nanoseconds */

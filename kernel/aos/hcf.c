@@ -4,12 +4,16 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <hcf.h>
+#include <sys/types.h>
 #include <sys/regs.h>
 #include <sys/helpers.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
 #include <vga/mode3h.h>
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
+#include <hcf.h>
 /* for when you screwed up pretty bad */
 void OHSHI( char *mesg, regs_t *regs )
 {

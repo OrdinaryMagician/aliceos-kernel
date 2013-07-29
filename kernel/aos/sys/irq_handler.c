@@ -4,13 +4,11 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/irq_handlers.h>
-#include <sys/regs.h>
-#include <sys/port.h>
 #include <sys/types.h>
-#include <sys/serial.h>
+#include <sys/regs.h>
+#include <sys/irq_handlers.h>
+#include <sys/port.h>
 #include <sys/helpers.h>
-#include <printk.h>
 #include <memops.h>
 /* handler listing */
 static irq_handler_t irq_handlers[16];

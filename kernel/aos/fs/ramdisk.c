@@ -4,11 +4,10 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
 #include <fs/ramdisk.h>
-#include <memops.h>
-#include <strops.h>
 #include <printk.h>
-#include <berp.h>
+#include <strops.h>
 uint32_t rdpos = 0;
 uint32_t rdsiz = 0;
 /* try to find an entry in the ramdisk by filename */

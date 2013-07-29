@@ -4,12 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef BGA_H
-#define BGA_H
-#include <sys/types.h>
-#include <video/vidtypes.h>
-#include <video/loadimg.h>
-#include <video/loadfnt.h>
 /* some necessary functions */
 void setbgareg(uint8_t reg, uint16_t val);
 uint16_t getbgareg(uint8_t reg);
@@ -80,4 +74,3 @@ typedef struct
 } bga_driver_t;
 /* the actual driver struct */
 bga_driver_t bga_drv;
-#endif

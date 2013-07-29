@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef IRQ_H
-#define IRQ_H
 /* IRQ handlers */
 extern void irq0( void );
 extern void irq1( void );
@@ -23,4 +21,3 @@ extern void irq12( void );
 extern void irq13( void );
 extern void irq14( void );
 extern void irq15( void );
-#endif

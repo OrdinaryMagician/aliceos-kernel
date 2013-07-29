@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef LOADIMG_H
-#define LOADIMG_H
-#include <sys/types.h>
 /* depth types */
 #define IMG_DP_MONO   0 /* 8bpp monochrome */
 #define IMG_DP_4COL   1 /* 8bpp 4 color */
@@ -35,4 +32,3 @@ typedef struct
 } img_t;
 /* load an image from the ramdisk */
 uint8_t loadimg( img_t *dest, char *fname );
-#endif

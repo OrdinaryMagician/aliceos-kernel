@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <math.h>
+#include <sys/types.h>
 #include <berp.h>
 /* undefined functions will result in a berp (panic) or whatever when called */
 double sin( double ang )
@@ -51,30 +51,15 @@ double square( double val )
 {
 	return val*val;
 }
-double exp( double val )
-{
-	return pow(2,val);
-}
 double root( double val, double rdx )
 {
 	BERP("not implemented");
 	return 0.0;
 }
-double pow( double val, double exp )
+double pow( double val, double exp );
+double exp( double val )
 {
-	double baseval = val;
-	if ( exp < 0.0 )
-		return 1.0/pow(val,exp);
-	if ( exp == 0.0 )
-		return 1.0;
-	if ( decp(exp) != 0.0 )
-		BERP("not implemented");
-	while ( exp > 1.0 )
-	{
-		val *= baseval;
-		exp -= 1.0;
-	}
-	return val;
+	return pow(2,val);
 }
 double floor( double val )
 {
@@ -94,4 +79,20 @@ double ceil( double val )
 double decp( double val )
 {
 	return val-floor(val);
+}
+double pow( double val, double exp )
+{
+	double baseval = val;
+	if ( exp < 0.0 )
+		return 1.0/pow(val,exp);
+	if ( exp == 0.0 )
+		return 1.0;
+	if ( decp(exp) != 0.0 )
+		BERP("not implemented");
+	while ( exp > 1.0 )
+	{
+		val *= baseval;
+		exp -= 1.0;
+	}
+	return val;
 }

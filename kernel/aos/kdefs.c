@@ -4,7 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <kdefs.h>
 /* kernel stuff */
 const char *_kname = "AliceOS kernel";
 const char *_kver_fmt = "%d.%d.%d%s";

@@ -36,6 +36,7 @@ Shanghai phase:
   X Paging
   P Basic PCI/PCI-e support (required for more drivers)
   - VMWare graphics driver
+  - QEMU Virgil3D driver (delay to next phase if not usable yet)
   - BGA linear framebuffer
   - ACPI interface
   C Multitasking

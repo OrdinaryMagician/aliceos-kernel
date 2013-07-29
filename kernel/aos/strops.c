@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <strops.h>
+#include <sys/types.h>
 /* return lowercase of a character */
 char chrlcaps( char c )
 {
@@ -65,6 +65,14 @@ char *strcasechr( char *in, char c )
 		in++;
 	}
 	return in;
+}
+/* returns the length of a null-terminated string */
+uint32_t strlen( char *s )
+{
+	uint32_t len = 0;
+	while ( *(s++) )
+		len++;
+	return len;
 }
 /* find last occurence of a character in a string */
 char *strrchr( char *in, char c )
@@ -157,13 +165,18 @@ uint8_t strcasecont( char *in, char *set )
 	}
 	return 1;
 }
-/* returns the length of a null-terminated string */
-uint32_t strlen( char *s )
+/* compare a number of characters at the start of a string with another */
+uint8_t strncmp( char *a, char *b, uint32_t count )
 {
-	uint32_t len = 0;
-	while ( *(s++) )
-		len++;
-	return len;
+	do
+	{
+		if ( *a != *b )
+			return 1;
+		if ( (!(*a) && *b) || (*a && !(*b)) )
+			return 1;
+	}
+	while ( *(a++) && *(b++) && --count );
+	return 0;
 }
 /* find the first occurence of a string inside another */
 char *strstr( char *in, char *s )
@@ -176,6 +189,19 @@ char *strstr( char *in, char *s )
 		in++;
 	}
 	return in;
+}
+/* case insensitive version of strncasecmp */
+uint8_t strncasecmp( char *a, char *b, uint32_t count )
+{
+	do
+	{
+		if ( chrlcaps(*a) != chrlcaps(*b) )
+			return 1;
+		if ( (!(*a) && *b) || (*a && !(*b)) )
+			return 1;
+	}
+	while ( *(a++) && *(b++) && --count );
+	return 0;
 }
 /* case insensitive version of strstr */
 char *strcasestr( char *in, char *s )
@@ -224,32 +250,6 @@ char *strncat( char *dest, char *src, uint32_t count )
 		*(dest++) = *(src++);
 	*dest = 0;	/* obligatory null termination */
 	return ret;
-}
-/* compare a number of characters at the start of a string with another */
-uint8_t strncmp( char *a, char *b, uint32_t count )
-{
-	do
-	{
-		if ( *a != *b )
-			return 1;
-		if ( (!(*a) && *b) || (*a && !(*b)) )
-			return 1;
-	}
-	while ( *(a++) && *(b++) && --count );
-	return 0;
-}
-/* case insensitive version of strncasecmp */
-uint8_t strncasecmp( char *a, char *b, uint32_t count )
-{
-	do
-	{
-		if ( chrlcaps(*a) != chrlcaps(*b) )
-			return 1;
-		if ( (!(*a) && *b) || (*a && !(*b)) )
-			return 1;
-	}
-	while ( *(a++) && *(b++) && --count );
-	return 0;
 }
 /* overwrite one string with a number of characters from another */
 char *strncpy( char *dest, char *src, uint32_t count )

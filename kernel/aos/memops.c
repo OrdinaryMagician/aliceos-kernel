@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <memops.h>
+#include <sys/types.h>
 /* copy byte blocks */
 void *memcpy( void *dest, const void *src, uint32_t count )
 {

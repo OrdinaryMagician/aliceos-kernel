@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef MEMOPS_H
-#define MEMOPS_H
-#include <sys/types.h>
 /* copy byte blocks */
 void *memcpy( void *dest, const void *src, uint32_t count );
 /* copy byte blocks checking for possible overlap */
@@ -31,4 +28,3 @@ uint16_t *memrevw( uint16_t *dest, uint32_t count );
 void *memb( void *in, uint8_t b, uint32_t count );
 /* find first occurence of a specific word in a memory block */
 uint16_t *memw( uint16_t *in, uint16_t w, uint32_t count );
-#endif

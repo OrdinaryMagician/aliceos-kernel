@@ -4,10 +4,11 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/regs.h>
+#include <sys/paging.h>
 #include <sys/task.h>
+#include <sys/syscall.h>
 #include <printk.h>
 /* from task.c */
 extern task_t *ctask;

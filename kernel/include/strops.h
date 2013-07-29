@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef STROPS_H
-#define STROPS_H
-#include <sys/types.h>
 /* return lowercase of a character */
 char chrlcaps( char c );
 /* convert an entire string to lowercase */
@@ -78,4 +75,3 @@ char *strnlcat( char *dest, char *src, uint32_t count, uint32_t dmax );
    NOTE: does not work like the standard c function. for subsequent calls you
    have to pass the next token, not NULL */
 char *strtok(char *str, char *delim);
-#endif

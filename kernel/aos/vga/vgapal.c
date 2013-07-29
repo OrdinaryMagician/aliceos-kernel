@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/vgapal.h>
+#include <sys/types.h>
 /* Alice standard 16 color palette, reduced from 8-bit to DAC's 6-bit */
 uint8_t alicepal[48] =
 {

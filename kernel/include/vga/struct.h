@@ -4,11 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef VGASTRUCT_H
-#define VGASTRUCT_H
-#include <sys/types.h>
-#include <video/loadimg.h>
-#include <video/loadfnt.h>
 /* memory access layout for modes */
 #define LAYOUT_LINEAR  0
 #define LAYOUT_PLANAR  1
@@ -85,4 +80,3 @@ typedef struct
 	void (*fbsetattr)( uint8_t fg, uint8_t bg, uint8_t ex );
 	void (*fbgetattr)( uint8_t *fg, uint8_t *bg, uint8_t *ex );
 } vga_mode_t;
-#endif

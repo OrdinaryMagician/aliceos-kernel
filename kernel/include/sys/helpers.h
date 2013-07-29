@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef HELPERS_H
-#define HELPERS_H
-#include <sys/types.h>
 /* some fundamental macros */
 #define max(a,b) (((a)>(b))?(a):(b))
 #define min(a,b) (((a)<(b))?(a):(b))
@@ -24,4 +21,3 @@ extern void khalt( uint32_t err );
 #define EXIT_BERP      0x50524542 /* basic error response printer */
 #define EXIT_EXCEPTION 0xDEADBEEF /* after halt and catch fire */
 #define EXIT_SUCCESS   0xADEADBED /* success return value */
-#endif

@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef BOCHSVBE_H
-#define BOCHSVBE_H
 /* memory */
 #define BGA_MEM_MB 0x10
 #define BGA_MEM_KB 0x4000
@@ -60,4 +58,3 @@
 #define BGA_8BITDAC    0x20
 #define BGA_LFBENABLED 0x40
 #define BGA_NOCLEARMEM 0x80
-#endif

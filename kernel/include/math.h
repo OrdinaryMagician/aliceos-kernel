@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef MATH_H
-#define MATH_H
-#include <sys/types.h>
 #define M_PI 3.141592653589793
 #define M_E 2.718281828459045
 #define M_NAN __builtin_nan("")
@@ -28,4 +25,3 @@ double floor( double val );
 double trunc( double val );
 double ceil( double val );
 double decp( double val );
-#endif

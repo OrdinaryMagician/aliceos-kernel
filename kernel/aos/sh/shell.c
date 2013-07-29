@@ -4,14 +4,17 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
 #include <sh/shell.h>
-#include <sh/sh_func.h>
-#include <sys/kbd.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
 #include <vga/mode3h.h>
-#include <memops.h>
 #include <strops.h>
 #include <kmem.h>
-#include <printk.h>
+#include <memops.h>
+#include <sh/sh_func.h>
+#include <sys/kbd.h>
 /* internal variables */
 static char *sh_cmdline;
 static char *sh_lcmdline;

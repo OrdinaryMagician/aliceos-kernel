@@ -6,28 +6,27 @@
 */
 #include <demos.h>
 #include <sys/types.h>
-#include <sys/helpers.h>
+#include <sys/kbd.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
+#include <vga/mode3h.h>
+#include <vga/vgamisc.h>
+#include <vga/vgafont.h>
+#include <vga/vgapal.h>
+#include <kdmem.h>
+#include <sys/regs.h>
 #include <sys/timer.h>
 #include <sys/cmos.h>
-#include <sys/regs.h>
-#include <sys/kbd.h>
-#include <kdefs.h>
-#include <krand.h>
-#include <printk.h>
+#include <sys/helpers.h>
 #include <berp.h>
-#include <fs/ramdisk.h>
-#include <vga/vgapal.h>
-#include <vga/vgafont.h>
-#include <vga/vgamisc.h>
-#include <vga/mode13h.h>
-#include <vga/mode3h.h>
-#include <video/loadimg.h>
-#include <video/loadfnt.h>
+#include <krand.h>
+#include <kdefs.h>
 #include <video/vidtypes.h>
-#include <video/fcpalette.h>
 #include <bga/bga.h>
+#include <video/fcpalette.h>
 #include <bga/bochsvbe.h>
-#include <kdmem.h>
+#include <vga/mode13h.h>
 demo_t demos[DEMO_COUNT] =
 {
 	{"blockgfx", "80x50 16-color block graphics demo", demo_blockgfx},

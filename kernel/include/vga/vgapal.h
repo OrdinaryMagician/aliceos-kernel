@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef PALETTES_H
-#define PALETTES_H
-#include <sys/types.h>
 /* Alice standard 16 color palette, reduced from 8-bit to DAC's 6-bit */
 uint8_t alicepal[48];
 /* Alice palette color names */
@@ -47,4 +44,3 @@ uint8_t alicepal256[768];
 #define APAL256_64USR_POS 576
 #define APAL256_64USR_OFF 192
 #define APAL256_64USR_LEN 192
-#endif

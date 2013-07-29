@@ -5,26 +5,30 @@
 	Released under the MIT License.
 */
 #include <sys/types.h>
-#include <sys/helpers.h>
 #include <sys/multiboot.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
+#include <vga/mode3h.h>
+#include <vga/vgamisc.h>
+#include <vga/vgafont.h>
+#include <vga/vgapal.h>
+#include <kdefs.h>
+#include <strops.h>
+#include <sys/helpers.h>
 #include <sys/serial.h>
+#include <printk.h>
+#include <kmem.h>
 #include <sys/desc_tables.h>
+#include <sys/regs.h>
 #include <sys/timer.h>
 #include <sys/paging.h>
-#include <sys/kbd.h>
 #include <sys/task.h>
+#include <sys/kbd.h>
 #include <sys/pci.h>
-#include <vga/vgapal.h>
-#include <vga/vgafont.h>
-#include <vga/vgamisc.h>
-#include <vga/mode3h.h>
 #include <fs/ramdisk.h>
-#include <sh/shell.h>
-#include <kdefs.h>
-#include <printk.h>
 #include <berp.h>
-#include <strops.h>
-#include <kmem.h>
+#include <sh/shell.h>
 /* initial stack pointer */
 uint32_t *initial_esp;
 /* location of certain parts of the kernel */

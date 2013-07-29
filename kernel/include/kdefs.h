@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef KDEFS_H
-#define KDEFS_H
 /* internal timer resolution */
 #define TIMER_HZ 1000
 /* some limits */
@@ -22,4 +20,3 @@ const char *_karch;
 const char *_kbuild_date;
 const char *_kbuild_time;
 const char *_kosname;
-#endif

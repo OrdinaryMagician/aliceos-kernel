@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef PCI_TABLES_H
-#define PCI_TABLES_H
-#include <sys/types.h>
 /* vendors */
 typedef struct
 {
@@ -28,4 +25,3 @@ typedef struct
 	uint8_t pif; /* 0xFF is any */
 	char *str;
 } pci_clss_t;
-#endif

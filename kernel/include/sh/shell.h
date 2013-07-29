@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef SHELL_H
-#define SHELL_H
-#include <sys/types.h>
 /* basic shell struct */
 typedef struct
 {
@@ -17,4 +14,3 @@ typedef struct
 	uint32_t (*lastret)( void ); /* Get the return code of last command */
 } shell_t;
 shell_t shell; /* the AOS internal shell */
-#endif

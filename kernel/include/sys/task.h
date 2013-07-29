@@ -4,11 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef TASK_H
-#define TASK_H
-#include <sys/types.h>
-#include <sys/paging.h>
-#include <sys/regs.h>
 /* some definitions */
 #define USR_CORE   0x0000	/* core user (kernel) */
 #define USR_ROOT   0x0100	/* root user (admin) */
@@ -65,4 +60,3 @@ uint32_t sc_fork( regs_t *regs );
 uint32_t exit( uint32_t status );
 /* exit (internal) */
 uint32_t sc_exit( regs_t *regs );
-#endif

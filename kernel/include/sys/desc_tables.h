@@ -4,10 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef DESC_TABLES_H
-#define DESC_TABLES_H
-#include <sys/types.h>
-#include <sys/helpers.h>
 /* GDT entry struct */
 typedef struct
 {
@@ -60,4 +56,3 @@ typedef struct
 } idt_ptr_t;
 /* Initialize descriptor tables (duh) */
 void init_descriptor_tables( void );
-#endif

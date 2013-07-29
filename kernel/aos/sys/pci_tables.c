@@ -4,6 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
 #include <sys/pci_tables.h>
 /* list of known vendors */
 pci_vnds_t pci_vnds[] =

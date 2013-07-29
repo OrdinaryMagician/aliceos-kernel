@@ -4,12 +4,11 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <kmem.h>
-#include <sys/helpers.h>
-#include <printk.h>
-#include <berp.h>
+#include <sys/types.h>
 #include <sys/paging.h>
 #include <kdmem.h>
+#include <printk.h>
+#include <berp.h>
 /* in sys/paging.c */
 extern pdir_t *kernel_directory;
 /* in sys/pagingasm.s */

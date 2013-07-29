@@ -4,8 +4,4 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef FCPALETTE_H
-#define FCPALETTE_H
-#include <video/vidtypes.h>
 color_t alicepalfc[16];
-#endif

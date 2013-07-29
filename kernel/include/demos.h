@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef DEMOS_H
-#define DEMOS_H
 #define DEMO_COUNT 6
 typedef struct
 {
@@ -28,4 +26,3 @@ void demo_realgfx( void );
 /* timer demo */
 void demo_timers( void );
 demo_t demos[DEMO_COUNT];
-#endif

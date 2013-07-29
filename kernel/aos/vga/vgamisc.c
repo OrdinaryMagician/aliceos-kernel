@@ -4,10 +4,9 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <vga/vgamisc.h>
+#include <sys/types.h>
 #include <vga/vgareg.h>
 #include <sys/port.h>
-#include <sys/helpers.h>
 /* plane switch */
 void planeswitch( uint8_t p )
 {

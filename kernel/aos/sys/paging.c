@@ -4,17 +4,17 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/helpers.h>
+#include <sys/types.h>
 #include <sys/paging.h>
-#include <sys/isr_handlers.h>
 #include <sys/regs.h>
-#include <hcf.h>
 #include <berp.h>
-#include <kmem.h>
-#include <kdmem.h>
-#include <strops.h>
-#include <memops.h>
 #include <printk.h>
+#include <kmem.h>
+#include <memops.h>
+#include <kdmem.h>
+#include <sys/isr_handlers.h>
+#include <strops.h>
+#include <hcf.h>
 /* from kmem.c */
 extern uint32_t p_addr;
 extern uint32_t m_addr;

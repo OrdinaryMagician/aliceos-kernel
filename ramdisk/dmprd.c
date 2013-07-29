@@ -4,14 +4,12 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
-#include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#include <stdio.h>
+#include <string.h>
 #include "mkrd.h"
 int dump( int fd, char fname[256], uint32_t start, uint32_t size )
 {

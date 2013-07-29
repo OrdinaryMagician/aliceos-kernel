@@ -4,11 +4,13 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
 #include <sys/kbd.h>
 #include <sys/port.h>
+#include <memops.h>
+#include <sys/regs.h>
 #include <sys/helpers.h>
 #include <sys/irq_handlers.h>
-#include <memops.h>
 #include <printk.h>
 /* internal: current mode keys */
 static uint8_t kbd_cmod  = 0;

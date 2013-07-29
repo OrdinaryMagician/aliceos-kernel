@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef TYPES_H
-#define TYPES_H
 /* nul~ */
 #define NULL ((void*)0)
 /* more comfortable this way */
@@ -37,4 +35,3 @@ typedef uint32_t wchar;
 #define SINT16LEN 6
 #define UINT32LEN 10
 #define SINT32LEN 11
-#endif

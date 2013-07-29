@@ -4,10 +4,14 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
 #include <sh/sh_func.h>
-#include <demos.h>
+#include <video/loadfnt.h>
+#include <video/loadimg.h>
+#include <vga/struct.h>
 #include <vga/mode3h.h>
 #include <strops.h>
+#include <demos.h>
 #include <sys/pci.h>
 /* prototypes */
 static cmd_t sh_help;

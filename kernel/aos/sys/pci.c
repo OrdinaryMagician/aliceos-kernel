@@ -4,8 +4,9 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/pci.h>
+#include <sys/types.h>
 #include <sys/pci_tables.h>
+#include <sys/pci.h>
 #include <sys/port.h>
 #include <printk.h>
 /* retrieve certain values from string tables */

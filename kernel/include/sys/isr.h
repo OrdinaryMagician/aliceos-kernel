@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef ISR_H
-#define ISR_H
 /* ISR handlers */
 extern void isr0( void );
 extern void isr1( void );
@@ -40,4 +38,3 @@ extern void isr29( void );
 extern void isr30( void );
 extern void isr31( void );
 extern void isr128( void );
-#endif

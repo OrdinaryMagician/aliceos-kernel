@@ -4,8 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/types.h>
-#include <sys/regs.h>
 /* Syscall levels */
 #define SCL_0 0x00	/* Level 0 (unprivileged) syscalls */
 #define SCL_1 0x01	/* Level 1 (administrative) syscalls */

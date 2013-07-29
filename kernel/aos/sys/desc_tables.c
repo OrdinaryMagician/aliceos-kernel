@@ -4,15 +4,17 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
 #include <sys/desc_tables.h>
-#include <sys/isr.h>
-#include <sys/irq.h>
-#include <sys/port.h>
-#include <memops.h>
+#include <printk.h>
 #include <sys/helpers.h>
+#include <memops.h>
+#include <sys/regs.h>
 #include <sys/irq_handlers.h>
 #include <sys/isr_handlers.h>
-#include <printk.h>
+#include <sys/port.h>
+#include <sys/isr.h>
+#include <sys/irq.h>
 /* Write the actual GDT pointer */
 extern void gdt_flush( uint32_t ptr );
 /* Write the actual IDT pointer */

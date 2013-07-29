@@ -4,14 +4,9 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef ISR_HANDLERS_H
-#define ISR_HANDLERS_H
-#include <sys/types.h>
-#include <sys/regs.h>
 /* just a harmless typedef */
 typedef void (*isr_handler_t)( regs_t *regs );
 /* register an ISR handler function */
 void register_isr_handler( uint8_t n, isr_handler_t handler );
 /* clear ISR handlers */
 void isr_clearhandlers( void );
-#endif

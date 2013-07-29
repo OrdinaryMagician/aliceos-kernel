@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef VGAMISC_H
-#define VGAMISC_H
-#include <sys/types.h>
 /* plane switch */
 void planeswitch( uint8_t p );
 /* blank screen */
@@ -17,4 +14,3 @@ void vgaunblank( void );
 void disableblink( void );
 /* enable text blinking reducing background colors to 8 */
 void enableblink( void );
-#endif

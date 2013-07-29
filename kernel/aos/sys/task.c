@@ -4,16 +4,17 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
+#include <sys/types.h>
+#include <sys/paging.h>
+#include <sys/regs.h>
 #include <sys/task.h>
+#include <memops.h>
 #include <sys/helpers.h>
 #include <sys/timer.h>
-#include <sys/regs.h>
-#include <sys/syscall.h>
+#include <kmem.h>
 #include <strops.h>
 #include <berp.h>
-#include <printk.h>
-#include <kmem.h>
-#include <memops.h>
+#include <sys/syscall.h>
 /* paging stuff */
 extern pdir_t *kernel_directory;
 extern pdir_t *current_directory;

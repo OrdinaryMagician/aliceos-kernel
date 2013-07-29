@@ -5,9 +5,6 @@
 	Released under the MIT License.
 	(This is a modified version that can be integrated into AOS)
 */
-#ifndef XSTRSTR_H
-#define XSTRSTR_H
-#include <sys/types.h>
 /* extended substring search */
 char *xstrstr_o(char *mainstr, char *searchstr, uint32_t startoff);
 char *xstrstr(char *mainstr, char *searchstr);
@@ -44,4 +41,3 @@ char *xstrlnof(char *mainstr, char *searchstr);
 /* find last NOT of for cstring (case insensitive!) */
 char *xstrilnof_o(char *mainstr, char *searchstr, uint32_t startoff);
 char *xstrilnof(char *mainstr, char *searchstr);
-#endif

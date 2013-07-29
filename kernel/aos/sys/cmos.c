@@ -4,7 +4,7 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/cmos.h>
+#include <sys/types.h>
 #include <sys/port.h>
 void cmos_dump( uint8_t *here )
 {

@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef SH_FUNC_H
-#define SH_FUNC_H
-#include <sys/types.h>
 /* command struct */
 typedef struct
 {
@@ -16,4 +13,3 @@ typedef struct
 } cmd_t;
 #define SH_NUMCMDS 5
 cmd_t* sh_cmds[SH_NUMCMDS];
-#endif

@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef LOADANIM_H
-#define LOADANIM_H
-#include <sys/types.h>
 /* depth types */
 #define ANM_DP_MONO   0 /* 8bpp monochrome */
 #define ANM_DP_4COL   1 /* 8bpp 4 color */
@@ -44,4 +41,3 @@ typedef struct
 } anm_t;
 /* load an animation from the ramdisk */
 uint8_t loadanm( anm_t *dest, char *fname );
-#endif

@@ -4,7 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/types.h>
 /* Attribute Controller ports */
 #define VGA_AC_I 0x3C0 /* Address */
 #define VGA_AC_W 0x3C0 /* Write */

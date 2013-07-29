@@ -4,15 +4,14 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include "mkrd.h"
+#include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include "mkrd.h"
+#include <unistd.h>
+#include <stdlib.h>
 int main( int argc, char **argv )
 {
 	const uint32_t aosrd_hdmagic = AOSRD_HDMAGIC;

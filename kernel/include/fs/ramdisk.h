@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef RAMDISK_H
-#define RAMDISK_H
-#include <sys/types.h>
 /*
 Layout of an AOS simple ramdisk
 ********
@@ -68,4 +65,3 @@ rd_entry_t *rd_entry( uint32_t idx );
 uint32_t rd_numents( void );
 /* initialize ramdisk handler */
 uint8_t init_ramdisk( uint32_t start, uint32_t end );
-#endif

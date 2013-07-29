@@ -4,10 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef PCI_H
-#define PCI_H
-#include <sys/types.h>
-#include <sys/helpers.h>
 /* port I/O */
 #define PCI_CONF_ADDR 0xCF8
 #define PCI_CONF_DATA 0xCFC
@@ -214,4 +210,3 @@ uint8_t pci_exists( uint8_t bus, uint8_t slot, uint8_t fn );
 void pci_gethead( uint8_t bus, uint8_t slot, uint8_t fn, void *to );
 /* enumerate pci devices */
 void init_pci( void );
-#endif

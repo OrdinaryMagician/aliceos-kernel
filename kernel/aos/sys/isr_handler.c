@@ -4,13 +4,13 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#include <sys/isr_handlers.h>
-#include <sys/regs.h>
 #include <sys/types.h>
+#include <sys/regs.h>
+#include <sys/isr_handlers.h>
+#include <hcf.h>
+#include <memops.h>
 #include <sys/helpers.h>
 #include <sys/syscall.h>
-#include <memops.h>
-#include <hcf.h>
 /* handler listing */
 static isr_handler_t isr_handlers[32];
 /* register an ISR handler function */

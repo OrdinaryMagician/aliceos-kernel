@@ -4,9 +4,6 @@
 	Part of AliceOS, the Alice Operating System.
 	Released under the MIT License.
 */
-#ifndef VGAFONT_H
-#define VGAFONT_H
-#include <sys/types.h>
 /* local copy of bios font */
 uint8_t biosfnt[4096];
 /* apply patches to the BIOS font, save a local copy */
@@ -23,4 +20,3 @@ void getfont( uint8_t *font );
 void setglyph( uint8_t val, uint8_t *data );
 /* retrieve a specific glyph in the character map */
 void getglyph( uint8_t val, uint8_t *data );
-#endif
