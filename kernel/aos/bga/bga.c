@@ -46,7 +46,6 @@ static void bga_getpal( color_t* pal );
 static void bga_setfont( fnt_t* fnt );
 static fnt_t* bga_getfont( void );
 static void bga_clear( void );
-static void bga_flip( void );
 static void bga_hscroll( int32_t offset );
 static void bga_vscroll( int32_t offset );
 static void bga_putpixel( uint16_t x, uint16_t y, color_t c );
@@ -444,6 +443,7 @@ static void bga_drawchar( uint16_t x, uint16_t y, char c )
 }
 static void bga_drawwchar( uint16_t x, uint16_t y, wchar c )
 {
+	x=0;y=0;c=0;
 	return;	/* not yet implemented */
 }
 static void bga_drawstring( uint16_t x, uint16_t y, char *s )
@@ -535,6 +535,7 @@ static void bga_fbputc( char c )
 }
 static void bga_fbwputc( wchar c )
 {
+	c=0;
 	return;	/* not yet implemented */
 }
 static void bga_fbputs( char *s )
@@ -906,6 +907,7 @@ static void bga_fbprintf( char *s, ... )
 }
 static void bga_fbwprintf( wchar *s, ... )
 {
+	s=0;
 	return;	/* not yet implemented */
 }
 static void bga_fbsetattr( uint8_t fg, uint8_t bg, uint8_t ex )

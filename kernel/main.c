@@ -29,15 +29,16 @@
 #include <fs/ramdisk.h>
 #include <berp.h>
 #include <sh/shell.h>
+#include <sys/map.h>
 /* initial stack pointer */
-uint32_t *initial_esp;
+static uint32_t *initial_esp;
 /* location of certain parts of the kernel */
 extern uint32_t code;
 extern uint32_t data;
 extern uint32_t bss;
 extern uint32_t end;
 /* C entry point for the kernel starts here. */
-int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
+uint32_t kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 {
 	/* set the initial stack pointer */
 	initial_esp = esp;
@@ -51,6 +52,9 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	mode_3h.fbcursorvis(1);
 	mode_3h.fbsetcursor(0,0);
 	mode_3h.fbsetattr(APAL_WHITE,APAL_BLACK,0);
+	/* sanity check */
+	if ( (mboot_mag != 0x2BADB002) || !mboot )
+		BERP("Incorrect multiboot parameters");
 	/* stuff to save */
 	char kfname[32];
 	char kargs[KCMDLINE_MAX];
@@ -141,6 +145,9 @@ int kmain( multiboot_t *mboot, uint32_t mboot_mag, uint32_t *esp )
 	/* set up ramdisk access */
 	if ( rdisk && init_ramdisk(rdisk->mod_start,rdisk->mod_end) )
 		BERP("Ramdisk initialization failed");
+	/* system map */
+	printk("%sLoading kernel symbol map\n",left);
+	init_sysmap();
 	/* print some kind of uname */
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLACK,0);
 	mode_3h.fbprintf("%s %s %s.%s.%s%s %s %s %s %s\n\n",

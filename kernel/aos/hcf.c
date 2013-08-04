@@ -14,6 +14,7 @@
 #include <vga/vgapal.h>
 #include <vga/vgafont.h>
 #include <hcf.h>
+#include <sys/map.h>
 /* for when you screwed up pretty bad */
 void OHSHI( char *mesg, regs_t *regs )
 {
@@ -57,10 +58,12 @@ void OHSHI( char *mesg, regs_t *regs )
 	mode_3h.fbprintf("%[7%{2,14GS  %#08x",regs->gs);
 	mode_3h.fbprintf("%[7%{17,14FS  %#08x",regs->fs);
 	mode_3h.fbprintf("%[7%{32,14ES  %#08x",regs->es);
-	mode_3h.fbprintf("%[7%{2,16EFLAGS %#08x [",regs->eflags);
-	for ( i=0; i<32; i++ )
-		mode_3h.fbprintf("%u",regs->eflags>>(31-i)&1);
-	mode_3h.fbprintf("]");
+	mode_3h.fbprintf("%[7%{2,16EFLAGS %#08x",regs->eflags);
+	/* trace */
+	mapsym_t current;
+	if ( !sym_addr(regs->eip,&current) )
+		mode_3h.fbprintf("%[7%{2,18At %s+%u",current.name,
+			regs->eip-current.addr);
 	/* heh */
 	mode_3h.fbprintf("%[F%{1,-3Computer will now halt and catch fire, have"
 			" a nice day! :)");

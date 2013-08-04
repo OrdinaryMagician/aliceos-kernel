@@ -1,42 +1,17 @@
-#!/bin/zsh
-if [[ ! -e ramdisk/mkrd ]]
- then
-  pushd ramdisk >/dev/null
-  echo -n "building mkrd... "
-  if ( ! which clang >/dev/null )
-   then
-    echo "you don't have clang, install it or go away"
-    exit 1
-  fi
-  ./build >/dev/null
-  if [ $? != 0 ]
-   then
-    echo "error"
-    exit 1
-  else
-    echo "done"
-  fi
-  popd >/dev/null
-fi
+#!/bin/sh
 mkdir -p rdtemp
 pushd rdtemp >/dev/null
 echo -n "extracting rdcontents... "
 tar xf ../rdcontents.tar.xz
-if [ $? != 0 ]
- then
-  echo "error"
-  exit 1
-else
-  echo "done"
-fi
+[ $? != 0 ] && echo "error" && exit 1
+echo "done"
+echo -n "adding maps... "
+cp ../system.map .
+[ $? != 0 ] && echo "error" && exit 1
+echo "done"
 popd >/dev/null
 echo -n "creating ramdisk... "
 ramdisk/mkrd initramfs-aliceos.img rdtemp/*
-if [ $? != 0 ]
- then
-  echo "error"
-  exit 1
-else
-  echo "done"
-fi
+[ $? != 0 ] && echo "error" && exit 1
+echo "done"
 rm -rf rdtemp

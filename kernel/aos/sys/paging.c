@@ -42,14 +42,14 @@ static void clr_frame( uint32_t addr )
 	uint32_t off = faddr%0x20;
 	frames[idx] &= ~(1<<off);
 }
-/* test the value of a bit in the bitset */
-static uint32_t chk_frame( uint32_t addr )
+/* test the value of a bit in the bitset (UNUSED) */
+/*static uint32_t chk_frame( uint32_t addr )
 {
 	uint32_t faddr = addr/0x1000;
 	uint32_t idx = faddr/0x20;
 	uint32_t off = faddr%0x20;
 	return frames[idx]&(1<<off);
-}
+}*/
 /* find the first free frame, return UINT32_MAX if there are no free frames */
 static uint32_t ffree_frame( void )
 {

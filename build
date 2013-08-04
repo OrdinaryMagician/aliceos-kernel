@@ -1,18 +1,19 @@
 #!/bin/zsh
-CFLAGS="-m32 -march=i486 -DAOSX86 -std=c99 -Os -pipe -Wall -Wextra -Werror \
-	-pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions \
-	-ffreestanding -funsigned-char -fpack-struct \
-	-Wno-unused-function -Wno-unused-parameter -Ikernel/include"
+CFLAGS="-m32 -march=i486 -DAOSX86 -Os -pipe -std=c99 -Wall -Wextra -Werror \
+        -pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions \
+	-ffreestanding -funsigned-char -fpack-struct -Ikernel/include"
 AFLAGS="-felf32"
 LFLAGS="-melf_i386 -Tkernel/linkx86.ld"
 NAME="vmaliceos"
+MAP="system.map"
 BINFILES=( ${KERNEL} ${RDISK} )
 SOURCES=( kernel/*.{s,c} kernel/aos/**/*.{s,c} )
 SOURCESO=${SOURCES//%.(s|c)/.o}
-CC="clang"
+CC=${CC:-clang}
 AS="nasm"
 LD="ld"
 RM="rm"
+NM="nm"
 aos_compile()
 {
  [ -e "$2" ] &&
@@ -48,6 +49,12 @@ aos_link()
  ${LD} ${=LFLAGS} -o "${NAME}" ${=SOURCESO}
  return $?
 }
+aos_symbols()
+{
+ echo -e "\e[1;32m[NM]\e[0m" ${NAME} "->" ${MAP}
+ ${NM} -n "${NAME}" > "${MAP}"
+ return $?
+}
 CHANGED=0
 if [[ "$1" == "clean" ]]
  then
@@ -65,4 +72,4 @@ for f in "${SOURCES[@]}"
    echo -e "\e[1;31mErrors occured when building\e[0m" >&2 &&
    exit 1
  done
-aos_link
+aos_link && aos_symbols

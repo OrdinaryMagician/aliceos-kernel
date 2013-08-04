@@ -8,7 +8,7 @@
 /* NOTE: 131072 allocations are possible per MiB */
 #define KDMEM_RESV 0x100000 /* 1MiB */
 #define KDMEM_ST 0xC0000000 /* virtual start address */
-#define KDMEM_SIZ 0x100000 /* 1MiB */
+#define KDMEM_SIZ 0x1000000 /* 16MiB */
 /* memory block structure */
 typedef struct
 {

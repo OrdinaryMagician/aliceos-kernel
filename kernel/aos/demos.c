@@ -110,8 +110,9 @@ void demo_kdmem( void )
 	mode_3h.fbprintf("%[07 1024 deallocations took %u ticks\n",delay);
 }
 /* update the header clock every second */
-void dt_updateheader( regs_t* regs )
+static void dt_updateheader( regs_t* regs )
 {
+	regs=0;
 	/* pretty print time and date */
 	uint8_t cmosval[128];
 	cmos_dump(&cmosval[0]);
@@ -125,9 +126,10 @@ void dt_updateheader( regs_t* regs )
 			cmosval[0]);
 }
 /* bottom animation */
-uint8_t base_angle = 0;
-void dt_wave( regs_t* regs )
+static uint8_t base_angle = 0;
+static void dt_wave( regs_t* regs )
 {
+	regs=0;
 	mode_3h.fbsetcursor(0,24);
 	char wave[8] = {0x20, 0xB0, 0xB1, 0xB2, 0xDB, 0xB2, 0xB1, 0xB0};
 	mode_3h.fbsetattr(APAL_CYAN,APAL_BLUE,EXATTR_NOSCR);
@@ -139,10 +141,11 @@ void dt_wave( regs_t* regs )
 		base_angle = 0;
 }
 /* bouncing ball */
-int16_t ball_x, ball_y;
-int16_t vel_x, vel_y;
-void dt_bounce( regs_t* regs )
+static int16_t ball_x, ball_y;
+static int16_t vel_x, vel_y;
+static void dt_bounce( regs_t* regs )
 {
+	regs=0;
 	mode_3h.drawrect(ball_x,ball_y,4,4,APAL_LIGHTGRAY);
 	ball_x += vel_x;
 	ball_y += vel_y;

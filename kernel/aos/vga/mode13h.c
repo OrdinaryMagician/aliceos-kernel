@@ -67,7 +67,7 @@ vga_mode_t mode_13h =
 	.mem = (void*)0xA0000,
 	.setmode = m13h_setmode,
 	.setpal = m13h_setpal,
-	.getpal = m13h_setpal,
+	.getpal = m13h_getpal,
 	.setfont = m13h_setfont,
 	.getfont = m13h_getfont,
 	.clear = m13h_clear,
@@ -391,6 +391,7 @@ static void m13h_drawchar( uint16_t x, uint16_t y, char c )
 }
 static void m13h_drawwchar( uint16_t x, uint16_t y, wchar c )
 {
+	x=0;y=0;c=0;
 	return;	/* Not implemented */
 }
 static void m13h_drawstring( uint16_t x, uint16_t y, char *s )
@@ -482,6 +483,7 @@ static void m13h_fbputc( char c )
 }
 static void m13h_fbwputc( wchar c )
 {
+	c=0;
 	return;	/* not yet implemented */
 }
 static void m13h_fbputs( char *s )
@@ -491,6 +493,7 @@ static void m13h_fbputs( char *s )
 }
 static void m13h_fbwputs( wchar *s )
 {
+	s=0;
 	return;	/* not yet implemented */
 }
 static uint32_t m13h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg,
@@ -852,6 +855,7 @@ static void m13h_fbprintf( char *s, ... )
 }
 static void m13h_fbwprintf( wchar *s, ... )
 {
+	s=0;
 	return;	/* not yet implemented */
 }
 static void m13h_fbsetattr( uint8_t fg, uint8_t bg, uint8_t ex )

@@ -42,6 +42,7 @@ Shanghai phase:
   C Multitasking
   P Syscalls
   - Rewrite paging
+  P Better HCF with named symbols and stack tracing
   - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
   - Move to new project folder layout

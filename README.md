@@ -22,10 +22,14 @@ I'm not asking too much, am I?
 ## Requirements
 
 Building and linking requires the following:
- - Clang
- - NASM
- - Zsh
- - GNU binutils
+ - clang (gcc currently does not work)
+ - nasm
+ - zsh
+ - binutils
+ - sed
+ - grep
+ - tar
+ - xz
 
 To test, you can install QEMU and use the included run_aliceos script.
 
