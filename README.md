@@ -26,8 +26,6 @@ Building and linking requires the following:
  - nasm
  - zsh
  - binutils
- - sed
- - grep
  - tar
  - xz
 
