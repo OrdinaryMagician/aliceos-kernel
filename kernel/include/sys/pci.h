@@ -8,17 +8,13 @@
 #error GCC buttfrustration incoming. See this source code file for more info.
 /*
    This will not compile with GCC.
-
    The compiler will get buttfrustrated if bitfields use types other than int.
    Please use Clang until this "issue" gets fixed.
-
    This is yet another case of GCC making up rules.
    Quoting C99, 6.7.2.1, paragraph 4:
-
      A bit-field shall have a type that is a qualified or unqualified version
      of _Bool, signed int, unsigned int, or some other implementation-defined
      type.
-
    It might have been a problem in C90 where that last part wasn't in, but not
    anymore on C99. Of course Clang has no problem with this and does not
    complain when compiling.
