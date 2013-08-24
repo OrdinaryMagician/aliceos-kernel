@@ -6,7 +6,6 @@ AFLAGS="-felf32"
 LFLAGS="-melf_i386 -Tkernel/linkx86.ld"
 NAME="vmaliceos"
 MAP="system.map"
-BINFILES=( ${KERNEL} ${RDISK} )
 SOURCES=( kernel/*.{s,c} kernel/aos/**/*.{s,c} )
 SOURCESO=${SOURCES//%.(s|c)/.o}
 CC=${CC:-clang}
