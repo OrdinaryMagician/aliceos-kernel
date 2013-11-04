@@ -128,3 +128,67 @@ Bucuresti:
 Dollmaker:
   - Go gold
   - Public announcement
+
+Unsorted (not likely to happen):
+  - Misc GPU support
+     - 3dfx Voodoo 2/3 + Glide API
+     - PowerVR 2 + Possible Dreamcast port
+     - PowerVR 5 + Possible Pandora port
+  - Misc platform support
+     - POWER port (specifically PowerPC)
+     - Native Nokinan and/or Nekern ports
+     - SPARC/SPARC64 port
+     - NES [Ricoh 2A03 (MOS 6502)] port
+     - "Potato" (Dreamcast)
+  - Misc hardware support
+     - Support for gamepads
+     - Oculus Rift support (it has to happen someday)
+  - Misc filesystem support
+     - Patented Microsoft filesystems
+        - Violate Microsoft's software patents in a dark alley
+        - NTFS
+        - exFAT
+     - Byproducts of the Grand Enterprise Mass
+        - Btrfs
+        - ZFS
+        - OCFS
+     - Other things
+        - XFS
+        - UFS
+        - F2FS
+        - HFS/HFS+
+  - Whatever
+     - Native 3D acceleration for kernel console
+     - In-house bootloader
+     - In-house assembler/compiler/linker
+     - Paravirtualization
+        - KVM
+        - Xen
+        - VMware
+        - Virtualbox
+        - HyperV
+  - Jokes
+     F AliceOS on alien hardware
+     - AliceOS, brought to you by Google/Microsoft/Apple
+     - AliceOS closes its source
+     - Low Level Java Virtual Machine
+     - In-kernel mail client
+     - NSA backdoor
+        - In kernel
+        - In C library
+        - In coreutils
+     - UnSX Team merging with Oracle
+     - Rewrites
+        - Basic
+        - Visual Basic
+        - Java
+        - Javascript
+        - Unrealscript
+        - C#
+        - C++
+        - Objective-C
+        - /g/script
+        - FiM++
+     - Abandon project
+     - Porting of anything Poettering-related
+     - AliceOS + Ubuntu distro
