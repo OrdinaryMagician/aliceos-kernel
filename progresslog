@@ -12,7 +12,7 @@ C Currently in progress
 
 Shanghai phase:
   X Start project
-  F Follow JamesM's tutorial step by step
+  F Follow JamesM's tutorial step by step (it didn't work well)
   X Restart project
   X VGA text mode
   X Implement printk()
@@ -26,22 +26,22 @@ Shanghai phase:
   X GDT, IDT...
   X IRQs
   X PIT
-  P Fix generic VGA drivers to work on real hardware
+  P Fix generic VGA drivers to work on real hardware (Boy do I hate this one)
   X PS/2 Keyboard input
-  - Fix PS/2 Keyboard issues in VMWare and in real hardware
+  - Fix PS/2 keyboard in VMWare and real hardware (none / duplicate keypresses)
   - PS/2 Mouse input
-  P Internal shell
-  P Dynamic memory (kalloc/krealloc/kfree)
-  - Proper RAM detection
+  P Internal shell (needs some fixes here and there)
+  P Dynamic memory (kalloc/krealloc/kfree, right now stack based)
+  - Proper RAM detection (Bootloaders can lie sometimes)
   X Paging
   P Basic PCI/PCI-e support (required for more drivers)
   - VMWare graphics driver
   - QEMU Virgil3D driver (delay to next phase if not usable yet)
-  - BGA linear framebuffer
-  - ACPI interface
-  C Multitasking
-  P Syscalls
-  - Rewrite paging
+  - BGA linear framebuffer (currently using bank mode and it's slow)
+  - ACPI interface (who in their right mind would do OOP on hardware level?)
+  C Multitasking (currently VERY stuck in here)
+  P Syscalls (the system itself works, that's for sure)
+  - Rewrite paging (code is currently a carbon from of jamesm's tutorial)
   P Better HCF with named symbols and stack tracing
   - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
@@ -55,13 +55,13 @@ Hourai phase:
 France:
   - Generic PATA/SATA drivers
   - Generic USB drivers
-  - PC speaker driver
+  - PC speaker driver (yay for beeps!)
   - USB keyboard and USB mouse drivers
   - Virtual Filesystem
   - Filesystem modules
      - In-house
         - AOSRD1/2
-        - AliceFS
+        - AliceFS (An adventure in the magical world of filesystems)
         - procfs
         - devfs
         - sysfs
@@ -69,34 +69,34 @@ France:
      - Other
         - FAT12/16/32
         - ext2/3/4
-        - ReiserFS
-  - Basic NVIDIA video driver
-  - Basic Intel video driver
-  - Basic ATI video driver
+        - ReiserFS (Perhaps Reiser4 too)
+  - Basic NVIDIA video driver (might include 3D acceleration)
+  - Basic Intel video driver (not like it'll be useful)
+  - Basic ATI (now AMD) video driver (might not exist)
 Holland:
-  - Audio subsystem
+  - Audio subsystem (OSS-like)
   - Specific audio drivers
-     - SB16
-     - AC97 / HD Audio
-     - ES1370
+     - SB16 (Just for the hell of it)
+     - AC97 / HD Audio (Default on Virtualbox / My computer)
+     - ES1370 (Used by VMware)
   - Attempt to get help from GPU manufacturers for more specialized drivers
-     - NVIDIA
-     - Intel
-     - ATI
-  - OpenGL (and EGL) implementation
-     - Software
-     - Hardware
+     - NVIDIA (Possibly request help with some nvidia-specific technologies)
+     - Intel (Might come in handy despite being relatively low-performance)
+     - ATI (now AMD) (inb4 no drivers)
+  - OpenGL (plus GLES and EGL, too) implementation
+     - Software (Possibly port Mesa directly)
+     - Hardware (Hope for at least supporting everything up to 3.2)
 Tibet (global AOS phase, not just kernel development):
   - AOS C Library
-  - Dynamic linking support
+  - Dynamic linking support (considered harmful)
   - Alice in Userland
   - Compiler porting
-     - GCC
-     - Clang
+     - GCC (ew)
+     - Clang (yay)
   - Miscellaneous system scripts
   - /sbin/init, init scripts
   - Shell
-  - Graphics server/compositor
+  - Graphics server/compositor (not a server anymore)
   - Window manager
   - Graphical applications
 Kyoto:
@@ -140,6 +140,9 @@ Unsorted (not likely to happen):
      - SPARC/SPARC64 port
      - NES [Ricoh 2A03 (MOS 6502)] port
      - "Potato" (Dreamcast)
+     - Other ARM + ARM64
+     - Other MIPS32 + MIPS64
+     - Tilera
   - Misc hardware support
      - Support for gamepads
      - Oculus Rift support (it has to happen someday)
@@ -149,16 +152,16 @@ Unsorted (not likely to happen):
         - NTFS
         - exFAT
      - Byproducts of the Grand Enterprise Mass
-        - Btrfs
+        - Btrfs (I can't believe it's not btrfs!)
         - ZFS
         - OCFS
      - Other things
         - XFS
         - UFS
         - F2FS
-        - HFS/HFS+
+        - HFS/HFS+ (crapple)
   - Whatever
-     - Native 3D acceleration for kernel console
+     - Native 3D acceleration for kernel console (hue)
      - In-house bootloader
      - In-house assembler/compiler/linker
      - Paravirtualization
@@ -166,7 +169,7 @@ Unsorted (not likely to happen):
         - Xen
         - VMware
         - Virtualbox
-        - HyperV
+        - HyperV (bigboobs :V)
   - Jokes
      F AliceOS on alien hardware
      - AliceOS, brought to you by Google/Microsoft/Apple
@@ -177,7 +180,7 @@ Unsorted (not likely to happen):
         - In kernel
         - In C library
         - In coreutils
-     - UnSX Team merging with Oracle
+     - UnSX Team merging with Oracle (we are Oracle, you will be assimilated)
      - Rewrites
         - Basic
         - Visual Basic
@@ -187,8 +190,8 @@ Unsorted (not likely to happen):
         - C#
         - C++
         - Objective-C
-        - /g/script
+        - /g/script (>implying)
         - FiM++
-     - Abandon project
+     - Abandon project (almost happened once)
      - Porting of anything Poettering-related
-     - AliceOS + Ubuntu distro
+     - AliceOS + Ubuntu distro (if you donate THIRTY TWO MILLION US DOLLARS)
