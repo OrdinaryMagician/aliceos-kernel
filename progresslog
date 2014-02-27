@@ -41,7 +41,7 @@ Shanghai phase:
   - ACPI interface (who in their right mind would do OOP on hardware level?)
   C Multitasking (currently VERY stuck in here)
   P Syscalls (the system itself works, that's for sure)
-  - Rewrite paging (code is currently a carbon from of jamesm's tutorial)
+  - Rewrite paging (code is currently a carbon copy from jamesm's tutorial)
   P Better HCF with named symbols and stack tracing
   - ELF loader (last step, very very important to reach Hourai phase)
 Hourai phase:
