@@ -39,7 +39,7 @@ Shanghai phase:
   - QEMU Virgil3D driver (delay to next phase if not usable yet)
   - BGA linear framebuffer (currently using bank mode and it's slow)
   - ACPI interface (who in their right mind would do OOP on hardware level?)
-  C Multitasking (currently VERY stuck in here)
+  C Multitasking (still stuck in here)
   P Syscalls (the system itself works, that's for sure)
   - Rewrite paging (code is currently a carbon copy from jamesm's tutorial)
   P Better HCF with named symbols and stack tracing
@@ -172,7 +172,7 @@ Unsorted (not likely to happen):
         - HyperV (bigboobs :V)
   - Jokes
      F AliceOS on alien hardware
-     - AliceOS, brought to you by Google/Microsoft/Apple
+     F AliceOS, brought to you by Google/Microsoft/Apple
      - AliceOS closes its source
      - Low Level Java Virtual Machine
      - In-kernel mail client
