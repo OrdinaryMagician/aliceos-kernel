@@ -1,5 +1,11 @@
 # AliceOS kernel
 
+## Important note
+
+This project has been on indefinite hold since 2013.
+5 years later, I've changed a lot both as a developer and as a person.
+If I ever decide to work on this again, I'll just restart from scratch.
+
 ## About
 
 The AliceOS kernel is a project to build a kernel according to AOS standards (more on this later).
