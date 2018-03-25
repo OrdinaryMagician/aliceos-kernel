@@ -389,8 +389,8 @@ static void m3h_drawchar( uint16_t x, uint16_t y, char c )
 }
 static void m3h_drawwchar( uint16_t x, uint16_t y, wchar c )
 {
-	x=0;y=0;c=0;
-	return;	/* not supported */
+	(void)x, (void)y, (void)c;
+	/* not supported */
 }
 static void m3h_drawstring( uint16_t x, uint16_t y, char *s )
 {
@@ -399,8 +399,8 @@ static void m3h_drawstring( uint16_t x, uint16_t y, char *s )
 }
 static void m3h_drawwstring( uint16_t x, uint16_t y, wchar *s )
 {
-	x=0;y=0;s=0;
-	return;	/* not supported */
+	(void)x, (void)y, (void)s;
+	/* not supported */
 }
 static void m3h_fbgetres( uint16_t *cols, uint16_t *rows )
 {
@@ -495,8 +495,8 @@ static void m3h_fbputc( char c )
 }
 static void m3h_fbwputc( wchar c )
 {
-	c=0;
-	return;	/* not supported */
+	(void)c;
+	/* not supported */
 }
 static void m3h_fbputs( char *s )
 {
@@ -505,8 +505,8 @@ static void m3h_fbputs( char *s )
 }
 static void m3h_fbwputs( wchar *s )
 {
-	s=0;
-	return;	/* not supported */
+	(void)s;
+	/* not supported */
 }
 static uint32_t m3h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg,
 				      uint8_t oex )
@@ -867,8 +867,8 @@ static void m3h_fbprintf( char *s, ... )
 }
 static void m3h_fbwprintf( wchar *s, ... )
 {
-	s=0;
-	return;	/* not supported */
+	(void)s;
+	/* not supported */
 }
 static void m3h_fbsetattr( uint8_t fg, uint8_t bg, uint8_t ex )
 {

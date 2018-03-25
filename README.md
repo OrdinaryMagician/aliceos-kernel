@@ -22,7 +22,7 @@ I'm not asking too much, am I?
 ## Requirements
 
 Building and linking requires the following:
- - clang (gcc currently does not work)
+ - clang or gcc (defaults to clang)
  - nasm
  - zsh
  - binutils

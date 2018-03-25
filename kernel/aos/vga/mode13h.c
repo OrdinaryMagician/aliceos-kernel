@@ -391,8 +391,8 @@ static void m13h_drawchar( uint16_t x, uint16_t y, char c )
 }
 static void m13h_drawwchar( uint16_t x, uint16_t y, wchar c )
 {
-	x=0;y=0;c=0;
-	return;	/* Not implemented */
+	(void)x, (void)y, (void)c;
+	/* Not implemented */
 }
 static void m13h_drawstring( uint16_t x, uint16_t y, char *s )
 {
@@ -483,8 +483,8 @@ static void m13h_fbputc( char c )
 }
 static void m13h_fbwputc( wchar c )
 {
-	c=0;
-	return;	/* not yet implemented */
+	(void)c;
+	/* not yet implemented */
 }
 static void m13h_fbputs( char *s )
 {
@@ -493,8 +493,8 @@ static void m13h_fbputs( char *s )
 }
 static void m13h_fbwputs( wchar *s )
 {
-	s=0;
-	return;	/* not yet implemented */
+	(void)s;
+	/* not yet implemented */
 }
 static uint32_t m13h_vafbprintf_sattr( char *s, uint8_t ofg, uint8_t obg,
 				       uint8_t oex )
@@ -855,8 +855,8 @@ static void m13h_fbprintf( char *s, ... )
 }
 static void m13h_fbwprintf( wchar *s, ... )
 {
-	s=0;
-	return;	/* not yet implemented */
+	(void)s;
+	/* not yet implemented */
 }
 static void m13h_fbsetattr( uint8_t fg, uint8_t bg, uint8_t ex )
 {

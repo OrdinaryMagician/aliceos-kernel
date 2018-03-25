@@ -1,5 +1,5 @@
 #!/bin/zsh
-CFLAGS="-m32 -march=i486 -DAOSX86 -Os -pipe -std=c99 -Wall -Wextra -Werror \
+CFLAGS="-m32 -march=i486 -DAOSX86 -Os -pipe -std=c11 -Wall -Wextra -Werror \
         -pedantic -nostdlib -nostdinc -fno-stack-protector -finline-functions \
 	-ffreestanding -funsigned-char -fpack-struct -Ikernel/include"
 AFLAGS="-felf32"

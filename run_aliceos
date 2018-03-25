@@ -1,5 +1,5 @@
 #!/bin/sh
-QEMU="qemu-system-i386"
+QEMU="qemu-system-x86_64"
 AOSKRNL="vmaliceos"
 AOSRD="initramfs-aliceos.img"
 QEMU_ARGS="-cpu 486 -m 128M -serial stdio -vga std"

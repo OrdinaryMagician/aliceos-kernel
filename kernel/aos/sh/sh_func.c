@@ -59,7 +59,7 @@ static cmd_t sh_help =
 };
 static uint32_t cmd_listdemos( uint32_t argc, char **argv )
 {
-	argc=0;argv=0;
+	(void)argc, (void)argv;
 	listdemos();
 	return 0;
 }
@@ -98,7 +98,7 @@ static cmd_t sh_rundemo =
 };
 static uint32_t cmd_clear( uint32_t argc, char **argv )
 {
-	argc=0;argv=0;
+	(void)argc, (void)argv;
 	mode_3h.clear();
 	mode_3h.fbsetcursor(0,0);
 	return 0;
@@ -173,7 +173,7 @@ static void lspci_level0( void )
 }
 static uint32_t cmd_lspci( uint32_t argc, char **argv )
 {
-	argc=0;argv=0;
+	(void)argc, (void)argv;
 	lspci_level0();
 	return 0;
 }

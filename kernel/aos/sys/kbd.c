@@ -270,7 +270,7 @@ void kbd_getkey( key_t *key )
 }
 static void kbd_basehandler( regs_t *regs )
 {
-	regs=0;
+	(void)regs;
 	int_enable();
 	key_t parsed;
 	kbd_getkey(&parsed);

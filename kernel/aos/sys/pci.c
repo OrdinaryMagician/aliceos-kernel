@@ -9,6 +9,7 @@
 #include <sys/pci.h>
 #include <sys/port.h>
 #include <printk.h>
+#include <memops.h>
 /* retrieve certain values from string tables */
 extern pci_vnds_t pci_vnds[];
 extern pci_devs_t pci_devs[];
@@ -64,7 +65,9 @@ uint16_t pci_cfg_r( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off )
 	addr.devno = slot;
 	addr.busno = bus;
 	addr.enable = 1;
-	outport_l(PCI_CONF_ADDR,*(uint32_t*)&addr);
+	uint32_t caddr = 0;
+	memcpy(&caddr,&addr,4);
+	outport_l(PCI_CONF_ADDR,caddr);
 	return (inport_l(PCI_CONF_DATA)>>((off&2)*8))&0xFFFF;
 }
 /* pci configuration (write) */
@@ -78,7 +81,9 @@ void pci_cfg_w( uint8_t bus, uint8_t slot, uint8_t fn, uint8_t off,
 	addr.devno = slot;
 	addr.busno = bus;
 	addr.enable = 1;
-	outport_l(PCI_CONF_ADDR,*(uint32_t*)&addr);
+	uint32_t caddr = 0;
+	memcpy(&caddr,&addr,4);
+	outport_l(PCI_CONF_ADDR,caddr);
 	outport_l(PCI_CONF_DATA,data);
 }
 /* check if a device exists (vendor id not 0xFFFF) */

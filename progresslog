@@ -39,7 +39,7 @@ Shanghai phase:
   - QEMU Virgil3D driver (delay to next phase if not usable yet)
   - BGA linear framebuffer (currently using bank mode and it's slow)
   - ACPI interface (who in their right mind would do OOP on hardware level?)
-  C Multitasking (still stuck in here)
+  - Multitasking (still stuck in here)
   P Syscalls (the system itself works, that's for sure)
   - Rewrite paging (code is currently a carbon copy from jamesm's tutorial)
   P Better HCF with named symbols and stack tracing

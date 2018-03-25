@@ -53,7 +53,7 @@ double square( double val )
 }
 double root( double val, double rdx )
 {
-	val=0;rdx=0;
+	(void)val, (void)rdx;
 	BERP("not implemented");
 	return 0.0;
 }
